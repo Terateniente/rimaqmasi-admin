@@ -1,0 +1,414 @@
+.retos-page {
+  color: var(--color-on-surface);
+  flex: 1;
+  min-height: 0;
+  padding: clamp(22px, 2.4vw, 32px);
+  padding-bottom: 64px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-variant-numeric: tabular-nums;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rq-main .retos-page button:not(:has(> svg:only-child)) {
+  min-height: 44px !important;
+  padding: 0 16px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.retos-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px !important;
+}
+.retos-page-header__content { min-width: 0; }
+.retos-page-header__eyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.retos-page-header p {
+  max-width: 720px;
+  margin: 7px 0 0;
+  color: var(--color-on-surface-variant);
+  font-size: 14px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.retos-refresh-button {
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--color-outline-variant) !important;
+  border-radius: 10px !important;
+  background: var(--color-surface) !important;
+  color: var(--color-on-surface-variant) !important;
+  box-shadow: none !important;
+  transition: transform 160ms ease-out, border-color 160ms ease-out, background-color 160ms ease-out !important;
+}
+.retos-refresh-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+.retos-refresh-button:focus-visible,
+.retos-page button:focus-visible,
+.retos-page select:focus-visible,
+.retos-page input:focus-visible,
+.retos-page textarea:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.retos-context-card,
+.retos-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-variant);
+  border-radius: 16px;
+  box-shadow: var(--shadow-level-1);
+}
+
+.retos-context-card { padding: 20px; margin-bottom: 22px; border-top: 3px solid var(--color-primary); }
+.retos-section-heading { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+.retos-section-heading > div:nth-child(2) { display: flex; flex-direction: column; gap: 2px; }
+.retos-section-heading strong { font-size: 15px; color: var(--color-on-surface); }
+.retos-section-heading > div:nth-child(2) > span { font-size: 12px; color: var(--color-on-surface-variant); }
+.retos-section-icon {
+  width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+  color: var(--color-primary); background: var(--color-primary-container); flex-shrink: 0;
+}
+.retos-context-actions { display: flex; align-items: center; gap: 11px; margin-left: auto; }
+.retos-context-progress { width: min(170px, 24vw); }
+.retos-context-progress > span { display: block; margin-bottom: 6px; text-align: right; font-size: 11px; font-weight: 750; color: var(--color-on-surface-variant); }
+.retos-context-progress > div { height: 5px; overflow: hidden; border-radius: 999px; background: var(--color-surface-container-high); }
+.retos-context-progress i { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--color-primary); transform-origin: left; transition: transform 180ms ease-out; }
+.rq-main .retos-save-route { min-height: 40px !important; padding: 0 14px !important; border: 1px solid var(--color-primary) !important; border-radius: 10px !important; background: var(--color-primary) !important; color: var(--color-on-primary) !important; box-shadow: 0 3px 8px color-mix(in srgb, var(--color-primary) 18%, transparent) !important; white-space: nowrap; transition: transform 160ms ease-out, background-color 160ms ease-out, box-shadow 160ms ease-out !important; }
+.rq-main .retos-save-route:hover:not(:disabled) { transform: translateY(-1px); background: color-mix(in srgb, var(--color-primary) 88%, #17233a) !important; box-shadow: 0 6px 14px color-mix(in srgb, var(--color-primary) 24%, transparent) !important; }
+.rq-main .retos-save-route:active:not(:disabled) { transform: translateY(0) scale(.98); }
+.rq-main .retos-save-route.is-saved { background: color-mix(in srgb, var(--color-primary) 92%, #17233a) !important; }
+.rq-main .retos-save-route:disabled { opacity: .45; cursor: not-allowed; }
+
+.retos-context-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.retos-context-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.retos-context-field > span {
+  display: flex; align-items: center; gap: 7px; color: var(--color-on-surface-variant);
+  font-size: 12px; font-weight: 700;
+}
+.retos-context-field b {
+  width: 21px; height: 21px; display: inline-grid; place-items: center; border-radius: 50%;
+  color: var(--color-primary); background: var(--color-primary-container); font-size: 11px;
+}
+.retos-context-field.is-complete > span { color: var(--color-on-surface); }
+.retos-context-field.is-complete b { color: #fff; background: var(--color-primary); }
+.retos-context-field select {
+  width: 100%; min-height: 44px; padding: 0 36px 0 12px; border-radius: 10px;
+  border: 1px solid var(--color-outline-variant); background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface); font-size: 13px; outline: none;
+}
+.retos-context-field select:hover:not(:disabled) { border-color: var(--color-outline); background: var(--color-surface); }
+.retos-context-field select:focus { border-color: var(--color-primary); box-shadow: var(--focus-ring); }
+.retos-context-field select:disabled { opacity: .55; cursor: not-allowed; }
+
+.retos-metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.retos-metric {
+  display: flex; align-items: center; gap: 13px; min-height: 104px; padding: 17px;
+  background: var(--color-surface); border: 1px solid var(--color-surface-variant);
+  border-radius: 14px; box-shadow: var(--shadow-level-1);
+}
+.retos-metric__icon {
+  width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+  color: var(--color-primary); background: var(--color-primary-container); flex-shrink: 0;
+}
+.retos-metric span { display: block; margin-bottom: 2px; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 600; }
+.retos-metric strong { display: block; color: var(--color-on-surface); font-size: 26px; line-height: 1; }
+.retos-metric small { display: block; margin-top: 5px; color: var(--color-outline); font-size: 10.5px; line-height: 1.2; }
+
+.retos-tabs {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: 100%;
+  margin-bottom: 18px; padding: 5px; gap: 4px; overflow-x: auto;
+  border: 1px solid var(--color-surface-variant); border-radius: 13px;
+  background: var(--color-surface);
+}
+.rq-main .retos-tabs button {
+  min-height: 42px !important; padding: 0 13px !important; border: 0 !important;
+  border-radius: 9px !important; background: transparent !important; color: var(--color-on-surface-variant) !important;
+  box-shadow: none !important; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform 150ms ease-out, background-color 150ms ease-out, color 150ms ease-out !important;
+}
+.rq-main .retos-tabs button:hover:not(.active) { color: var(--color-on-surface) !important; background: var(--color-surface-container-high) !important; }
+.rq-main .retos-tabs button.active {
+  background: var(--color-primary) !important; color: var(--color-on-primary) !important;
+  box-shadow: 0 3px 9px color-mix(in srgb, var(--color-primary) 22%, transparent) !important;
+}
+
+.retos-panel { padding: 20px; }
+.retos-panel__header {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  margin: -20px -20px 0; padding: 18px 20px;
+  border-bottom: 1px solid var(--color-surface-variant);
+}
+.retos-panel__eyebrow { color: var(--color-primary); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.retos-panel__header h2 { margin: 3px 0 2px !important; font-size: 22px !important; text-wrap: balance; }
+.retos-panel__header p { margin: 0; color: var(--color-on-surface-variant); font-size: 12px; }
+.rq-main .retos-new-button {
+  min-height: 46px !important; height: 46px !important; padding: 0 19px !important;
+  border: 1px solid var(--color-primary) !important; border-radius: 10px !important;
+  background: var(--color-primary) !important; color: var(--color-on-primary) !important;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--color-primary) 22%, transparent) !important;
+  flex-shrink: 0;
+}
+.rq-main .retos-new-button:hover:not(:disabled),
+.rq-main .retos-generate-button:hover:not(:disabled),
+.rq-main .retos-primary-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--color-primary) 88%, #17233a) !important;
+  box-shadow: 0 7px 16px color-mix(in srgb, var(--color-primary) 24%, transparent) !important;
+}
+.rq-main .retos-new-button:active:not(:disabled),
+.rq-main .retos-generate-button:active:not(:disabled),
+.rq-main .retos-primary-button:active:not(:disabled) { transform: translateY(0) scale(.98); }
+
+.retos-table { margin: 0 !important; border-radius: 0 0 12px 12px; }
+.retos-table table { width: 100%; border-collapse: collapse; min-width: 880px; }
+.retos-table th {
+  padding: 13px 12px; text-align: left; border-bottom: 1px solid var(--color-surface-variant);
+  background: var(--color-surface-container-lowest); color: var(--color-on-surface-variant);
+  font-size: 11px; font-weight: 800; letter-spacing: .035em; text-transform: uppercase;
+}
+.retos-table tbody tr { transition: background-color .18s ease; }
+.retos-table tbody tr:hover { background: var(--color-surface-container-lowest); }
+.retos-table td { vertical-align: middle; }
+
+.retos-empty { display: flex; flex-direction: column; align-items: center; padding: 42px 20px; text-align: center; }
+.retos-empty__icon,
+.retos-selection-empty__icon {
+  width: 58px; height: 58px; display: grid; place-items: center; margin-bottom: 12px;
+  border-radius: 18px; color: var(--color-primary); background: var(--color-primary-container);
+}
+.retos-empty strong { font-size: 16px; color: var(--color-on-surface); }
+.retos-empty p { max-width: 430px; margin: 5px 0 15px; color: var(--color-on-surface-variant); font-size: 13px; line-height: 1.5; }
+
+.retos-selection-empty {
+  min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 36px 20px; border: 1px dashed var(--color-outline-variant); border-radius: 16px;
+  background: color-mix(in srgb, var(--color-surface) 88%, var(--color-primary) 2%); text-align: center;
+}
+.retos-selection-empty__step { margin-bottom: 7px; color: var(--color-primary); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.retos-selection-empty h3 { margin: 0 0 5px; color: var(--color-on-surface); }
+.retos-selection-empty p { max-width: 480px; margin: 0 0 17px; color: var(--color-on-surface-variant); font-size: 13px; }
+.rq-main .retos-empty-action { border: 1px solid var(--color-primary); background: var(--color-surface); color: var(--color-primary); }
+.rq-main .retos-empty-action:hover { background: var(--color-primary-container); transform: translateY(-1px); }
+
+.retos-workspace { margin: 0; }
+.retos-workspace__header { display: flex; align-items: center; gap: 12px; margin: -2px 0 22px; padding-bottom: 18px; border-bottom: 1px solid var(--color-surface-variant); }
+.retos-workspace__header h2 { margin: 0 0 3px !important; font-size: 21px !important; text-wrap: balance; }
+.retos-workspace__header p { margin: 0; color: var(--color-on-surface-variant); font-size: 12.5px; line-height: 1.45; text-wrap: pretty; }
+.rq-main .retos-header-save { min-height: 40px !important; margin-left: auto; padding: 0 14px !important; flex: 0 0 auto; border: 1px solid var(--color-primary) !important; background: var(--color-primary) !important; color: var(--color-on-primary) !important; box-shadow: 0 3px 8px color-mix(in srgb, var(--color-primary) 18%, transparent) !important; }
+.rq-main .retos-header-save:hover:not(:disabled) { transform: translateY(-1px); background: color-mix(in srgb, var(--color-primary) 88%, #17233a) !important; }
+.rq-main .retos-header-save:disabled { opacity: .5; cursor: not-allowed; box-shadow: none !important; }
+.retos-workspace__icon { width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 42px; border-radius: 12px; color: var(--color-primary); background: var(--color-primary-container); }
+.retos-workspace__label { display: flex; align-items: center; gap: 10px; margin: 4px 0 11px; }
+.retos-workspace__label > span { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border-radius: 50%; color: #fff; background: var(--color-primary); font-size: 11px; font-weight: 800; }
+.retos-workspace__label strong, .retos-workspace__label small { display: block; }
+.retos-workspace__label strong { font-size: 13px; }
+.retos-workspace__label small { margin-top: 1px; color: var(--color-on-surface-variant); font-size: 11px; }
+
+.retos-type-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px;
+  padding: 12px; margin-bottom: 16px; border-radius: 12px; background: var(--color-surface-container-low);
+}
+.retos-type-grid label {
+  display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 10px;
+  border: 1px solid transparent; border-radius: 9px; color: var(--color-on-surface-variant);
+  background: var(--color-surface); cursor: pointer; font-size: 12px; font-weight: 650;
+}
+.retos-type-grid label.selected { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-container); }
+.retos-type-grid input { width: 16px; height: 16px; accent-color: var(--color-primary); }
+
+.retos-word-toolbar { display: flex; gap: 9px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.retos-category-select { flex: 0 1 260px; min-width: 220px; }
+.retos-word-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px;
+  max-height: 420px; overflow-y: auto; padding: 2px 5px 2px 2px;
+}
+.retos-word-card {
+  display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 4px 8px; padding: 12px;
+  border: 1px solid var(--color-surface-variant); border-radius: 11px; cursor: pointer;
+  background: var(--color-surface-container-lowest); transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+}
+.retos-word-card:hover { border-color: var(--color-outline); transform: translateY(-1px); }
+.retos-word-card.selected { border: 2px solid var(--color-primary); padding: 11px; background: var(--color-primary-container); }
+.retos-word-card input { grid-row: 1 / 4; width: 16px; height: 16px; margin-top: 2px; accent-color: var(--color-primary); }
+.retos-word-card strong { min-width: 0; color: var(--color-on-surface); font-size: 14px; }
+.retos-word-card div { color: var(--color-on-surface-variant); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.retos-word-card small { color: var(--color-outline); font-size: 11px; }
+.retos-result-count { margin-left: auto; padding: 6px 10px; border-radius: 999px; background: var(--color-surface-container-high); color: var(--color-on-surface-variant); font-size: 11px; font-weight: 750; white-space: nowrap; }
+.retos-word-empty { min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; border: 1px dashed var(--color-outline-variant); border-radius: 12px; color: var(--color-on-surface-variant); text-align: center; }
+.retos-word-empty svg { margin-bottom: 9px; color: var(--color-primary); }
+.retos-word-empty strong { color: var(--color-on-surface); font-size: 14px; }
+.retos-word-empty span { margin-top: 3px; font-size: 12px; }
+.retos-generation-footer { position: sticky; z-index: 10; bottom: -20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 18px -20px -20px; padding: 13px 20px; border-top: 1px solid var(--color-surface-variant); background: var(--color-surface); box-shadow: 0 -8px 20px rgba(23, 35, 58, .05); }
+.retos-generation-footer > span { color: var(--color-on-surface-variant); font-size: 12px; }
+.retos-generation-footer > span b { color: var(--color-primary); font-size: 15px; }
+.rq-main .retos-generate-button {
+  min-height: 46px !important; height: 46px !important; margin-top: 0; padding: 0 19px !important;
+  border: 1px solid var(--color-primary) !important; border-radius: 10px !important;
+  background: var(--color-primary) !important; color: var(--color-on-primary) !important;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
+}
+.rq-main .retos-generate-button:disabled { opacity: .5; cursor: not-allowed; box-shadow: none !important; }
+
+.retos-settings-panel,
+.retos-guide-panel { width: 100%; max-width: none; }
+.retos-settings-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(240px, .65fr); gap: 16px; align-items: start; }
+.retos-settings-main { display: grid; gap: 14px; }
+.retos-settings-section { padding: 17px; border: 1px solid var(--color-surface-variant); border-radius: 13px; background: var(--color-surface-container-lowest); }
+.retos-settings-section__heading { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+.retos-settings-section__heading > span { width: 26px; height: 26px; display: grid; place-items: center; flex: 0 0 26px; border-radius: 50%; color: #fff; background: var(--color-primary); font-size: 11px; font-weight: 800; }
+.retos-settings-section__heading strong,
+.retos-settings-section__heading small { display: block; }
+.retos-settings-section__heading strong { font-size: 13.5px; }
+.retos-settings-section__heading small { margin-top: 2px; color: var(--color-on-surface-variant); font-size: 11px; font-weight: 500; }
+.retos-settings-section__heading > b { margin-left: auto; padding: 5px 9px; border-radius: 999px; font-size: 11px; }
+.retos-settings-section__heading > b.is-valid { color: #2f703b; background: color-mix(in srgb, #3f8a4a 10%, var(--color-surface)); }
+.retos-settings-section__heading > b.is-invalid { color: var(--color-primary); background: var(--color-primary-container); }
+.retos-settings-primary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.retos-settings-primary-grid label,
+.retos-distribution-grid label { display: flex; flex-direction: column; gap: 4px; color: var(--color-on-surface); font-size: 12.5px; font-weight: 750; }
+.retos-settings-primary-grid label > small { color: var(--color-on-surface-variant); font-size: 10.5px; font-weight: 500; }
+.retos-number-field { display: flex; align-items: center; min-height: 42px; margin-top: 5px; overflow: hidden; border: 1px solid var(--color-outline-variant); border-radius: 9px; background: var(--color-surface); }
+.retos-number-field:focus-within { border-color: var(--color-primary); box-shadow: var(--focus-ring); }
+.retos-number-field input { width: 100%; min-width: 0; height: 40px; padding: 0 11px; border: 0; outline: 0; background: transparent; color: var(--color-on-surface); font: inherit; font-size: 13px; }
+.retos-number-field b { align-self: stretch; display: grid; place-items: center; min-width: 48px; padding: 0 9px; border-left: 1px solid var(--color-surface-variant); background: var(--color-surface-container-low); color: var(--color-on-surface-variant); font-size: 10.5px; }
+.retos-distribution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.retos-distribution-status { height: 6px; margin-top: 14px; overflow: hidden; border-radius: 999px; background: var(--color-surface-container-high); }
+.retos-distribution-status i { display: block; width: 100%; height: 100%; transform-origin: left; background: var(--color-primary); }
+.retos-distribution-status.is-valid i { background: #3f8a4a; }
+.retos-settings-error { margin: 8px 0 0; color: var(--color-primary); font-size: 11px; font-weight: 650; }
+.retos-settings-aside { padding: 18px; border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-variant)); border-radius: 13px; background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface)); }
+.retos-settings-aside__icon { width: 42px; height: 42px; display: grid; place-items: center; margin-bottom: 13px; border-radius: 12px; color: var(--color-primary); background: var(--color-primary-container); }
+.retos-settings-aside > strong { font-size: 14px; }
+.retos-settings-aside > p { margin: 7px 0 15px; color: var(--color-on-surface-variant); font-size: 11.5px; line-height: 1.5; text-wrap: pretty; }
+.retos-settings-aside ul { display: grid; gap: 9px; margin: 0; padding: 13px 0 0; border-top: 1px solid var(--color-surface-variant); list-style: none; }
+.retos-settings-aside li { display: flex; align-items: center; gap: 7px; color: var(--color-on-surface-variant); font-size: 11px; }
+.retos-settings-aside li svg { flex: 0 0 auto; color: #3f8a4a; }
+
+.retos-guide-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+.retos-guide-form { display: grid; gap: 14px; padding: 18px; border: 1px solid var(--color-surface-variant); border-radius: 13px; background: var(--color-surface-container-lowest); }
+.retos-guide-form label { display: flex; flex-direction: column; gap: 4px; color: var(--color-on-surface); font-size: 12.5px; }
+.retos-guide-form label > span { color: var(--color-on-surface-variant); font-size: 10.5px; font-weight: 500; line-height: 1.35; }
+.retos-guide-form input,
+.retos-guide-form textarea { margin-top: 5px; background: var(--color-surface) !important; }
+.retos-guide-content textarea { min-height: 220px; resize: vertical; line-height: 1.55; }
+.retos-guide-content > small { align-self: flex-end; color: var(--color-outline); font-size: 10px; font-weight: 550; }
+.retos-guide-aside { padding: 18px; border: 1px solid var(--color-surface-variant); border-radius: 13px; background: var(--color-surface-container-lowest); }
+.retos-guide-progress { display: flex; align-items: baseline; gap: 7px; padding-bottom: 14px; border-bottom: 1px solid var(--color-surface-variant); }
+.retos-guide-progress strong { color: var(--color-primary); font-size: 25px; line-height: 1; }
+.retos-guide-progress span { color: var(--color-on-surface-variant); font-size: 10.5px; }
+.retos-guide-aside ul { display: grid; gap: 10px; margin: 14px 0; padding: 0; list-style: none; }
+.retos-guide-aside li { display: flex; align-items: center; gap: 8px; color: var(--color-outline); font-size: 11.5px; }
+.retos-guide-aside li svg { flex: 0 0 auto; }
+.retos-guide-aside li.is-ready { color: #2f703b; font-weight: 650; }
+.retos-guide-tip { display: flex; align-items: flex-start; gap: 9px; padding: 12px; border-radius: 10px; background: var(--color-primary-container); }
+.retos-guide-tip svg { flex: 0 0 auto; color: var(--color-primary); }
+.retos-guide-tip strong { font-size: 11.5px; }
+.retos-guide-tip p { margin: 3px 0 0; color: var(--color-on-surface-variant); font-size: 10.5px; line-height: 1.45; }
+.retos-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 17px; padding-top: 16px; border-top: 1px solid var(--color-surface-variant); }
+.retos-save-state { color: var(--color-on-surface-variant); font-size: 11px; }
+.retos-save-state.is-ready { color: #2f703b; font-weight: 650; }
+.rq-main .retos-primary-button { min-height: 46px !important; padding: 0 19px !important; border: 1px solid var(--color-primary) !important; background: var(--color-primary) !important; color: var(--color-on-primary) !important; box-shadow: 0 4px 10px color-mix(in srgb, var(--color-primary) 20%, transparent) !important; }
+.rq-main .retos-primary-button:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none !important; }
+
+.retos-modal-backdrop { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 12px; background: rgba(15, 23, 42, .68); }
+.retos-preview-dialog,
+.retos-editor-dialog { border-top: 4px solid var(--color-primary) !important; }
+.retos-editor-dialog__header { background: var(--color-surface-container-lowest); }
+
+.rq-main .retos-page button[style*="background: var(--color-primary)"]:not([title]),
+.rq-main .retos-page form button[type="submit"] {
+  min-height: 46px !important;
+  height: 46px !important;
+  padding: 0 19px !important;
+  border-radius: 10px !important;
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  border: 1px solid var(--color-primary) !important;
+  box-shadow: 0 5px 12px color-mix(in srgb, var(--color-primary) 24%, transparent) !important;
+}
+
+@media (max-width: 1050px) {
+  .retos-context-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .retos-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .retos-settings-layout,
+  .retos-guide-layout { grid-template-columns: 1fr; }
+  .retos-settings-aside,
+  .retos-guide-aside { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 13px; }
+  .retos-settings-aside__icon,
+  .retos-guide-progress { grid-row: 1 / 4; }
+  .retos-settings-aside > p { margin: 5px 0 9px; }
+  .retos-settings-aside ul,
+  .retos-guide-aside ul { margin: 0; padding-top: 9px; }
+  .retos-guide-tip { grid-column: 1 / -1; margin-top: 12px; }
+}
+
+@media (max-width: 600px) {
+  .retos-page { padding: 18px 14px 44px; }
+  .retos-page-header { flex-direction: column; gap: 14px; }
+  .retos-refresh-button { width: 100%; }
+  .retos-context-card, .retos-panel { padding: 15px; border-radius: 14px; }
+  .retos-section-heading { align-items: flex-start; flex-wrap: wrap; }
+  .retos-section-heading > div:nth-child(2) { flex: 1; min-width: 180px; }
+  .retos-section-heading > div:nth-child(2) > span { display: none; }
+  .retos-context-actions { width: calc(100% - 47px); margin-left: 47px; flex-wrap: wrap; }
+  .retos-context-progress { width: auto; min-width: 130px; flex: 1; }
+  .retos-context-progress > span { text-align: left; }
+  .rq-main .retos-save-route { flex: 1; }
+  .retos-context-grid { grid-template-columns: 1fr; }
+  .retos-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .retos-metric { min-height: 94px; padding: 13px; gap: 10px; }
+  .retos-metric__icon { width: 38px; height: 38px; }
+  .retos-metric strong { font-size: 22px; }
+  .retos-metric small { display: none; }
+  .retos-tabs { display: flex; width: 100%; }
+  .rq-main .retos-tabs button { flex: 0 0 auto; min-height: 40px !important; }
+  .retos-panel__header { margin: -15px -15px 0; padding: 15px; align-items: flex-start; }
+  .rq-main .retos-new-button { width: 46px !important; min-width: 46px !important; padding: 0 !important; }
+  .retos-new-button span { display: none; }
+  .retos-word-toolbar > button { flex: 1; }
+  .retos-category-select { width: 100%; min-width: 0; flex-basis: 100%; }
+  .retos-word-grid { grid-template-columns: 1fr; }
+  .retos-result-count { width: 100%; margin-left: 0; text-align: center; }
+  .retos-generation-footer { bottom: -15px; flex-direction: column; align-items: stretch; margin: 16px -15px -15px; padding: 12px 15px; }
+  .retos-generation-footer > span { text-align: center; }
+  .rq-main .retos-generate-button { width: 100%; }
+  .retos-settings-primary-grid,
+  .retos-distribution-grid { grid-template-columns: 1fr; }
+  .retos-settings-section { padding: 14px; }
+  .retos-settings-aside,
+  .retos-guide-aside { display: block; padding: 15px; }
+  .retos-settings-aside__icon { margin-bottom: 11px; }
+  .retos-guide-progress { padding-bottom: 12px; }
+  .retos-guide-form { padding: 14px; }
+  .retos-guide-content textarea { min-height: 200px; }
+  .retos-form-actions { flex-direction: column; align-items: stretch; }
+  .retos-save-state { text-align: center; }
+  .retos-form-actions .retos-primary-button { width: 100%; }
+  .rq-main .retos-header-save { min-width: 44px; padding: 0 11px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retos-page *,
+  .retos-page *::before,
+  .retos-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

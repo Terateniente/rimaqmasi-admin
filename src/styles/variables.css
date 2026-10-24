@@ -1,0 +1,210 @@
+:root {
+  /* ═══════════════════════════════════════════════════
+     RIMAQMASI — Light Mode (Default)
+     Andean Heritage Modern Palette
+     ═══════════════════════════════════════════════════ */
+
+  /* Primary — Rich Crimson Red */
+  --color-primary: #B91C2C;
+  --color-on-primary: #ffffff;
+  --color-primary-container: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --color-on-primary-container: var(--color-primary);
+  --color-inverse-primary: #FFB3B3;
+  --color-surface-tint: #B91C2C;
+
+  /* Secondary — Deep Royal Blue */
+  --color-secondary: #1D5FAA;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #DBEAFE;
+  --color-on-secondary-container: #0A2E5C;
+
+  /* Tertiary — Warm Amber Gold */
+  --color-tertiary: #D4A017;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #FFF3CD;
+  --color-on-tertiary-container: #3D2E00;
+
+  /* Extended Palette */
+  --color-quaternary: #16A34A;  /* Green */
+  --color-quinary: #7C3AED;    /* Purple */
+  --color-senary: #EA580C;     /* Orange */
+
+  /* Error */
+  --color-error: #DC2626;
+  --color-on-error: #ffffff;
+  --color-error-container: #FEE2E2;
+  --color-on-error-container: #991B1B;
+
+  /* Background & Surfaces */
+  --color-background: #F8FAFC;
+  --color-on-background: #0F172A;
+
+  --color-surface: #FFFFFF;
+  --color-on-surface: #1E293B;
+  --color-surface-variant: #F1F5F9;
+  --color-on-surface-variant: #475569;
+  --color-inverse-surface: #1E293B;
+  --color-inverse-on-surface: #F1F5F9;
+
+  --color-surface-dim: #E2E8F0;
+  --color-surface-bright: #FFFFFF;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F8FAFC;
+  --color-surface-container: #F1F5F9;
+  --color-surface-container-high: #E2E8F0;
+  --color-surface-container-highest: #CBD5E1;
+
+  /* Outlines */
+  --color-outline: #94A3B8;
+  --color-outline-variant: #E2E8F0;
+
+  /* Semantic Colors */
+  --color-success: #16A34A;
+  --color-success-container: #DCFCE7;
+  --color-on-success-container: #14532D;
+
+  --color-info: #0284C7;
+  --color-info-container: #E0F2FE;
+  --color-on-info-container: #075985;
+
+  --color-neutral-container: #F1F5F9;
+  --color-on-neutral-container: #64748B;
+
+  --color-dashed-border: #CBD5E1;
+
+  /* ─── Typography ─── */
+  --font-display: 'Inter', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+
+  /* Corporate component tokens */
+  --control-height: 42px;
+  --card-radius: 16px;
+  --modal-radius: 20px;
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+
+  /* Font Sizes */
+  --text-display-lg: 48px;
+  --text-headline-lg: 32px;
+  --text-headline-md: 24px;
+  --text-headline-sm: 20px;
+  --text-body-lg: 18px;
+  --text-body-md: 16px;
+  --text-body-sm: 14px;
+  --text-label-lg: 14px;
+  --text-label-md: 12px;
+
+  /* Line Heights */
+  --lh-display-lg: 56px;
+  --lh-headline-lg: 40px;
+  --lh-headline-md: 32px;
+  --lh-headline-sm: 28px;
+  --lh-body-lg: 28px;
+  --lh-body-md: 24px;
+  --lh-body-sm: 20px;
+  --lh-label-lg: 16px;
+  --lh-label-md: 16px;
+
+  /* ─── Spacing ─── */
+  --spacing-xs: 4px;
+  --spacing-base: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 24px;
+  --spacing-lg: 40px;
+  --spacing-xl: 64px;
+  --spacing-gutter: 24px;
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 80px;
+
+  /* ─── Radii ─── */
+  --radius-sm: 0.25rem;
+  --radius-default: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* ─── Shadows — Soft & Layered ─── */
+  --shadow-level-1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-level-2: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-level-3: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   RIMAQMASI — Dark Mode
+   Warm, Layered Dark Palette with High Readability
+   ═══════════════════════════════════════════════════ */
+[data-theme='dark'] {
+  /* Primary — Bright, Vibrant Red (readable on dark) */
+  --color-primary: #EF4444;
+  --color-on-primary: #ffffff;
+  --color-primary-container: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  --color-on-primary-container: #FCA5A5;
+  --color-inverse-primary: #B91C2C;
+  --color-surface-tint: #EF4444;
+
+  /* Secondary — Soft Luminous Blue */
+  --color-secondary: #93C5FD;
+  --color-on-secondary: #0A2540;
+  --color-secondary-container: #1E3A5F;
+  --color-on-secondary-container: #DBEAFE;
+
+  /* Tertiary — Warm Gold */
+  --color-tertiary: #FCD34D;
+  --color-on-tertiary: #3D2E00;
+  --color-tertiary-container: #523E08;
+  --color-on-tertiary-container: #FEF3C7;
+
+  /* Extended Palette (brighter for dark bg) */
+  --color-quaternary: #4ADE80;
+  --color-quinary: #A78BFA;
+  --color-senary: #FB923C;
+
+  /* Error */
+  --color-error: #FCA5A5;
+  --color-on-error: #450A0A;
+  --color-error-container: #5C1A1A;
+  --color-on-error-container: #FECACA;
+
+  /* Background & Surfaces — Warm-tinted dark, NOT flat gray */
+  --color-background: #0C0F14;
+  --color-on-background: #E8ECF1;
+
+  --color-surface: #141820;
+  --color-on-surface: #E2E8F0;
+  --color-surface-variant: #1E2330;
+  --color-on-surface-variant: #94A3B8;
+  --color-inverse-surface: #E2E8F0;
+  --color-inverse-on-surface: #1E293B;
+
+  --color-surface-dim: #0A0D12;
+  --color-surface-bright: #2A3040;
+  --color-surface-container-lowest: #080A0E;
+  --color-surface-container-low: #0F1319;
+  --color-surface-container: #161B24;
+  --color-surface-container-high: #1E2330;
+  --color-surface-container-highest: #262D3A;
+
+  /* Outlines — Subtle but visible */
+  --color-outline: #475569;
+  --color-outline-variant: #1E2938;
+
+  /* Semantic Colors Dark */
+  --color-success: #4ADE80;
+  --color-success-container: rgba(22, 163, 74, 0.18);
+  --color-on-success-container: #86EFAC;
+
+  --color-info: #7DD3FC;
+  --color-info-container: rgba(14, 165, 233, 0.18);
+  --color-on-info-container: #BAE6FD;
+
+  --color-neutral-container: var(--color-surface-variant);
+  --color-on-neutral-container: var(--color-on-surface-variant);
+
+  --color-dashed-border: #2A3040;
+
+  /* Shadows — Deeper in dark mode */
+  --shadow-level-1: 0 1px 4px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-level-2: 0 4px 16px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-level-3: 0 12px 48px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.4);
+}

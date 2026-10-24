@@ -1,0 +1,193 @@
+/* Shared action footer for every administrative modal form. */
+.rq-main [style*='position: fixed'] form > div:last-child:has(button[type='submit']),
+[style*='position: fixed'] form > div:last-child:has(button[type='submit']),
+.rq-form-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin-top: 28px !important;
+  padding: 22px 0 0 !important;
+  border-top: 1px solid var(--color-outline-variant) !important;
+  background: transparent !important;
+}
+
+.rq-form-actions > button,
+.rq-form-actions > div > button {
+  min-height: 44px !important;
+  padding: 11px 20px !important;
+  border: 1px solid var(--color-outline-variant) !important;
+  border-radius: 10px !important;
+  background: var(--color-surface) !important;
+  color: var(--color-on-surface) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.rq-form-actions > button:last-child,
+.rq-form-actions > div > button:last-child {
+  min-width: 132px !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 24%, transparent) !important;
+}
+
+.rq-form-actions button > svg { display: none !important; }
+
+.rq-main [style*='position: fixed'] form button[type='submit'],
+[style*='position: fixed'] form button[type='submit'] {
+  min-width: 132px !important;
+  min-height: 44px !important;
+  padding: 11px 24px !important;
+  border: 1px solid var(--color-primary) !important;
+  border-radius: 10px !important;
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 24%, transparent) !important;
+}
+
+.rq-main [style*='position: fixed'] form > div:last-child:has(button[type='submit']) button[type='button'],
+[style*='position: fixed'] form > div:last-child:has(button[type='submit']) button[type='button'] {
+  min-height: 44px !important;
+  padding: 11px 20px !important;
+  border: 1px solid var(--color-outline-variant) !important;
+  border-radius: 10px !important;
+  background: var(--color-surface) !important;
+  color: var(--color-on-surface) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+}
+
+/* Form action buttons use text only; functional field/table icons remain visible. */
+.rq-main [style*='position: fixed'] form button[type='submit'] > svg,
+[style*='position: fixed'] form button[type='submit'] > svg,
+.rq-main [style*='position: fixed'] form > div:last-child:has(button[type='submit']) button[type='button'] > svg,
+[style*='position: fixed'] form > div:last-child:has(button[type='submit']) button[type='button'] > svg {
+  display: none !important;
+}
+
+@media (max-width: 540px) {
+  .rq-main [style*='position: fixed'] form > div:last-child:has(button[type='submit']),
+  [style*='position: fixed'] form > div:last-child:has(button[type='submit']),
+  .rq-form-actions {
+    margin-top: 20px !important;
+    padding-top: 16px !important;
+  }
+
+  .rq-main [style*='position: fixed'] form button[type='submit'],
+  [style*='position: fixed'] form button[type='submit'] {
+    min-width: 120px !important;
+  }
+}
+
+/* Lesson wizard follows the same sizing rules as Unit and Session forms. */
+.lesson-form-modal form input:not([type='checkbox']):not([type='radio']),
+.lesson-form-modal form select,
+.lesson-form-modal form textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.lesson-form-modal form .flex-col-mobile > * {
+  min-width: 0;
+}
+
+.lesson-form-modal .lesson-form-scroll {
+  min-width: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* Scrollbars for Gestión Académica modals: compact, scoped and on-brand. */
+.academic-modal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 55%, var(--color-outline-variant)) transparent;
+  scrollbar-gutter: stable;
+}
+
+.academic-modal-scroll::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.academic-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.academic-modal-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 55%, var(--color-outline-variant));
+  background-clip: padding-box;
+}
+
+.academic-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+  background-clip: padding-box;
+}
+
+.lesson-detail-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.lesson-detail-grid > div {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--color-surface-variant);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+/* Stable footer for multi-step and guided administrative forms. */
+.rq-main [style*='position: fixed'] form > div.rq-form-actions.rq-step-form-actions,
+[style*='position: fixed'] form > div.rq-form-actions.rq-step-form-actions {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 20px 24px !important;
+  border-top: 1px solid var(--color-surface-variant) !important;
+  background: var(--color-surface) !important;
+  flex-shrink: 0 !important;
+  justify-content: flex-end !important;
+}
+
+.rq-step-form-actions > .rq-step-form-actions__primary {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-left: 0;
+}
+
+/* The same wizard footer id is reused across mutually exclusive page modals. */
+#rq-step-form-actions {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 20px 24px !important;
+  justify-content: flex-end !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 540px) {
+  .rq-main [style*='position: fixed'] form > div.rq-form-actions.rq-step-form-actions,
+  [style*='position: fixed'] form > div.rq-form-actions.rq-step-form-actions {
+    padding: 16px !important;
+  }
+
+  #rq-step-form-actions {
+    padding: 16px !important;
+  }
+}

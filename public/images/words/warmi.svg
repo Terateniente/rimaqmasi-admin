@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#831843" />
+      <stop offset="100%" stop-color="#BE185D" />
+    </linearGradient>
+    <linearGradient id="innerBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0F172A" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Card Frame -->
+  <rect x="12" y="12" width="376" height="376" rx="28" fill="url(#cardBg)" filter="url(#shadow)"/>
+  
+  <!-- Andean Decorative Top Border (Stepped Pattern) -->
+  <path d="M 30 35 L 50 35 L 50 45 L 70 45 L 70 35 L 90 35 L 90 45 L 110 45 L 110 35 L 130 35 L 130 45 L 150 45 L 150 35 L 170 35 L 170 45 L 190 45 L 190 35 L 210 35 L 210 45 L 230 45 L 230 35 L 250 35 L 250 45 L 270 45 L 270 35 L 290 35 L 290 45 L 310 45 L 310 35 L 330 35 L 330 45 L 350 45 L 350 35 L 370 35" stroke="#F472B6" stroke-width="2.5" fill="none" opacity="0.45"/>
+
+  <!-- Category Tag -->
+  <rect x="35" y="48" width="160" height="26" rx="13" fill="rgba(255,255,255,0.18)"/>
+  <text x="115" y="65" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">FAMILIA Y PERSONAS</text>
+
+  <!-- Number Badge -->
+  <circle cx="345" cy="61" r="16" fill="rgba(255,255,255,0.22)"/>
+  <text x="345" y="66" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="800" fill="#FFFFFF" text-anchor="middle">#10</text>
+
+  <!-- Center Illustration Canvas -->
+  <rect x="35" y="86" width="330" height="190" rx="20" fill="url(#innerBg)" stroke="#FBCFE8" stroke-width="2"/>
+  
+  <!-- Graphic Motif -->
+  <g id="illustration">
+    
+    <!-- Andean Chakana Cross Symbol -->
+    <path d="
+      M 180 120 L 220 120 L 220 140 L 240 140 L 240 160 L 260 160 L 260 200 L 240 200 L 240 220 L 220 220 L 220 240 L 180 240 L 180 220 L 160 220 L 160 200 L 140 200 L 140 160 L 160 160 L 160 140 L 180 140 Z
+    " fill="#F59E0B" stroke="#B45309" stroke-width="4"/>
+    <circle cx="200" cy="180" r="16" fill="#FEF3C7" stroke="#B45309" stroke-width="3"/>
+  
+  </g>
+
+  <!-- Word Title (Quechua) -->
+  <text x="200" y="318" font-family="system-ui, -apple-system, sans-serif" font-size="30" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.5">Warmi</text>
+
+  <!-- Phonetic Pill -->
+  <rect x="130" y="332" width="140" height="22" rx="11" fill="rgba(0,0,0,0.28)"/>
+  <text x="200" y="347" font-family="'DejaVu Sans', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="500" fill="#F472B6" text-anchor="middle">/ˈwaɾ.mi/</text>
+
+  <!-- Spanish Translation Subtitle -->
+  <text x="200" y="372" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" opacity="0.95" text-anchor="middle">Mujer / Esposa</text>
+</svg>

@@ -1,0 +1,1458 @@
+[
+  {
+    "palabra": "Allqu",
+    "categoria": "Animales",
+    "fonetica": "/ÈaŽ.qu/",
+    "traducciones": [
+      "Perro"
+    ]
+  },
+  {
+    "palabra": "Anka",
+    "categoria": "Animales",
+    "fonetica": "/Èan.ka/",
+    "traducciones": [
+      "Gavilán"
+    ]
+  },
+  {
+    "palabra": "Anqhas",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èan.q°as/",
+    "traducciones": [
+      "Azul"
+    ]
+  },
+  {
+    "palabra": "Aqha",
+    "categoria": "Alimentos",
+    "fonetica": "/Èa.q°a/",
+    "traducciones": [
+      "Chicha"
+    ]
+  },
+  {
+    "palabra": "Aqu",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èa.qu/",
+    "traducciones": [
+      "Arena"
+    ]
+  },
+  {
+    "palabra": "Awqa",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èaw.qa/",
+    "traducciones": [
+      "Enemigo"
+    ]
+  },
+  {
+    "palabra": "Ch'aki",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Ètƒ¼a.ki/",
+    "traducciones": [
+      "Seco"
+    ]
+  },
+  {
+    "palabra": "Ch'aran",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Ètƒ¼a.~an/",
+    "traducciones": [
+      "Mojado"
+    ]
+  },
+  {
+    "palabra": "Ch'asca",
+    "categoria": "Naturaleza",
+    "fonetica": "/Ètƒ¼as.ka/",
+    "traducciones": [
+      "Estrella"
+    ]
+  },
+  {
+    "palabra": "Ch'inlla",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Ètƒ¼in.Ža/",
+    "traducciones": [
+      "Callado",
+      "Silencio"
+    ]
+  },
+  {
+    "palabra": "Ch'iya",
+    "categoria": "Animales",
+    "fonetica": "/Ètƒ¼i.ja/",
+    "traducciones": [
+      "Liendre"
+    ]
+  },
+  {
+    "palabra": "Ch'ullu",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Ètƒ¼u.Žu/",
+    "traducciones": [
+      "Prenda"
+    ]
+  },
+  {
+    "palabra": "Chanka",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Ètƒa.ka/",
+    "traducciones": [
+      "Puente",
+      "Pierna"
+    ]
+  },
+  {
+    "palabra": "Chawlla",
+    "categoria": "Animales",
+    "fonetica": "/Ètƒaw.Ža/",
+    "traducciones": [
+      "Pescado"
+    ]
+  },
+  {
+    "palabra": "Chawpi",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Ètƒaw.pi/",
+    "traducciones": [
+      "Medio"
+    ]
+  },
+  {
+    "palabra": "Chayllata",
+    "categoria": "Saludos y expresiones",
+    "fonetica": "/tƒaj.ÈŽa.ta/",
+    "traducciones": [
+      "Eso es todo",
+      "Eso nomás"
+    ]
+  },
+  {
+    "palabra": "Chayman",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Ètƒaj.man/",
+    "traducciones": [
+      "Allí"
+    ]
+  },
+  {
+    "palabra": "Chaypi",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Ètƒaj.pi/",
+    "traducciones": [
+      "Ahí"
+    ]
+  },
+  {
+    "palabra": "Chhalla",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Ètƒ°a.Ža/",
+    "traducciones": [
+      "Sin peso"
+    ]
+  },
+  {
+    "palabra": "Chhancha",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Ètƒ°an.tƒa/",
+    "traducciones": [
+      "Hilachas que cuelgan"
+    ]
+  },
+  {
+    "palabra": "Chhapa",
+    "categoria": "Alimentos",
+    "fonetica": "/Ètƒ°a.pa/",
+    "traducciones": [
+      "Afrecho"
+    ]
+  },
+  {
+    "palabra": "Chhikaqa",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/tƒ°i.Èka.qa/",
+    "traducciones": [
+      "Entonces"
+    ]
+  },
+  {
+    "palabra": "Chhullu",
+    "categoria": "Naturaleza",
+    "fonetica": "/Ètƒ°u.Žu/",
+    "traducciones": [
+      "Raíz o base de totora"
+    ]
+  },
+  {
+    "palabra": "Chhuqay",
+    "categoria": "Acciones",
+    "fonetica": "/Ètƒ°u.qaj/",
+    "traducciones": [
+      "Arrojar"
+    ]
+  },
+  {
+    "palabra": "Chicha",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Ètƒi.tƒa/",
+    "traducciones": [
+      "Preñada"
+    ]
+  },
+  {
+    "palabra": "Chiri",
+    "categoria": "Naturaleza",
+    "fonetica": "/Ètƒi.~i/",
+    "traducciones": [
+      "Frío"
+    ]
+  },
+  {
+    "palabra": "Chiwchi",
+    "categoria": "Animales",
+    "fonetica": "/Ètƒiw.tƒi/",
+    "traducciones": [
+      "Pollo"
+    ]
+  },
+  {
+    "palabra": "Chukcha",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Ètƒuk.tƒa/",
+    "traducciones": [
+      "Cabello"
+    ]
+  },
+  {
+    "palabra": "Chullu",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Ètƒu.Žu/",
+    "traducciones": [
+      "Remojado"
+    ]
+  },
+  {
+    "palabra": "Chunka",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Ètƒun.ka/",
+    "traducciones": [
+      "Diez"
+    ]
+  },
+  {
+    "palabra": "Hank'u",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èhan.k¼u/",
+    "traducciones": [
+      "Nervio"
+    ]
+  },
+  {
+    "palabra": "Hanku",
+    "categoria": "Alimentos",
+    "fonetica": "/Èhan.ku/",
+    "traducciones": [
+      "Crudo"
+    ]
+  },
+  {
+    "palabra": "Hatun",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èha.tun/",
+    "traducciones": [
+      "Grande"
+    ]
+  },
+  {
+    "palabra": "Hinan",
+    "categoria": "Saludos y expresiones",
+    "fonetica": "/Èhi.nan/",
+    "traducciones": [
+      "Así es"
+    ]
+  },
+  {
+    "palabra": "Hucha",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/Èhu.tƒa/",
+    "traducciones": [
+      "Culpa",
+      "Pecado"
+    ]
+  },
+  {
+    "palabra": "Huk'ucha",
+    "categoria": "Animales",
+    "fonetica": "/hu.Èk¼u.tƒa/",
+    "traducciones": [
+      "Ratón"
+    ]
+  },
+  {
+    "palabra": "Illapa",
+    "categoria": "Naturaleza",
+    "fonetica": "/i.ÈŽa.pa/",
+    "traducciones": [
+      "Relámpago"
+    ]
+  },
+  {
+    "palabra": "Ima",
+    "categoria": "Saludos y expresiones",
+    "fonetica": "/Èi.ma/",
+    "traducciones": [
+      "Qué cosa"
+    ]
+  },
+  {
+    "palabra": "Inka",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/Èin.ka/",
+    "traducciones": [
+      "Soberano",
+      "Monarca"
+    ]
+  },
+  {
+    "palabra": "Inti",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èin.ti/",
+    "traducciones": [
+      "Sol"
+    ]
+  },
+  {
+    "palabra": "Iñiy",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/Èi.rij/",
+    "traducciones": [
+      "Creer"
+    ]
+  },
+  {
+    "palabra": "Itha",
+    "categoria": "Animales",
+    "fonetica": "/Èi.t°a/",
+    "traducciones": [
+      "Piojo de aves"
+    ]
+  },
+  {
+    "palabra": "K'aki",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èk¼a.ki/",
+    "traducciones": [
+      "Quijada"
+    ]
+  },
+  {
+    "palabra": "K'anka",
+    "categoria": "Animales",
+    "fonetica": "/Èk¼an.ka/",
+    "traducciones": [
+      "Gallo"
+    ]
+  },
+  {
+    "palabra": "K'aspi",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èk¼as.pi/",
+    "traducciones": [
+      "Palo"
+    ]
+  },
+  {
+    "palabra": "K'iri",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èk¼i.~i/",
+    "traducciones": [
+      "Herida"
+    ]
+  },
+  {
+    "palabra": "K'uchu",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èk¼u.tƒu/",
+    "traducciones": [
+      "Rincón"
+    ]
+  },
+  {
+    "palabra": "K'uychi",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èk¼uj.tƒi/",
+    "traducciones": [
+      "Arco iris"
+    ]
+  },
+  {
+    "palabra": "Kachi",
+    "categoria": "Alimentos",
+    "fonetica": "/Èka.tƒi/",
+    "traducciones": [
+      "Sal"
+    ]
+  },
+  {
+    "palabra": "Kallpa",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/ÈkaŽ.pa/",
+    "traducciones": [
+      "Fuerza"
+    ]
+  },
+  {
+    "palabra": "Karu",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èka.~u/",
+    "traducciones": [
+      "Lejos"
+    ]
+  },
+  {
+    "palabra": "Khamuy",
+    "categoria": "Acciones",
+    "fonetica": "/Èk°a.muj/",
+    "traducciones": [
+      "Masticar"
+    ]
+  },
+  {
+    "palabra": "Khanka",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èk°an.ka/",
+    "traducciones": [
+      "Sucio",
+      "Mugre"
+    ]
+  },
+  {
+    "palabra": "Kharmu",
+    "categoria": "Alimentos",
+    "fonetica": "/Èk°a~.mu/",
+    "traducciones": [
+      "Fiambre"
+    ]
+  },
+  {
+    "palabra": "Khiki",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èk°i.ki/",
+    "traducciones": [
+      "Ácaro",
+      "Sarna"
+    ]
+  },
+  {
+    "palabra": "Khipu",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/Èk°i.pu/",
+    "traducciones": [
+      "Atado"
+    ]
+  },
+  {
+    "palabra": "Khuchi",
+    "categoria": "Animales",
+    "fonetica": "/Èk°u.tƒi/",
+    "traducciones": [
+      "Cerdo"
+    ]
+  },
+  {
+    "palabra": "Killa",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èki.Ža/",
+    "traducciones": [
+      "Luna"
+    ]
+  },
+  {
+    "palabra": "Kiru",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èki.~u/",
+    "traducciones": [
+      "Diente"
+    ]
+  },
+  {
+    "palabra": "Kuru",
+    "categoria": "Animales",
+    "fonetica": "/Èku.~u/",
+    "traducciones": [
+      "Gusano"
+    ]
+  },
+  {
+    "palabra": "Lawa",
+    "categoria": "Alimentos",
+    "fonetica": "/Èla.wa/",
+    "traducciones": [
+      "Mazamorra"
+    ]
+  },
+  {
+    "palabra": "Layqa",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/Èlaj.qa/",
+    "traducciones": [
+      "Brujo",
+      "Curandero"
+    ]
+  },
+  {
+    "palabra": "Linli",
+    "categoria": "Alimentos",
+    "fonetica": "/Èlin.li/",
+    "traducciones": [
+      "Variedad de papa"
+    ]
+  },
+  {
+    "palabra": "Liwi",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èli.wi/",
+    "traducciones": [
+      "Boleador"
+    ]
+  },
+  {
+    "palabra": "Llaki",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/ÈŽa.ki/",
+    "traducciones": [
+      "Pena"
+    ]
+  },
+  {
+    "palabra": "Llalliq",
+    "categoria": "Familia y personas",
+    "fonetica": "/ÈŽa.Žiq/",
+    "traducciones": [
+      "Vencedor"
+    ]
+  },
+  {
+    "palabra": "Llanthu",
+    "categoria": "Naturaleza",
+    "fonetica": "/ÈŽan.t°u/",
+    "traducciones": [
+      "Sombra"
+    ]
+  },
+  {
+    "palabra": "Llika",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/ÈŽi.ka/",
+    "traducciones": [
+      "Red",
+      "Malla"
+    ]
+  },
+  {
+    "palabra": "Lluk'i",
+    "categoria": "Acciones",
+    "fonetica": "/ÈŽu.k¼i/",
+    "traducciones": [
+      "Llevar bajo el sobaco"
+    ]
+  },
+  {
+    "palabra": "Llulla",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/ÈŽu.Ža/",
+    "traducciones": [
+      "Mentira",
+      "Engaño"
+    ]
+  },
+  {
+    "palabra": "Luluy",
+    "categoria": "Acciones",
+    "fonetica": "/Èlu.luj/",
+    "traducciones": [
+      "Acariciar",
+      "Halagar"
+    ]
+  },
+  {
+    "palabra": "Luylu",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èluj.lu/",
+    "traducciones": [
+      "Cariñoso",
+      "Amable"
+    ]
+  },
+  {
+    "palabra": "Machu",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èma.tƒu/",
+    "traducciones": [
+      "Viejo"
+    ]
+  },
+  {
+    "palabra": "Maki",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èma.ki/",
+    "traducciones": [
+      "Mano"
+    ]
+  },
+  {
+    "palabra": "Mayu",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èma.ju/",
+    "traducciones": [
+      "Río"
+    ]
+  },
+  {
+    "palabra": "Mikuy",
+    "categoria": "Alimentos",
+    "fonetica": "/Èmi.kuj/",
+    "traducciones": [
+      "Comida",
+      "Comer"
+    ]
+  },
+  {
+    "palabra": "Misk'i",
+    "categoria": "Alimentos",
+    "fonetica": "/Èmis.k¼i/",
+    "traducciones": [
+      "Dulce"
+    ]
+  },
+  {
+    "palabra": "Muhu",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èmu.hu/",
+    "traducciones": [
+      "Semilla"
+    ]
+  },
+  {
+    "palabra": "Muqu",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èmu.qu/",
+    "traducciones": [
+      "Rodilla",
+      "Mogote"
+    ]
+  },
+  {
+    "palabra": "Muyu",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èmu.ju/",
+    "traducciones": [
+      "Redondo",
+      "Círculo"
+    ]
+  },
+  {
+    "palabra": "Nanay",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èna.naj/",
+    "traducciones": [
+      "Dolor"
+    ]
+  },
+  {
+    "palabra": "Napaykuy",
+    "categoria": "Saludos y expresiones",
+    "fonetica": "/na.Èpaj.kuj/",
+    "traducciones": [
+      "Saludo"
+    ]
+  },
+  {
+    "palabra": "Naqha",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èna.q°a/",
+    "traducciones": [
+      "Hace un momento"
+    ]
+  },
+  {
+    "palabra": "Ninki",
+    "categoria": "Lengua y aprendizaje",
+    "fonetica": "/Ènin.ki/",
+    "traducciones": [
+      "Has dicho",
+      "Le dices"
+    ]
+  },
+  {
+    "palabra": "Niy",
+    "categoria": "Lengua y aprendizaje",
+    "fonetica": "/Ènij/",
+    "traducciones": [
+      "Dile"
+    ]
+  },
+  {
+    "palabra": "Nuna",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/Ènu.na/",
+    "traducciones": [
+      "Alma",
+      "Espíritu"
+    ]
+  },
+  {
+    "palabra": "Ñañu",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èra.ru/",
+    "traducciones": [
+      "Delgado"
+    ]
+  },
+  {
+    "palabra": "Ñawsa",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èraw.sa/",
+    "traducciones": [
+      "Ciego"
+    ]
+  },
+  {
+    "palabra": "Ñishu",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Èri.ƒu/",
+    "traducciones": [
+      "Mucho"
+    ]
+  },
+  {
+    "palabra": "Ñit'iy",
+    "categoria": "Acciones",
+    "fonetica": "/Èri.t¼ij/",
+    "traducciones": [
+      "Aplastar"
+    ]
+  },
+  {
+    "palabra": "Ñuñu",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èru.ru/",
+    "traducciones": [
+      "Seno"
+    ]
+  },
+  {
+    "palabra": "Ñut'u",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èru.t¼u/",
+    "traducciones": [
+      "Menudo"
+    ]
+  },
+  {
+    "palabra": "P'acha",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èp¼a.tƒa/",
+    "traducciones": [
+      "Ropa"
+    ]
+  },
+  {
+    "palabra": "P'asña",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èp¼as.ra/",
+    "traducciones": [
+      "Mujer joven"
+    ]
+  },
+  {
+    "palabra": "P'isaq",
+    "categoria": "Animales",
+    "fonetica": "/Èp¼i.saq/",
+    "traducciones": [
+      "Perdiz",
+      "Nombre de un pueblo"
+    ]
+  },
+  {
+    "palabra": "P'istuy",
+    "categoria": "Acciones",
+    "fonetica": "/Èp¼is.tuj/",
+    "traducciones": [
+      "Envolver"
+    ]
+  },
+  {
+    "palabra": "P'uku",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èp¼u.ku/",
+    "traducciones": [
+      "Plato"
+    ]
+  },
+  {
+    "palabra": "P'unchay",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èp¼un.tƒaj/",
+    "traducciones": [
+      "Día"
+    ]
+  },
+  {
+    "palabra": "Pacha",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èpa.tƒa/",
+    "traducciones": [
+      "Espacio",
+      "Tiempo",
+      "Tierra"
+    ]
+  },
+  {
+    "palabra": "Pachaq",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Èpa.tƒaq/",
+    "traducciones": [
+      "Cien"
+    ]
+  },
+  {
+    "palabra": "Pay",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èpaj/",
+    "traducciones": [
+      "Él"
+    ]
+  },
+  {
+    "palabra": "Phata",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èp°a.ta/",
+    "traducciones": [
+      "Reventado"
+    ]
+  },
+  {
+    "palabra": "Phaway",
+    "categoria": "Acciones",
+    "fonetica": "/Èp°a.waj/",
+    "traducciones": [
+      "Correr"
+    ]
+  },
+  {
+    "palabra": "Phiña",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èp°i.ra/",
+    "traducciones": [
+      "Enojado"
+    ]
+  },
+  {
+    "palabra": "Phisqa",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Èp°is.qa/",
+    "traducciones": [
+      "Cinco"
+    ]
+  },
+  {
+    "palabra": "Phuru",
+    "categoria": "Animales",
+    "fonetica": "/Èp°u.~u/",
+    "traducciones": [
+      "Pluma"
+    ]
+  },
+  {
+    "palabra": "Phuyu",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èp°u.ju/",
+    "traducciones": [
+      "Nube"
+    ]
+  },
+  {
+    "palabra": "Piki",
+    "categoria": "Animales",
+    "fonetica": "/Èpi.ki/",
+    "traducciones": [
+      "Pulga"
+    ]
+  },
+  {
+    "palabra": "Pirqa",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èpi~.qa/",
+    "traducciones": [
+      "Pared"
+    ]
+  },
+  {
+    "palabra": "Punku",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èpun.ku/",
+    "traducciones": [
+      "Puerta"
+    ]
+  },
+  {
+    "palabra": "Puñuy",
+    "categoria": "Acciones",
+    "fonetica": "/Èpu.ruj/",
+    "traducciones": [
+      "Dormir"
+    ]
+  },
+  {
+    "palabra": "Pusaq",
+    "categoria": "Acciones",
+    "fonetica": "/Èpu.saq/",
+    "traducciones": [
+      "Conducir",
+      "Guiar"
+    ]
+  },
+  {
+    "palabra": "Q'ara",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èq¼a.~a/",
+    "traducciones": [
+      "Pelado"
+    ]
+  },
+  {
+    "palabra": "Q'ata",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èq¼a.ta/",
+    "traducciones": [
+      "Turbio"
+    ]
+  },
+  {
+    "palabra": "Q'aytu",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èq¼aj.tu/",
+    "traducciones": [
+      "Hilo de lana"
+    ]
+  },
+  {
+    "palabra": "Q'iya",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èq¼i.ja/",
+    "traducciones": [
+      "Pus",
+      "Materia"
+    ]
+  },
+  {
+    "palabra": "Q'umir",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èq¼u.mi~/",
+    "traducciones": [
+      "Verde"
+    ]
+  },
+  {
+    "palabra": "Q'upa",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èq¼u.pa/",
+    "traducciones": [
+      "Basura"
+    ]
+  },
+  {
+    "palabra": "Qallu",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èqa.Žu/",
+    "traducciones": [
+      "Lengua"
+    ]
+  },
+  {
+    "palabra": "Qanchis",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Èqan.tƒis/",
+    "traducciones": [
+      "Siete"
+    ]
+  },
+  {
+    "palabra": "Qata",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èqa.ta/",
+    "traducciones": [
+      "Cobija"
+    ]
+  },
+  {
+    "palabra": "Qayna",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èqaj.na/",
+    "traducciones": [
+      "Ayer"
+    ]
+  },
+  {
+    "palabra": "Qhachun",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èq°a.tƒun/",
+    "traducciones": [
+      "Yerna"
+    ]
+  },
+  {
+    "palabra": "Qhapaq",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èq°a.paq/",
+    "traducciones": [
+      "Rico",
+      "Adinerado"
+    ]
+  },
+  {
+    "palabra": "Qhillay",
+    "categoria": "Acciones",
+    "fonetica": "/Èq°i.Žaj/",
+    "traducciones": [
+      "Echar agua con las manos"
+    ]
+  },
+  {
+    "palabra": "Qhilli",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èq°i.Ži/",
+    "traducciones": [
+      "Sucio",
+      "Deshonesto"
+    ]
+  },
+  {
+    "palabra": "Qhupu",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èq°u.pu/",
+    "traducciones": [
+      "Joroba"
+    ]
+  },
+  {
+    "palabra": "Qhuru",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èq°u.~u/",
+    "traducciones": [
+      "Mutilado"
+    ]
+  },
+  {
+    "palabra": "Qucha",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èqu.tƒa/",
+    "traducciones": [
+      "Lago"
+    ]
+  },
+  {
+    "palabra": "Quri",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èqu.~i/",
+    "traducciones": [
+      "Oro"
+    ]
+  },
+  {
+    "palabra": "Rantiy",
+    "categoria": "Acciones",
+    "fonetica": "/È~an.tij/",
+    "traducciones": [
+      "Comprar"
+    ]
+  },
+  {
+    "palabra": "Raphi",
+    "categoria": "Naturaleza",
+    "fonetica": "/È~a.p°i/",
+    "traducciones": [
+      "Hoja"
+    ]
+  },
+  {
+    "palabra": "Raymi",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/È~aj.mi/",
+    "traducciones": [
+      "Fiesta"
+    ]
+  },
+  {
+    "palabra": "Rimay",
+    "categoria": "Lengua y aprendizaje",
+    "fonetica": "/È~i.maj/",
+    "traducciones": [
+      "Hablar"
+    ]
+  },
+  {
+    "palabra": "Rinri",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/È~in.~i/",
+    "traducciones": [
+      "Oreja"
+    ]
+  },
+  {
+    "palabra": "Runtu",
+    "categoria": "Alimentos",
+    "fonetica": "/È~un.tu/",
+    "traducciones": [
+      "Huevo"
+    ]
+  },
+  {
+    "palabra": "Sansa",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èsan.sa/",
+    "traducciones": [
+      "Brasa",
+      "Carbón encendido"
+    ]
+  },
+  {
+    "palabra": "Sasa",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èsa.sa/",
+    "traducciones": [
+      "Difícil"
+    ]
+  },
+  {
+    "palabra": "Simi",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èsi.mi/",
+    "traducciones": [
+      "Boca"
+    ]
+  },
+  {
+    "palabra": "Sinchi",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Èsin.tƒi/",
+    "traducciones": [
+      "Bastante"
+    ]
+  },
+  {
+    "palabra": "Sumaq",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èsu.maq/",
+    "traducciones": [
+      "Hermoso",
+      "Bonito"
+    ]
+  },
+  {
+    "palabra": "Suwa",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èsu.wa/",
+    "traducciones": [
+      "Ladrón"
+    ]
+  },
+  {
+    "palabra": "Suyu",
+    "categoria": "Lugares y territorio",
+    "fonetica": "/Èsu.ju/",
+    "traducciones": [
+      "Región",
+      "Nación"
+    ]
+  },
+  {
+    "palabra": "T'aqa",
+    "categoria": "Otros conceptos",
+    "fonetica": "/Èt¼a.qa/",
+    "traducciones": [
+      "Fracción",
+      "Parte"
+    ]
+  },
+  {
+    "palabra": "T'aqsay",
+    "categoria": "Acciones",
+    "fonetica": "/Èt¼aq.saj/",
+    "traducciones": [
+      "Lavar"
+    ]
+  },
+  {
+    "palabra": "T'ika",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èt¼i.ka/",
+    "traducciones": [
+      "Flor"
+    ]
+  },
+  {
+    "palabra": "T'iqi",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èt¼i.qi/",
+    "traducciones": [
+      "Relleno",
+      "Apretado"
+    ]
+  },
+  {
+    "palabra": "T'uqu",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Èt¼u.qu/",
+    "traducciones": [
+      "Hueco"
+    ]
+  },
+  {
+    "palabra": "T'uru",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èt¼u.~u/",
+    "traducciones": [
+      "Barro"
+    ]
+  },
+  {
+    "palabra": "Takiy",
+    "categoria": "Acciones",
+    "fonetica": "/Èta.kij/",
+    "traducciones": [
+      "Cantar"
+    ]
+  },
+  {
+    "palabra": "Taruka",
+    "categoria": "Animales",
+    "fonetica": "/ta.È~u.ka/",
+    "traducciones": [
+      "Venado"
+    ]
+  },
+  {
+    "palabra": "Tawa",
+    "categoria": "Números y cantidades",
+    "fonetica": "/Èta.wa/",
+    "traducciones": [
+      "Cuatro"
+    ]
+  },
+  {
+    "palabra": "Tawna",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Ètaw.na/",
+    "traducciones": [
+      "Bastón"
+    ]
+  },
+  {
+    "palabra": "Thanta",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èt°an.ta/",
+    "traducciones": [
+      "Trapo"
+    ]
+  },
+  {
+    "palabra": "Thinti",
+    "categoria": "Cualidades y estados",
+    "fonetica": "/Èt°in.ti/",
+    "traducciones": [
+      "Coqueto",
+      "Sonriente"
+    ]
+  },
+  {
+    "palabra": "Thiqtiy",
+    "categoria": "Acciones",
+    "fonetica": "/Èt°iq.tij/",
+    "traducciones": [
+      "Freír"
+    ]
+  },
+  {
+    "palabra": "Thupay",
+    "categoria": "Acciones",
+    "fonetica": "/Èt°u.paj/",
+    "traducciones": [
+      "Raspar",
+      "Rallar"
+    ]
+  },
+  {
+    "palabra": "Thuqay",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èt°u.qaj/",
+    "traducciones": [
+      "Saliva",
+      "Escupir"
+    ]
+  },
+  {
+    "palabra": "Thuta",
+    "categoria": "Animales",
+    "fonetica": "/Èt°u.ta/",
+    "traducciones": [
+      "Polilla"
+    ]
+  },
+  {
+    "palabra": "Titi",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èti.ti/",
+    "traducciones": [
+      "Plomo"
+    ]
+  },
+  {
+    "palabra": "Tusuy",
+    "categoria": "Acciones",
+    "fonetica": "/Ètu.suj/",
+    "traducciones": [
+      "Bailar"
+    ]
+  },
+  {
+    "palabra": "Tuta",
+    "categoria": "Tiempo y espacio",
+    "fonetica": "/Ètu.ta/",
+    "traducciones": [
+      "Noche"
+    ]
+  },
+  {
+    "palabra": "Uchu",
+    "categoria": "Alimentos",
+    "fonetica": "/Èu.tƒu/",
+    "traducciones": [
+      "Ají"
+    ]
+  },
+  {
+    "palabra": "Uma",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èu.ma/",
+    "traducciones": [
+      "Cabeza"
+    ]
+  },
+  {
+    "palabra": "Unancha",
+    "categoria": "Cultura y conceptos",
+    "fonetica": "/u.Ènan.tƒa/",
+    "traducciones": [
+      "Bandera"
+    ]
+  },
+  {
+    "palabra": "Unu",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èu.nu/",
+    "traducciones": [
+      "Agua"
+    ]
+  },
+  {
+    "palabra": "Urpi",
+    "categoria": "Animales",
+    "fonetica": "/Èu~.pi/",
+    "traducciones": [
+      "Paloma"
+    ]
+  },
+  {
+    "palabra": "Usa",
+    "categoria": "Animales",
+    "fonetica": "/Èu.sa/",
+    "traducciones": [
+      "Piojo"
+    ]
+  },
+  {
+    "palabra": "Warmi",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èwa~.mi/",
+    "traducciones": [
+      "Mujer"
+    ]
+  },
+  {
+    "palabra": "Wasi",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èwa.si/",
+    "traducciones": [
+      "Casa"
+    ]
+  },
+  {
+    "palabra": "Wayna",
+    "categoria": "Familia y personas",
+    "fonetica": "/Èwaj.na/",
+    "traducciones": [
+      "Joven"
+    ]
+  },
+  {
+    "palabra": "Wira",
+    "categoria": "Alimentos",
+    "fonetica": "/Èwi.~a/",
+    "traducciones": [
+      "Cebo"
+    ]
+  },
+  {
+    "palabra": "Wishlla",
+    "categoria": "Hogar y objetos",
+    "fonetica": "/Èwiƒ.Ža/",
+    "traducciones": [
+      "Cucharón"
+    ]
+  },
+  {
+    "palabra": "Yachay",
+    "categoria": "Lengua y aprendizaje",
+    "fonetica": "/Èja.tƒaj/",
+    "traducciones": [
+      "Saber"
+    ]
+  },
+  {
+    "palabra": "Yana",
+    "categoria": "Naturaleza",
+    "fonetica": "/Èja.na/",
+    "traducciones": [
+      "Negro"
+    ]
+  },
+  {
+    "palabra": "Yawar",
+    "categoria": "Cuerpo y salud",
+    "fonetica": "/Èja.wa~/",
+    "traducciones": [
+      "Sangre"
+    ]
+  },
+  {
+    "palabra": "Yupay",
+    "categoria": "Acciones",
+    "fonetica": "/Èju.paj/",
+    "traducciones": [
+      "Contar"
+    ]
+  },
+  {
+    "palabra": "Yuyo",
+    "categoria": "Alimentos",
+    "fonetica": "/Èju.ju/",
+    "traducciones": [
+      "Nabo"
+    ]
+  }
+]
