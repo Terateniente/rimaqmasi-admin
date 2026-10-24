@@ -16,8 +16,6 @@ coverage
 # Variables locales y de producción
 .env
 .env.*
-!.env.example
-!.env.production.example
 
 # Reportes y correcciones temporales
 eslint-report.json

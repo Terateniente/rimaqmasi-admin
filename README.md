@@ -69,7 +69,6 @@
 git clone https://github.com/Terateniente/rimaqmasi-admin.git
 cd rimaqmasi-admin
 npm install
-cp .env.example .env
 npm run dev
 ```
 
@@ -86,8 +85,9 @@ VITE_API_URL=http://localhost:3000/api/v1
 |---|---|
 | `VITE_API_URL` | Dirección base de la API de RimaqMasiEDU |
 
-Usa `.env.example` para desarrollo o `.env.production.example` como referencia
-de producción. Los archivos con credenciales reales no se incluyen en Git.
+Configura la variable directamente en el entorno privado de desarrollo o del
+servicio de alojamiento. Los archivos de configuración privada no se incluyen
+en Git.
 
 ## Comandos disponibles
 
