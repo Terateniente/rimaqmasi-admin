@@ -1026,7 +1026,7 @@ export const Unidades = () => {
                         </div>
                       )}
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>CREADO POR</span>
+                        <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>CREADO POR</span>
                         <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-on-surface)' }}>
                           {formatUserName(selectedUnidadView.creado_por)}
                         </span>
@@ -1046,7 +1046,7 @@ export const Unidades = () => {
                           </div>
                         )}
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>MODIFICADO POR</span>
+                          <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>MODIFICADO POR</span>
                           <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-on-surface)' }}>
                             {formatUserName(selectedUnidadView.actualizado_por)}
                           </span>

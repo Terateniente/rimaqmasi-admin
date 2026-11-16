@@ -1,4 +1,12 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
+import {
+  clearSessionStorage,
+  getStoredRefreshToken,
+  getStoredToken,
+  setSessionTokens,
+  USER_STORAGE_KEY,
+} from '../services/api';
+import { logout as logoutApi } from '../services/authService';
 
 export const AuthContext = createContext();
 
@@ -7,9 +15,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay token y usuario guardado en localStorage al iniciar
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken = getStoredToken();
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
 
     if (storedToken && storedUser) {
       try {
@@ -20,25 +27,38 @@ export const AuthProvider = ({ children }) => {
           throw new Error('La sesión guardada no contiene un usuario válido');
         }
       } catch {
-        // Una sesión dañada no debe impedir que el panel vuelva a abrir.
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        clearSessionStorage();
       }
     }
     setLoading(false);
   }, []);
 
-  const loginAuth = (userData, token) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-  };
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      clearSessionStorage();
+      setUser(null);
+    };
+    window.addEventListener('rq:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('rq:session-expired', handleSessionExpired);
+  }, []);
 
-  const logoutAuth = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const loginAuth = useCallback((userData, token, refreshToken) => {
+    setSessionTokens({
+      token: token || getStoredToken(),
+      refresh_token: refreshToken || getStoredRefreshToken(),
+    });
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+    setUser(userData);
+  }, []);
+
+  const logoutAuth = useCallback(() => {
+    const refreshToken = getStoredRefreshToken();
+    clearSessionStorage();
     setUser(null);
-  };
+    if (refreshToken) {
+      void logoutApi(refreshToken);
+    }
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading, loginAuth, logoutAuth }}>

@@ -784,7 +784,7 @@ const LineChart = ({ title, data, series }) => {
               dataKey="fecha"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 11.5, fill: 'var(--color-on-surface-variant)', fontWeight: 600 }}
+              tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)', fontWeight: 600 }}
               tickFormatter={value => formatChartDate(value)}
               tickMargin={12}
               minTickGap={28}

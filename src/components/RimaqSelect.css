@@ -39,14 +39,14 @@
   padding: 7px 36px 7px 11px;
   border-radius: 7px;
   color: var(--color-on-surface);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.35;
   cursor: pointer;
   user-select: none;
   outline: none;
 }
 .rq-select__item[data-highlighted] { background: var(--color-primary-container); color: var(--color-primary); }
-.rq-select__item[data-state="checked"] { color: var(--color-primary); font-weight: 750; }
+.rq-select__item[data-state="checked"] { color: var(--color-primary); font-weight: 700; }
 .rq-select__indicator { position: absolute; right: 11px; display: inline-flex; color: var(--color-primary); }
 
 @media (prefers-reduced-motion: reduce) {

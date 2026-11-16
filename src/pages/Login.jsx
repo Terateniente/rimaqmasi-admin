@@ -50,6 +50,7 @@ export const Login = () => {
       const response = await login(data.correo.trim().toLowerCase(), data.contrasena);
       if (response.success || response.token || response.data?.token) {
         const token = response.token || response.data?.token;
+        const refreshToken = response.refresh_token || response.data?.refresh_token;
         const usuario = response.usuario || response.data?.usuario || { correo: data.correo, rol: 'administrador' };
         const rol = (usuario.rol || '').toLowerCase();
         if (!['admin', 'administrador', 'super admin', 'super admi', 'super_admin'].includes(rol)) {
@@ -58,7 +59,7 @@ export const Login = () => {
         }
         if (rememberMe) localStorage.setItem('rememberedEmail', data.correo);
         else localStorage.removeItem('rememberedEmail');
-        loginAuth(usuario, token);
+        loginAuth(usuario, token, refreshToken);
         toast.success(response.message || 'Sesión iniciada exitosamente');
         navigate('/dashboard');
       }

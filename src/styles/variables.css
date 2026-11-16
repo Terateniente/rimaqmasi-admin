@@ -73,8 +73,8 @@
   --color-dashed-border: #CBD5E1;
 
   /* ─── Typography ─── */
-  --font-display: 'Inter', 'Segoe UI', sans-serif;
-  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-display: 'Inter Variable', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Inter', 'Segoe UI', system-ui, sans-serif;
 
   /* Corporate component tokens */
   --control-height: 42px;

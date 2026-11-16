@@ -4,8 +4,66 @@ const Block = ({ width = '100%', height = 14, radius = 8 }) => (
   <div className="rq-skeleton-block" style={{ width, height, borderRadius: radius }} />
 );
 
-export const ModernPageSkeleton = ({ cards = 4, showHeading = true, compact = false }) => (
+export const ModernPageSkeleton = ({
+  cards = 4,
+  showHeading = true,
+  compact = false,
+  label = 'Sincronizando módulo académico · RimaqMasiEDU',
+}) => (
   <div className="rq-modern-skeleton" aria-hidden="true" aria-label="Cargando contenido">
+    {!compact && (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+          padding: '14px 18px',
+          marginBottom: 18,
+          borderRadius: 16,
+          background: 'var(--color-surface)',
+          border: '1px solid var(--color-outline-variant)',
+          boxShadow: 'var(--shadow-level-1)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                background: 'var(--color-primary)',
+                boxShadow: '0 0 0 4px color-mix(in srgb, var(--color-primary) 16%, transparent)',
+              }}
+            />
+            <strong style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-on-surface)' }}>
+              {label}
+            </strong>
+          </div>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>
+            Cargando…
+          </span>
+        </div>
+        <div
+          style={{
+            width: '100%',
+            height: 4,
+            borderRadius: 999,
+            overflow: 'hidden',
+            background: 'color-mix(in srgb, var(--color-primary) 14%, transparent)',
+          }}
+        >
+          <div
+            style={{
+              width: '45%',
+              height: '100%',
+              borderRadius: 999,
+              background: 'linear-gradient(90deg, var(--color-primary), var(--color-tertiary))',
+            }}
+          />
+        </div>
+      </div>
+    )}
     {showHeading && (
       <div>
         <div className="rq-modern-skeleton__heading">

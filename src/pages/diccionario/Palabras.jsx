@@ -397,7 +397,7 @@ export const Palabras = () => {
             style={{ width: compact ? '22px' : '28px', height: compact ? '16px' : '20px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--color-surface-variant)', boxShadow: '0 1px 3px rgba(0,0,0,.14)', flexShrink: 0 }}
           />
         ) : (
-          <span style={{ width: compact ? '22px' : '28px', height: compact ? '16px' : '20px', borderRadius: '4px', background: 'var(--color-surface-container-high)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 800, flexShrink: 0 }}>
+          <span style={{ width: compact ? '22px' : '28px', height: compact ? '16px' : '20px', borderRadius: '4px', background: 'var(--color-surface-container-high)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 800, flexShrink: 0 }}>
             {String(idioma?.codigo_iso || '?').slice(0, 2).toUpperCase()}
           </span>
         )}
@@ -615,7 +615,7 @@ export const Palabras = () => {
                         )}
                       </td>
                       <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)', minWidth: '150px' }}>
-                        <div style={{ fontWeight: 650, color: 'var(--color-on-surface)' }}>{getUserDisplayName(palabra.creadoPor || palabra.creado_por)}</div>
+                        <div style={{ fontWeight: 600, color: 'var(--color-on-surface)' }}>{getUserDisplayName(palabra.creadoPor || palabra.creado_por)}</div>
                         {palabra.creado_en && <div style={{ marginTop: '3px', fontSize: '11px', color: 'var(--color-outline)' }}>{new Intl.DateTimeFormat('es-PE').format(new Date(palabra.creado_en))}</div>}
                       </td>
                       <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)' }}>{palabra.transcripcion_fonetica || '-'}</td>

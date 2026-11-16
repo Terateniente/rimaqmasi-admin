@@ -1040,7 +1040,7 @@ export const Sesiones = () => {
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>ORDEN DE SESIÓN</span>
-                      <span style={{ fontSize: '18px', fontWeight: 900, color: 'var(--color-on-surface)', lineHeight: 1 }}>
+                      <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-on-surface)', lineHeight: 1 }}>
                         #{selectedSesionView.orden ?? selectedSesionView.orden_clasificacion}
                       </span>
                     </div>
@@ -1053,7 +1053,7 @@ export const Sesiones = () => {
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>TOTAL LECCIONES</span>
-                      <span style={{ fontSize: '18px', fontWeight: 900, color: 'var(--color-on-surface)', lineHeight: 1 }}>
+                      <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-on-surface)', lineHeight: 1 }}>
                         {selectedSesionView.lecciones ? selectedSesionView.lecciones.length : 0}
                       </span>
                     </div>

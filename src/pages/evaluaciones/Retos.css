@@ -85,7 +85,7 @@
 }
 .retos-context-actions { display: flex; align-items: center; gap: 11px; margin-left: auto; }
 .retos-context-progress { width: min(170px, 24vw); }
-.retos-context-progress > span { display: block; margin-bottom: 6px; text-align: right; font-size: 11px; font-weight: 750; color: var(--color-on-surface-variant); }
+.retos-context-progress > span { display: block; margin-bottom: 6px; text-align: right; font-size: 11px; font-weight: 700; color: var(--color-on-surface-variant); }
 .retos-context-progress > div { height: 5px; overflow: hidden; border-radius: 999px; background: var(--color-surface-container-high); }
 .retos-context-progress i { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--color-primary); transform-origin: left; transition: transform 180ms ease-out; }
 .rq-main .retos-save-route { min-height: 40px !important; padding: 0 14px !important; border: 1px solid var(--color-primary) !important; border-radius: 10px !important; background: var(--color-primary) !important; color: var(--color-on-primary) !important; box-shadow: 0 3px 8px color-mix(in srgb, var(--color-primary) 18%, transparent) !important; white-space: nowrap; transition: transform 160ms ease-out, background-color 160ms ease-out, box-shadow 160ms ease-out !important; }
@@ -126,8 +126,8 @@
   color: var(--color-primary); background: var(--color-primary-container); flex-shrink: 0;
 }
 .retos-metric span { display: block; margin-bottom: 2px; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 600; }
-.retos-metric strong { display: block; color: var(--color-on-surface); font-size: 26px; line-height: 1; }
-.retos-metric small { display: block; margin-top: 5px; color: var(--color-outline); font-size: 10.5px; line-height: 1.2; }
+.retos-metric strong { display: block; color: var(--color-on-surface); font-size: 28px; line-height: 1; }
+.retos-metric small { display: block; margin-top: 5px; color: var(--color-outline); font-size: 11px; line-height: 1.2; }
 
 .retos-tabs {
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: 100%;
@@ -154,7 +154,7 @@
   border-bottom: 1px solid var(--color-surface-variant);
 }
 .retos-panel__eyebrow { color: var(--color-primary); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.retos-panel__header h2 { margin: 3px 0 2px !important; font-size: 22px !important; text-wrap: balance; }
+.retos-panel__header h2 { margin: 3px 0 2px !important; font-size: 24px !important; text-wrap: balance; }
 .retos-panel__header p { margin: 0; color: var(--color-on-surface-variant); font-size: 12px; }
 .rq-main .retos-new-button {
   min-height: 46px !important; height: 46px !important; padding: 0 19px !important;
@@ -207,8 +207,8 @@
 
 .retos-workspace { margin: 0; }
 .retos-workspace__header { display: flex; align-items: center; gap: 12px; margin: -2px 0 22px; padding-bottom: 18px; border-bottom: 1px solid var(--color-surface-variant); }
-.retos-workspace__header h2 { margin: 0 0 3px !important; font-size: 21px !important; text-wrap: balance; }
-.retos-workspace__header p { margin: 0; color: var(--color-on-surface-variant); font-size: 12.5px; line-height: 1.45; text-wrap: pretty; }
+.retos-workspace__header h2 { margin: 0 0 3px !important; font-size: 20px !important; text-wrap: balance; }
+.retos-workspace__header p { margin: 0; color: var(--color-on-surface-variant); font-size: 13px; line-height: 1.45; text-wrap: pretty; }
 .rq-main .retos-header-save { min-height: 40px !important; margin-left: auto; padding: 0 14px !important; flex: 0 0 auto; border: 1px solid var(--color-primary) !important; background: var(--color-primary) !important; color: var(--color-on-primary) !important; box-shadow: 0 3px 8px color-mix(in srgb, var(--color-primary) 18%, transparent) !important; }
 .rq-main .retos-header-save:hover:not(:disabled) { transform: translateY(-1px); background: color-mix(in srgb, var(--color-primary) 88%, #17233a) !important; }
 .rq-main .retos-header-save:disabled { opacity: .5; cursor: not-allowed; box-shadow: none !important; }
@@ -226,7 +226,7 @@
 .retos-type-grid label {
   display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 10px;
   border: 1px solid transparent; border-radius: 9px; color: var(--color-on-surface-variant);
-  background: var(--color-surface); cursor: pointer; font-size: 12px; font-weight: 650;
+  background: var(--color-surface); cursor: pointer; font-size: 12px; font-weight: 600;
 }
 .retos-type-grid label.selected { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-container); }
 .retos-type-grid input { width: 16px; height: 16px; accent-color: var(--color-primary); }
@@ -248,7 +248,7 @@
 .retos-word-card strong { min-width: 0; color: var(--color-on-surface); font-size: 14px; }
 .retos-word-card div { color: var(--color-on-surface-variant); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .retos-word-card small { color: var(--color-outline); font-size: 11px; }
-.retos-result-count { margin-left: auto; padding: 6px 10px; border-radius: 999px; background: var(--color-surface-container-high); color: var(--color-on-surface-variant); font-size: 11px; font-weight: 750; white-space: nowrap; }
+.retos-result-count { margin-left: auto; padding: 6px 10px; border-radius: 999px; background: var(--color-surface-container-high); color: var(--color-on-surface-variant); font-size: 11px; font-weight: 700; white-space: nowrap; }
 .retos-word-empty { min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; border: 1px dashed var(--color-outline-variant); border-radius: 12px; color: var(--color-on-surface-variant); text-align: center; }
 .retos-word-empty svg { margin-bottom: 9px; color: var(--color-primary); }
 .retos-word-empty strong { color: var(--color-on-surface); font-size: 14px; }
@@ -273,55 +273,55 @@
 .retos-settings-section__heading > span { width: 26px; height: 26px; display: grid; place-items: center; flex: 0 0 26px; border-radius: 50%; color: #fff; background: var(--color-primary); font-size: 11px; font-weight: 800; }
 .retos-settings-section__heading strong,
 .retos-settings-section__heading small { display: block; }
-.retos-settings-section__heading strong { font-size: 13.5px; }
+.retos-settings-section__heading strong { font-size: 14px; }
 .retos-settings-section__heading small { margin-top: 2px; color: var(--color-on-surface-variant); font-size: 11px; font-weight: 500; }
 .retos-settings-section__heading > b { margin-left: auto; padding: 5px 9px; border-radius: 999px; font-size: 11px; }
 .retos-settings-section__heading > b.is-valid { color: #2f703b; background: color-mix(in srgb, #3f8a4a 10%, var(--color-surface)); }
 .retos-settings-section__heading > b.is-invalid { color: var(--color-primary); background: var(--color-primary-container); }
 .retos-settings-primary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .retos-settings-primary-grid label,
-.retos-distribution-grid label { display: flex; flex-direction: column; gap: 4px; color: var(--color-on-surface); font-size: 12.5px; font-weight: 750; }
-.retos-settings-primary-grid label > small { color: var(--color-on-surface-variant); font-size: 10.5px; font-weight: 500; }
+.retos-distribution-grid label { display: flex; flex-direction: column; gap: 4px; color: var(--color-on-surface); font-size: 13px; font-weight: 700; }
+.retos-settings-primary-grid label > small { color: var(--color-on-surface-variant); font-size: 11px; font-weight: 500; }
 .retos-number-field { display: flex; align-items: center; min-height: 42px; margin-top: 5px; overflow: hidden; border: 1px solid var(--color-outline-variant); border-radius: 9px; background: var(--color-surface); }
 .retos-number-field:focus-within { border-color: var(--color-primary); box-shadow: var(--focus-ring); }
 .retos-number-field input { width: 100%; min-width: 0; height: 40px; padding: 0 11px; border: 0; outline: 0; background: transparent; color: var(--color-on-surface); font: inherit; font-size: 13px; }
-.retos-number-field b { align-self: stretch; display: grid; place-items: center; min-width: 48px; padding: 0 9px; border-left: 1px solid var(--color-surface-variant); background: var(--color-surface-container-low); color: var(--color-on-surface-variant); font-size: 10.5px; }
+.retos-number-field b { align-self: stretch; display: grid; place-items: center; min-width: 48px; padding: 0 9px; border-left: 1px solid var(--color-surface-variant); background: var(--color-surface-container-low); color: var(--color-on-surface-variant); font-size: 11px; }
 .retos-distribution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .retos-distribution-status { height: 6px; margin-top: 14px; overflow: hidden; border-radius: 999px; background: var(--color-surface-container-high); }
 .retos-distribution-status i { display: block; width: 100%; height: 100%; transform-origin: left; background: var(--color-primary); }
 .retos-distribution-status.is-valid i { background: #3f8a4a; }
-.retos-settings-error { margin: 8px 0 0; color: var(--color-primary); font-size: 11px; font-weight: 650; }
+.retos-settings-error { margin: 8px 0 0; color: var(--color-primary); font-size: 11px; font-weight: 600; }
 .retos-settings-aside { padding: 18px; border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-variant)); border-radius: 13px; background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface)); }
 .retos-settings-aside__icon { width: 42px; height: 42px; display: grid; place-items: center; margin-bottom: 13px; border-radius: 12px; color: var(--color-primary); background: var(--color-primary-container); }
 .retos-settings-aside > strong { font-size: 14px; }
-.retos-settings-aside > p { margin: 7px 0 15px; color: var(--color-on-surface-variant); font-size: 11.5px; line-height: 1.5; text-wrap: pretty; }
+.retos-settings-aside > p { margin: 7px 0 15px; color: var(--color-on-surface-variant); font-size: 12px; line-height: 1.5; text-wrap: pretty; }
 .retos-settings-aside ul { display: grid; gap: 9px; margin: 0; padding: 13px 0 0; border-top: 1px solid var(--color-surface-variant); list-style: none; }
 .retos-settings-aside li { display: flex; align-items: center; gap: 7px; color: var(--color-on-surface-variant); font-size: 11px; }
 .retos-settings-aside li svg { flex: 0 0 auto; color: #3f8a4a; }
 
 .retos-guide-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
 .retos-guide-form { display: grid; gap: 14px; padding: 18px; border: 1px solid var(--color-surface-variant); border-radius: 13px; background: var(--color-surface-container-lowest); }
-.retos-guide-form label { display: flex; flex-direction: column; gap: 4px; color: var(--color-on-surface); font-size: 12.5px; }
-.retos-guide-form label > span { color: var(--color-on-surface-variant); font-size: 10.5px; font-weight: 500; line-height: 1.35; }
+.retos-guide-form label { display: flex; flex-direction: column; gap: 4px; color: var(--color-on-surface); font-size: 13px; }
+.retos-guide-form label > span { color: var(--color-on-surface-variant); font-size: 11px; font-weight: 500; line-height: 1.35; }
 .retos-guide-form input,
 .retos-guide-form textarea { margin-top: 5px; background: var(--color-surface) !important; }
 .retos-guide-content textarea { min-height: 220px; resize: vertical; line-height: 1.55; }
-.retos-guide-content > small { align-self: flex-end; color: var(--color-outline); font-size: 10px; font-weight: 550; }
+.retos-guide-content > small { align-self: flex-end; color: var(--color-outline); font-size: 10px; font-weight: 500; }
 .retos-guide-aside { padding: 18px; border: 1px solid var(--color-surface-variant); border-radius: 13px; background: var(--color-surface-container-lowest); }
 .retos-guide-progress { display: flex; align-items: baseline; gap: 7px; padding-bottom: 14px; border-bottom: 1px solid var(--color-surface-variant); }
-.retos-guide-progress strong { color: var(--color-primary); font-size: 25px; line-height: 1; }
-.retos-guide-progress span { color: var(--color-on-surface-variant); font-size: 10.5px; }
+.retos-guide-progress strong { color: var(--color-primary); font-size: 24px; line-height: 1; }
+.retos-guide-progress span { color: var(--color-on-surface-variant); font-size: 11px; }
 .retos-guide-aside ul { display: grid; gap: 10px; margin: 14px 0; padding: 0; list-style: none; }
-.retos-guide-aside li { display: flex; align-items: center; gap: 8px; color: var(--color-outline); font-size: 11.5px; }
+.retos-guide-aside li { display: flex; align-items: center; gap: 8px; color: var(--color-outline); font-size: 12px; }
 .retos-guide-aside li svg { flex: 0 0 auto; }
-.retos-guide-aside li.is-ready { color: #2f703b; font-weight: 650; }
+.retos-guide-aside li.is-ready { color: #2f703b; font-weight: 600; }
 .retos-guide-tip { display: flex; align-items: flex-start; gap: 9px; padding: 12px; border-radius: 10px; background: var(--color-primary-container); }
 .retos-guide-tip svg { flex: 0 0 auto; color: var(--color-primary); }
-.retos-guide-tip strong { font-size: 11.5px; }
-.retos-guide-tip p { margin: 3px 0 0; color: var(--color-on-surface-variant); font-size: 10.5px; line-height: 1.45; }
+.retos-guide-tip strong { font-size: 12px; }
+.retos-guide-tip p { margin: 3px 0 0; color: var(--color-on-surface-variant); font-size: 11px; line-height: 1.45; }
 .retos-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 17px; padding-top: 16px; border-top: 1px solid var(--color-surface-variant); }
 .retos-save-state { color: var(--color-on-surface-variant); font-size: 11px; }
-.retos-save-state.is-ready { color: #2f703b; font-weight: 650; }
+.retos-save-state.is-ready { color: #2f703b; font-weight: 600; }
 .rq-main .retos-primary-button { min-height: 46px !important; padding: 0 19px !important; border: 1px solid var(--color-primary) !important; background: var(--color-primary) !important; color: var(--color-on-primary) !important; box-shadow: 0 4px 10px color-mix(in srgb, var(--color-primary) 20%, transparent) !important; }
 .rq-main .retos-primary-button:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none !important; }
 
@@ -373,7 +373,7 @@
   .retos-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
   .retos-metric { min-height: 94px; padding: 13px; gap: 10px; }
   .retos-metric__icon { width: 38px; height: 38px; }
-  .retos-metric strong { font-size: 22px; }
+  .retos-metric strong { font-size: 24px; }
   .retos-metric small { display: none; }
   .retos-tabs { display: flex; width: 100%; }
   .rq-main .retos-tabs button { flex: 0 0 auto; min-height: 40px !important; }

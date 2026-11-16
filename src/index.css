@@ -148,7 +148,7 @@ a:hover {
   background: var(--color-background);
   color: var(--color-on-surface-variant);
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .rq-route-loading__spinner {
@@ -197,7 +197,7 @@ a:hover {
   margin-bottom: 8px;
   color: var(--color-primary);
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: .08em;
   text-transform: uppercase;
 }

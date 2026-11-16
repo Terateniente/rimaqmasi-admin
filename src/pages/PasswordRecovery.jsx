@@ -223,7 +223,7 @@ export const PasswordRecovery = ({ step }) => {
             }}>
               PANEL DE ADMINISTRACIÓN
             </h4>
-            <h2 style={{ color: 'var(--color-primary)', fontSize: '30px', fontWeight: 'bold', margin: 0, marginBottom: '12px' }}>
+            <h2 style={{ color: 'var(--color-primary)', fontSize: '32px', fontWeight: '700', margin: 0, marginBottom: '12px' }}>
               {step === 'request' && 'Recupera tu contraseña'}
               {step === 'code' && 'Introduce el código'}
               {step === 'reset' && 'Nueva contraseña'}

@@ -55,7 +55,7 @@ export const DeleteConfirmationModal = ({
           <Trash2 size={30} strokeWidth={2.4} />
         </div>
 
-        <h2 id="delete-confirmation-title" style={{ margin: '0 0 12px', fontSize: '22px', lineHeight: 1.25, fontWeight: 800 }}>
+        <h2 id="delete-confirmation-title" style={{ margin: '0 0 12px', fontSize: '24px', lineHeight: 1.25, fontWeight: 800 }}>
           {title}
         </h2>
         <p style={{ margin: '0 auto', maxWidth: '290px', color: 'var(--color-on-surface-variant)', fontSize: '15px', lineHeight: 1.5 }}>
@@ -64,13 +64,13 @@ export const DeleteConfirmationModal = ({
         {children}
 
         <div style={{ display: 'grid', gridTemplateColumns: secondaryLabel ? '1fr 1fr' : '1fr 1fr', gap: '12px', marginTop: '26px' }}>
-          <button ref={cancelButtonRef} type="button" onClick={onCancel} disabled={busy} style={{ minHeight: '44px', padding: '10px 14px', border: 'none', borderRadius: '9px', background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)', fontWeight: 750, cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? .65 : 1, transition: 'background-color 0.2s' }} onMouseOver={e => !busy && (e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)')} onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-container-high)'}>
+          <button ref={cancelButtonRef} type="button" onClick={onCancel} disabled={busy} style={{ minHeight: '44px', padding: '10px 14px', border: 'none', borderRadius: '9px', background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? .65 : 1, transition: 'background-color 0.2s' }} onMouseOver={e => !busy && (e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)')} onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-container-high)'}>
             Cancelar
           </button>
-          {secondaryLabel && <button type="button" onClick={onSecondary} disabled={busy} style={{ minHeight: '44px', padding: '10px 14px', border: '1px solid var(--color-primary)', borderRadius: '9px', background: 'var(--color-surface)', color: 'var(--color-primary)', fontWeight: 750, cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? .65 : 1 }}>
+          {secondaryLabel && <button type="button" onClick={onSecondary} disabled={busy} style={{ minHeight: '44px', padding: '10px 14px', border: '1px solid var(--color-primary)', borderRadius: '9px', background: 'var(--color-surface)', color: 'var(--color-primary)', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? .65 : 1 }}>
             {secondaryLabel}
           </button>}
-          <button type="button" onClick={onConfirm} disabled={busy || confirmDisabled} style={{ gridColumn: secondaryLabel ? '1 / -1' : 'auto', minHeight: '44px', padding: '10px 14px', border: 'none', borderRadius: '9px', background: 'var(--color-error)', color: 'var(--color-on-error, #fff)', fontWeight: 750, cursor: busy || confirmDisabled ? 'not-allowed' : 'pointer', opacity: busy || confirmDisabled ? .55 : 1, transition: 'filter 0.2s' }} onMouseOver={e => !busy && !confirmDisabled && (e.currentTarget.style.filter = 'brightness(1.1)')} onMouseOut={e => e.currentTarget.style.filter = 'none'}>
+          <button type="button" onClick={onConfirm} disabled={busy || confirmDisabled} style={{ gridColumn: secondaryLabel ? '1 / -1' : 'auto', minHeight: '44px', padding: '10px 14px', border: 'none', borderRadius: '9px', background: 'var(--color-error)', color: 'var(--color-on-error, #fff)', fontWeight: 700, cursor: busy || confirmDisabled ? 'not-allowed' : 'pointer', opacity: busy || confirmDisabled ? .55 : 1, transition: 'filter 0.2s' }} onMouseOver={e => !busy && !confirmDisabled && (e.currentTarget.style.filter = 'brightness(1.1)')} onMouseOut={e => e.currentTarget.style.filter = 'none'}>
             {busy ? 'Procesando…' : confirmLabel}
           </button>
         </div>

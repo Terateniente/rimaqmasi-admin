@@ -90,8 +90,8 @@
 
 .sidebar-avatar-fallback {
   color: var(--color-primary);
-  font-size: 19px;
-  font-weight: 750;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .sidebar-profile-card.collapsed .sidebar-avatar-fallback { font-size: 16px; }
@@ -134,7 +134,7 @@
   overflow: hidden;
   color: var(--color-on-surface);
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 700;
   line-height: 19px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -161,7 +161,7 @@
   border-radius: 999px;
   background: color-mix(in srgb, currentColor 9%, transparent);
   font-size: 10px;
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
 }

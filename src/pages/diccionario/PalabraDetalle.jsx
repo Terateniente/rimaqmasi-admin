@@ -342,7 +342,7 @@ export const PalabraDetalle = () => {
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>{getIdiomaNombre(traduccion.idioma)}</span>
                 </div>
                 <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Traducción</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-on-surface)', marginTop: '3px' }}>{traduccion.termino}</div>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-on-surface)', marginTop: '3px' }}>{traduccion.termino}</div>
                 <div style={{ marginTop: '9px', padding: '8px 10px', borderRadius: '8px', background: 'var(--color-surface-container-low)', color: 'var(--color-on-surface-variant)', fontSize: '11px' }}>
                   Creada por <strong>{getUserDisplayName(traduccion.creadoPor)}</strong>
                   {traduccion.creadoEn && <> · {new Intl.DateTimeFormat('es-PE').format(new Date(traduccion.creadoEn))}</>}
@@ -350,7 +350,7 @@ export const PalabraDetalle = () => {
                 {traduccion.ejemplos?.length > 0 && <div style={{ marginTop: '11px', paddingTop: '10px', borderTop: '1px solid var(--color-surface-variant)' }}>
                   <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', textTransform: 'uppercase', marginBottom: '6px' }}>Ejemplos de uso</div>
                   {traduccion.ejemplos.map((example, exampleIndex) => <div key={example.ejemplo_id || example.id || exampleIndex} style={{ padding: '8px 10px', borderRadius: '8px', background: 'var(--color-surface)', marginTop: '5px', fontSize: '12px', lineHeight: 1.45 }}>
-                    <div style={{ fontWeight: 650, color: 'var(--color-on-surface)' }}>“{example.texto_ejemplo || example.ejemplo_texto}”</div>
+                    <div style={{ fontWeight: 600, color: 'var(--color-on-surface)' }}>“{example.texto_ejemplo || example.ejemplo_texto}”</div>
                     {(example.texto_significado || example.traduccion_ejemplo) && <div style={{ color: 'var(--color-on-surface-variant)', marginTop: '3px' }}>{example.texto_significado || example.traduccion_ejemplo}</div>}
                   </div>)}
                 </div>}
@@ -385,7 +385,7 @@ export const PalabraDetalle = () => {
                     <span style={{ width: '30px', height: '30px', borderRadius: '9px', background: 'var(--color-primary)', color: 'var(--color-on-primary)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{def.orden_acepcion || idx + 1}</span>
                     {definitionFlag ? <img src={getFileUrl(definitionFlag)} alt="" style={{ width: '28px', height: '20px', objectFit: 'cover', borderRadius: '4px' }} /> : <Languages size={18} />}
                     <div>
-                      <div style={{ fontWeight: 750, color: 'var(--color-on-surface)' }}>{getIdiomaNombre(definitionLanguage)}</div>
+                      <div style={{ fontWeight: 700, color: 'var(--color-on-surface)' }}>{getIdiomaNombre(definitionLanguage)}</div>
                       <div style={{ fontSize: '11px', color: 'var(--color-outline)', textTransform: 'capitalize' }}>{def.estado || 'Sin estado'}</div>
                     </div>
                   </div>
@@ -395,7 +395,7 @@ export const PalabraDetalle = () => {
                   </div>
                 </header>
                 <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: parsed.origen && parsed.destino ? 'repeat(2, minmax(0, 1fr))' : '1fr', gap: '14px' }}>
-                  {parsed.termino && <div style={{ gridColumn: '1 / -1', fontSize: '21px', fontWeight: 800, color: 'var(--color-primary)' }}>{parsed.termino}</div>}
+                  {parsed.termino && <div style={{ gridColumn: '1 / -1', fontSize: '20px', fontWeight: 800, color: 'var(--color-primary)' }}>{parsed.termino}</div>}
                   {parsed.origen && <div style={{ padding: '14px', borderRadius: '11px', background: 'var(--color-surface-container-low)' }}><div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.06em', color: 'var(--color-outline)', textTransform: 'uppercase', marginBottom: '6px' }}>Definición original</div><div style={{ color: 'var(--color-on-surface)', lineHeight: 1.55 }}>{parsed.origen}</div></div>}
                   <div style={{ padding: '14px', borderRadius: '11px', background: 'var(--color-primary-container)' }}><div style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '.06em', color: 'var(--color-on-primary-container)', opacity: .72, textTransform: 'uppercase', marginBottom: '6px' }}>Significado en {getIdiomaNombre(definitionLanguage)}</div><div style={{ color: 'var(--color-on-primary-container)', lineHeight: 1.55 }}>{parsed.destino || parsed.raw}</div></div>
                 </div>
@@ -416,7 +416,7 @@ export const PalabraDetalle = () => {
               const exampleLanguage = findIdioma(idiomas, ejemplo.idioma_significado_id, ejemplo.idiomaSignificado);
               const exampleFlag = getIdiomaBandera(exampleLanguage);
               return <article key={ejemplo.ejemplo_id || ejemplo.ejemplos_id || ejemplo.id || index} style={{ padding: '16px', borderRadius: '13px', background: 'var(--color-surface)', border: '1px solid var(--color-surface-variant)', display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
-                <div><MessageSquareQuote size={18} color="var(--color-primary)" /><p style={{ margin: '7px 0', fontSize: '15px', fontWeight: 650, color: 'var(--color-on-surface)', lineHeight: 1.5 }}>“{ejemplo.texto_ejemplo || ejemplo.ejemplo_texto}”</p>{(ejemplo.texto_significado || ejemplo.traduccion_ejemplo) && <div style={{ display: 'flex', alignItems: 'center', gap: '7px', color: 'var(--color-on-surface-variant)', fontSize: '13px' }}>{exampleFlag && <img src={getFileUrl(exampleFlag)} alt="" style={{ width: '22px', height: '16px', objectFit: 'cover', borderRadius: '3px' }} />}<span>{ejemplo.texto_significado || ejemplo.traduccion_ejemplo}</span></div>}</div>
+                <div><MessageSquareQuote size={18} color="var(--color-primary)" /><p style={{ margin: '7px 0', fontSize: '15px', fontWeight: 600, color: 'var(--color-on-surface)', lineHeight: 1.5 }}>“{ejemplo.texto_ejemplo || ejemplo.ejemplo_texto}”</p>{(ejemplo.texto_significado || ejemplo.traduccion_ejemplo) && <div style={{ display: 'flex', alignItems: 'center', gap: '7px', color: 'var(--color-on-surface-variant)', fontSize: '13px' }}>{exampleFlag && <img src={getFileUrl(exampleFlag)} alt="" style={{ width: '22px', height: '16px', objectFit: 'cover', borderRadius: '3px' }} />}<span>{ejemplo.texto_significado || ejemplo.traduccion_ejemplo}</span></div>}</div>
                 <div style={{ display: 'flex', gap: '7px', alignItems: 'flex-start' }}>{ejemplo.url_audio && <button onClick={() => playAudio(ejemplo.url_audio)} style={{ border: 'none', background: 'var(--color-primary-container)', color: 'var(--color-on-primary-container)', padding: '7px', borderRadius: '8px', cursor: 'pointer', display: 'flex' }}><Volume2 size={16} /></button>}<button onClick={() => handleDeleteEjemplo(ejemplo.ejemplo_id || ejemplo.ejemplos_id || ejemplo.id)} style={{ border: 'none', background: 'var(--color-error-container)', color: 'var(--color-on-error-container)', padding: '7px', borderRadius: '8px', cursor: 'pointer', display: 'flex' }}><Trash2 size={16} /></button></div>
               </article>;
             })}
@@ -472,9 +472,9 @@ export const PalabraDetalle = () => {
                     </div>
                   </article>
                 ))}
-                <button type="button" onClick={() => appendTranslation({ idioma_destino_id: '', termino_traducido: '', ejemplo_origen: '', ejemplo_traduccion: '' })} style={{ border: '1px dashed var(--color-primary)', borderRadius: '11px', padding: '12px', background: 'var(--color-primary-container)', color: 'var(--color-on-primary-container)', fontWeight: 750, cursor: 'pointer' }}><Plus size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />Añadir otra traducción</button>
+                <button type="button" onClick={() => appendTranslation({ idioma_destino_id: '', termino_traducido: '', ejemplo_origen: '', ejemplo_traduccion: '' })} style={{ border: '1px dashed var(--color-primary)', borderRadius: '11px', padding: '12px', background: 'var(--color-primary-container)', color: 'var(--color-on-primary-container)', fontWeight: 700, cursor: 'pointer' }}><Plus size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />Añadir otra traducción</button>
               </div>
-              <footer style={{ padding: '18px 24px', borderTop: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: 'var(--color-surface)' }}><button type="button" onClick={() => setIsTranslationModalOpen(false)} style={{ padding: '11px 18px', borderRadius: '10px', border: '1px solid var(--color-outline-variant)', background: 'var(--color-surface)', color: 'var(--color-on-surface)', fontWeight: 700, cursor: 'pointer' }}>Cancelar</button><button type="submit" disabled={isSavingTranslations} style={{ padding: '11px 20px', borderRadius: '10px', border: 'none', background: 'var(--color-primary)', color: 'var(--color-on-primary)', fontWeight: 750, cursor: isSavingTranslations ? 'wait' : 'pointer', opacity: isSavingTranslations ? .7 : 1 }}>{isSavingTranslations ? 'Guardando...' : 'Guardar traducciones'}</button></footer>
+              <footer style={{ padding: '18px 24px', borderTop: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: 'var(--color-surface)' }}><button type="button" onClick={() => setIsTranslationModalOpen(false)} style={{ padding: '11px 18px', borderRadius: '10px', border: '1px solid var(--color-outline-variant)', background: 'var(--color-surface)', color: 'var(--color-on-surface)', fontWeight: 700, cursor: 'pointer' }}>Cancelar</button><button type="submit" disabled={isSavingTranslations} style={{ padding: '11px 20px', borderRadius: '10px', border: 'none', background: 'var(--color-primary)', color: 'var(--color-on-primary)', fontWeight: 700, cursor: isSavingTranslations ? 'wait' : 'pointer', opacity: isSavingTranslations ? .7 : 1 }}>{isSavingTranslations ? 'Guardando...' : 'Guardar traducciones'}</button></footer>
             </form>
           </div>
         </div>

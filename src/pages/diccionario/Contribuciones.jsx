@@ -98,7 +98,7 @@ export const Contribuciones = () => {
           </div>
           <time style={{ fontSize: '13px', color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>{new Date(item.creado_en).toLocaleDateString()}</time>
         </div>
-        <h2 style={{ fontSize: '22px', margin: 0, color: 'var(--color-primary)', fontWeight: 800 }}>{item.termino || item.palabra?.termino}</h2>
+        <h2 style={{ fontSize: '24px', margin: 0, color: 'var(--color-primary)', fontWeight: 800 }}>{item.termino || item.palabra?.termino}</h2>
         <div style={{ padding: '12px', background: 'var(--color-surface-variant)', borderRadius: '12px' }}>
           <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--color-on-surface)', fontWeight: 600 }}>{item.idioma?.nombre} → significado en {item.idiomaSignificado?.nombre}</p>
           <p style={{ margin: 0, fontSize: '15px', color: 'var(--color-on-surface)', lineHeight: 1.5 }}>{item.significado}</p>

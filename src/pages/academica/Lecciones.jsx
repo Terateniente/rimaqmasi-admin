@@ -1274,7 +1274,7 @@ export const Lecciones = () => {
                 <div style={{ width: '56px', height: '56px', flexShrink: 0, borderRadius: '16px', background: 'rgba(255,255,255,.18)', border: '1px solid rgba(255,255,255,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookOpen size={28} /></div>
                 <div style={{ minWidth: 0 }}>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,.86)', textTransform: 'uppercase', letterSpacing: '1px' }}>Detalles de la Lección</span>
-                  <h2 style={{ margin: '3px 0 0', fontSize: '23px', lineHeight: 1.2, color: 'white', fontWeight: 800 }}>{selectedLeccionView.titulo}</h2>
+                  <h2 style={{ margin: '3px 0 0', fontSize: '24px', lineHeight: 1.2, color: 'white', fontWeight: 800 }}>{selectedLeccionView.titulo}</h2>
                 </div>
               </div>
               <button onClick={() => setSelectedLeccionView(null)} style={{ background: 'rgba(0,0,0,.2)', border: 'none', color: 'white', cursor: 'pointer', width: '36px', height: '36px', flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
@@ -1447,7 +1447,7 @@ export const Lecciones = () => {
                         <div style={{ width: '32px', height: '32px', flexShrink: 0, borderRadius: '10px', backgroundColor: 'var(--color-info-container)', color: 'var(--color-on-info-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800 }}>{formatUserName(selectedLeccionView.creado_por).charAt(0)}</div>
                       )}
                       <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>CREADO POR</span>
+                        <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>CREADO POR</span>
                         <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-on-surface)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatUserName(selectedLeccionView.creado_por)}</span>
                         <span style={{ fontSize: '11px', color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>{(selectedLeccionView.fecha_creacion || selectedLeccionView.creado_en) ? new Date(selectedLeccionView.fecha_creacion || selectedLeccionView.creado_en).toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Fecha desconocida'}</span>
                       </div>
@@ -1461,7 +1461,7 @@ export const Lecciones = () => {
                           <div style={{ width: '32px', height: '32px', flexShrink: 0, borderRadius: '10px', backgroundColor: 'var(--color-surface-variant)', color: 'var(--color-on-surface-variant)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800 }}>{formatUserName(selectedLeccionView.actualizado_por).charAt(0)}</div>
                         )}
                         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                          <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>MODIFICADO POR</span>
+                          <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-outline)', letterSpacing: '0.5px' }}>MODIFICADO POR</span>
                           <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-on-surface)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatUserName(selectedLeccionView.actualizado_por)}</span>
                           <span style={{ fontSize: '11px', color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>{(selectedLeccionView.fecha_actualizacion || selectedLeccionView.actualizado_en) ? new Date(selectedLeccionView.fecha_actualizacion || selectedLeccionView.actualizado_en).toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Fecha desconocida'}</span>
                         </div>

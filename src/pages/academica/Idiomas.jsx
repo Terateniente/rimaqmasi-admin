@@ -54,7 +54,7 @@ const IdiomaCard = ({ idioma, getImageUrl, handleOpenEdit, handleDelete }) => {
           {flagUrl && !flagLoadFailed ? (
             <img src={flagUrl} alt={idioma.nombres} style={{ width: '100%', height: '100%', objectFit: 'cover' }} crossOrigin="anonymous" onError={() => setFlagLoadFailed(true)} />
           ) : null}
-          <span aria-hidden={flagUrl && !flagLoadFailed} style={{ display: flagUrl && !flagLoadFailed ? 'none' : 'flex', fontWeight: 'bold', fontSize: '18px', color: 'var(--color-primary)', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+          <span aria-hidden={flagUrl && !flagLoadFailed} style={{ display: flagUrl && !flagLoadFailed ? 'none' : 'flex', fontWeight: '700', fontSize: '18px', color: 'var(--color-primary)', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
             {(idioma.nombres || idioma.nombre || '?').charAt(0)}
           </span>
         </div>

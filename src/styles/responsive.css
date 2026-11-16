@@ -55,6 +55,22 @@
   to { opacity: 1; }
 }
 
+@media (min-width: 769px) and (max-width: 1080px) {
+  .rq-main {
+    padding-left: 14px;
+  }
+
+  .rq-main > div:not([style*='position: fixed']) {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .rq-main .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
   [data-sonner-toaster] {
     width: calc(100vw - 24px) !important;
@@ -179,5 +195,22 @@
 @media (prefers-reduced-motion: reduce) {
   .rq-sidebar-overlay {
     animation: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .rq-sidebar-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .rq-sidebar,
+  .rq-main table,
+  .rq-main input,
+  .rq-main select,
+  .rq-main textarea {
+    border-width: 1.5px;
   }
 }
