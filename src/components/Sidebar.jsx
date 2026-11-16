@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProfileModal } from './ProfileModal';
+import { resolveMediaUrl } from '../services/api';
 import './Sidebar.css';
 
 export const MENU_ITEMS = [
@@ -124,19 +125,11 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMo
     return location.pathname === path;
   };
 
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-    const baseUrl = API_URL.replace('/api/v1', '');
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public') ? `${baseUrl}${cleanPath}` : `${baseUrl}/public${cleanPath}`;
-  };
+  const getImageUrl = (path) => resolveMediaUrl(path);
 
   const roleLabels = {
     super_admin: { label: 'Super Admin', color: 'var(--color-primary)' },
     admin: { label: 'Admin', color: 'var(--color-secondary)' },
-    profesor: { label: 'Profesor', color: 'var(--color-tertiary)' },
     estudiante: { label: 'Estudiante', color: 'var(--color-outline)' },
     cajero: { label: 'Cajero', color: 'var(--color-tertiary)' }
   };

@@ -15,6 +15,7 @@ import { generateCurriculumPdf } from '../../utils/curriculumPdf';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { WizardProgress } from '../../components/WizardProgress';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { resolveMediaUrl } from '../../services/api';
 
 const normalizeList = (response) => {
   if (Array.isArray(response)) return response;
@@ -370,15 +371,7 @@ const CursoCard = ({ curso, idiomas, getImageUrl, onView, onEdit, onDelete, onTo
 export const Cursos = () => {
   const { user } = useAuth();
   const currentUserId = user?.id || user?.usuarios_id || user?.usuario_id;
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getImageUrl = (path) => resolveMediaUrl(path);
 
   const formatAuditDate = (dateStr) => {
     if (!dateStr) return null;

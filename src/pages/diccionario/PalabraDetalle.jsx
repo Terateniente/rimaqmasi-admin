@@ -8,6 +8,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { findIdioma, getIdiomaBandera, getIdiomaId, getIdiomaNombre, getUserDisplayName, getWordTranslations, parseDefinitionText } from '../../utils/dictionaryViewUtils';
 import { ModernPageSkeleton } from '../../components/ModernPageSkeleton';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { resolveMediaUrl } from '../../services/api';
 
 export const PalabraDetalle = () => {
   const { id } = useParams();
@@ -39,9 +40,6 @@ export const PalabraDetalle = () => {
     defaultValues: { traducciones: [{ idioma_destino_id: '', termino_traducido: '', ejemplo_origen: '', ejemplo_traduccion: '' }] }
   });
   const { fields: translationFields, append: appendTranslation, remove: removeTranslation } = useFieldArray({ control: translationControl, name: 'traducciones' });
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
 
   const fetchData = async () => {
     try {
@@ -214,12 +212,7 @@ export const PalabraDetalle = () => {
     }
   };
 
-  const getFileUrl = (url) => {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    const cleanPath = url.startsWith('/') ? url : `/${url}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getFileUrl = (url) => resolveMediaUrl(url) || '';
 
   const playAudio = (path) => {
     if (!path) return;

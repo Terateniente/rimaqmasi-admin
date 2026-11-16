@@ -12,6 +12,7 @@ import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModa
 import { WizardProgress } from '../../components/WizardProgress';
 import { RimaqSelect } from '../../components/RimaqSelect';
 import './Palabras.css';
+import { resolveMediaUrl } from '../../services/api';
 
 const WORD_CONTEXT_DRAFT_KEY = 'rimaqmasi:palabra-contexto-borrador';
 
@@ -60,18 +61,8 @@ export const Palabras = () => {
   
   const selectedCategoriasIds = watch('categorias_ids') || [];
   const selectedSourceLanguageId = watch('idiomas_id');
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
-
   const getPalabraId = (palabra) => palabra?.palabra_id ?? palabra?.palabras_id ?? palabra?.id;
-
-  const getFileUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    const cleanPath = url.startsWith('/') ? url : `/${url}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getFileUrl = (url) => resolveMediaUrl(url);
 
   const fetchData = async () => {
     setLoading(true);

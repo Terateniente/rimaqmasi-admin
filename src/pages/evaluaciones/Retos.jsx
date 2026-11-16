@@ -12,6 +12,7 @@ import {
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { ModernPageSkeleton } from '../../components/ModernPageSkeleton';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { resolveMediaUrl } from '../../services/api';
 import './Retos.css';
 
 const TYPES = [
@@ -26,11 +27,7 @@ const field = { padding: '10px 12px', borderRadius: 8, border: '1px solid var(--
 const card = { background: 'var(--color-surface)', border: '1px solid var(--color-surface-variant)', borderRadius: 14, padding: 20, boxShadow: 'var(--shadow-level-1)' };
 const button = { border: 0, borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontWeight: 700, display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' };
 const iconButton = (color, background) => ({ border: '1px solid var(--color-surface-variant)', borderRadius: 8, width: 34, height: 34, display: 'inline-grid', placeItems: 'center', cursor: 'pointer', color, background });
-const mediaUrl = (url) => {
-  if (!url || url.startsWith('http')) return url;
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  return `${apiUrl.replace('/api/v1', '')}/public${url.startsWith('/') ? url : `/${url}`}`;
-};
+const mediaUrl = (url) => resolveMediaUrl(url);
 const isChoiceType = (type) => ['opcion_multiple', 'respuesta_imagen'].includes(type);
 const ROUTE_STORAGE_KEY = 'rimaqmasi:admin:retos-route';
 const EMPTY_SELECTION = { course: '', unit: '', session: '', lesson: '' };

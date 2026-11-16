@@ -3,6 +3,7 @@ import { getIdiomas, createIdioma, updateIdioma, deleteIdioma, uploadFlag } from
 import { toast } from 'sonner';
 import { Search, Plus, Edit2, Trash2, Globe, X, ImagePlus, Save, ShieldCheck, Eye, Filter } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { resolveMediaUrl } from '../../services/api';
 
 import { FastAverageColor } from 'fast-average-color';
 import { matchesSearch } from '../../utils/searchUtils';
@@ -144,16 +145,7 @@ export const Idiomas = () => {
   const itemsPerPage = 5;
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
-
-  // Utilidad para resolver la URL de la imagen
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getImageUrl = (path) => resolveMediaUrl(path);
 
   const fetchIdiomas = async () => {
     try {
@@ -369,14 +361,7 @@ export const Idiomas = () => {
           </div>
         ) : (
           paginatedIdiomas.map((idioma, i) => {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-            const BACKEND_HOST = API_URL.replace('/api/v1', '');
-            const getImageUrl = (path) => {
-              if (!path) return null;
-              if (path.startsWith('http')) return path;
-              const cleanPath = path.startsWith('/') ? path : `/${path}`;
-              return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-            };
+  const getImageUrl = (path) => resolveMediaUrl(path);
             return (
               <IdiomaCard 
                 key={idioma.idioma_id || idioma.id || i}

@@ -8,9 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../hooks/useAuth';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { RimaqSelect } from '../../components/RimaqSelect';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-const BACKEND_HOST = API_URL.replace(/\/api\/v1\/?$/, '');
+import { resolveMediaUrl } from '../../services/api';
 
 const MatriculaTableRow = ({ matricula, index, cursos, usuarios, onEdit, onDelete }) => {
   const [imageError, setImageError] = useState(false);
@@ -51,15 +49,8 @@ const MatriculaTableRow = ({ matricula, index, cursos, usuarios, onEdit, onDelet
   const statusColor = getStatusColor(matricula.estado);
   const bgRow = index % 2 === 0 ? 'var(--color-surface)' : 'var(--color-surface-container-low)';
 
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
-
   const fotoPerfil = usuarioFull?.url_foto_perfil || matricula.usuario?.url_foto_perfil;
-  const avatarUrl = getImageUrl(fotoPerfil);
+  const avatarUrl = resolveMediaUrl(fotoPerfil);
 
   return (
     <tr style={{ 
@@ -650,8 +641,8 @@ export const Matriculas = () => {
                             
                             const orig = c.idioma_origen?.nombre || 'Desconocido';
                             const dest = c.idioma_destino?.nombre || 'Desconocido';
-                            const origUrl = c.idioma_origen?.bandera ? (c.idioma_origen.bandera.startsWith('http') ? c.idioma_origen.bandera : `${BACKEND_HOST}${c.idioma_origen.bandera.startsWith('/') ? c.idioma_origen.bandera : '/' + c.idioma_origen.bandera}`) : null;
-                            const destUrl = c.idioma_destino?.bandera ? (c.idioma_destino.bandera.startsWith('http') ? c.idioma_destino.bandera : `${BACKEND_HOST}${c.idioma_destino.bandera.startsWith('/') ? c.idioma_destino.bandera : '/' + c.idioma_destino.bandera}`) : null;
+                            const origUrl = resolveMediaUrl(c.idioma_origen?.bandera);
+                            const destUrl = resolveMediaUrl(c.idioma_destino?.bandera);
 
                             return (
                               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -678,8 +669,8 @@ export const Matriculas = () => {
                             {cursos.map(c => {
                               const orig = c.idioma_origen?.nombre || 'Desconocido';
                               const dest = c.idioma_destino?.nombre || 'Desconocido';
-                              const origUrl = c.idioma_origen?.bandera ? (c.idioma_origen.bandera.startsWith('http') ? c.idioma_origen.bandera : `${BACKEND_HOST}${c.idioma_origen.bandera.startsWith('/') ? c.idioma_origen.bandera : '/' + c.idioma_origen.bandera}`) : null;
-                              const destUrl = c.idioma_destino?.bandera ? (c.idioma_destino.bandera.startsWith('http') ? c.idioma_destino.bandera : `${BACKEND_HOST}${c.idioma_destino.bandera.startsWith('/') ? c.idioma_destino.bandera : '/' + c.idioma_destino.bandera}`) : null;
+                              const origUrl = resolveMediaUrl(c.idioma_origen?.bandera);
+                              const destUrl = resolveMediaUrl(c.idioma_destino?.bandera);
                               const isSelected = (c.cursos_id || c.id).toString() === (selectedCursoId || '').toString();
 
                               return (

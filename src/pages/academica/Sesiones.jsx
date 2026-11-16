@@ -12,6 +12,7 @@ import { matchesSearch } from '../../utils/searchUtils';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { WizardProgress } from '../../components/WizardProgress';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { resolveMediaUrl } from '../../services/api';
 
 // --- Componente removido, pasado a Lecciones ---
 const SesionTableRow = ({ sesion, index, cursos, unidads, idiomas, getImageUrl, onView, onEdit, onDelete, onToggleEstado }) => {
@@ -140,15 +141,7 @@ export const Sesiones = () => {
   const [idiomas, setIdiomas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getImageUrl = (path) => resolveMediaUrl(path);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('create');

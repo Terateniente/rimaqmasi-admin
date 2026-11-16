@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { matchesSearch } from '../../utils/searchUtils';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { resolveMediaUrl } from '../../services/api';
 
 export const Ejemplos = () => {
   const [palabras, setPalabras] = useState([]);
@@ -23,9 +24,6 @@ export const Ejemplos = () => {
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
   const selectedDefinicionId = watch('definicion_id');
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
 
   const fetchData = async () => {
     setLoading(true);
@@ -135,7 +133,7 @@ export const Ejemplos = () => {
 
   const playAudio = (path) => {
     if (!path) return;
-    const url = path.startsWith('http') ? path : `${BACKEND_HOST}${path.startsWith('/') ? path : '/' + path}`;
+    const url = resolveMediaUrl(path);
     const audio = new Audio(url);
     audio.play().catch(e => toast.error('No se pudo reproducir el audio'));
   };

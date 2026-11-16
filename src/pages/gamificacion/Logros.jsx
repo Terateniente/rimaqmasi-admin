@@ -7,6 +7,7 @@ import { FastAverageColor } from 'fast-average-color';
 import { matchesSearch } from '../../utils/searchUtils';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { resolveMediaUrl } from '../../services/api';
 
 const METRICAS_LOGRO = [
   { value: 'racha_maxima', label: 'Racha máxima (días)' },
@@ -170,15 +171,7 @@ export const Logros = () => {
   const [xpFilter, setXpFilter] = useState('__all__');
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public/') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getImageUrl = (path) => resolveMediaUrl(path);
 
   const fetchLogros = async () => {
     try {

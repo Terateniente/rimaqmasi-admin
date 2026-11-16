@@ -9,6 +9,7 @@ import { matchesSearch } from '../../utils/searchUtils';
 import { AuthContext } from '../../context/AuthContext';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import './Usuarios.css';
+import { resolveMediaUrl } from '../../services/api';
 
 const getLevelFromXP = (xp) => Math.floor(xp / 1000) + 1;
 
@@ -39,16 +40,7 @@ export const Usuarios = () => {
   const [createData, setCreateData] = useState({ nombres: '', apellidos: '', correo: '', contrasena: '', rol: 'admin', idioma_origen_id: 1 });
   const [isCreating, setIsCreating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
-  const BACKEND_HOST = API_URL.replace('/api/v1', '');
-  
-  const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return cleanPath.startsWith('/public') ? `${BACKEND_HOST}${cleanPath}` : `${BACKEND_HOST}/public${cleanPath}`;
-  };
+  const getImageUrl = (path) => resolveMediaUrl(path);
 
   const loadUsuarios = async () => {
     setLoading(true);
