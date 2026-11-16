@@ -2,7 +2,7 @@ export const normalizeRole = (role) => {
   const value = String(role || '').trim().toLowerCase().replaceAll(' ', '_');
   if (value === 'super' || value === 'superadmin' || value === 'super_admi') return 'super_admin';
   if (value === 'administrador') return 'admin';
-  if (value === 'student') return 'estudiante';
+  if (value === 'student' || value === 'alumno') return 'estudiante';
   return value;
 };
 
@@ -12,4 +12,9 @@ export const isSuperAdmin = (user) => {
 
 export const isAdmin = (user) => {
   return normalizeRole(user?.rol) === 'admin';
+};
+
+export const isAllowedInAdminPanel = (user) => {
+  const role = normalizeRole(user?.rol);
+  return role === 'super_admin' || role === 'admin';
 };

@@ -7,6 +7,7 @@ import {
   USER_STORAGE_KEY,
 } from '../services/api';
 import { logout as logoutApi } from '../services/authService';
+import { isAllowedInAdminPanel } from '../utils/roles';
 
 export const AuthContext = createContext();
 
@@ -21,10 +22,10 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && typeof parsedUser === 'object') {
+        if (parsedUser && typeof parsedUser === 'object' && isAllowedInAdminPanel(parsedUser)) {
           setUser(parsedUser);
         } else {
-          throw new Error('La sesión guardada no contiene un usuario válido');
+          throw new Error('La sesión guardada no tiene permisos administrativos');
         }
       } catch {
         clearSessionStorage();

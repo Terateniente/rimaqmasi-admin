@@ -4,7 +4,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../hooks/useAuth';
-import { login } from '../services/authService';
+import { login, logout as logoutApi } from '../services/authService';
+import { isAllowedInAdminPanel } from '../utils/roles';
 import './PasswordRecovery.css';
 
 const getLoginErrorMessage = (error) => {
@@ -51,10 +52,10 @@ export const Login = () => {
       if (response.success || response.token || response.data?.token) {
         const token = response.token || response.data?.token;
         const refreshToken = response.refresh_token || response.data?.refresh_token;
-        const usuario = response.usuario || response.data?.usuario || { correo: data.correo, rol: 'administrador' };
-        const rol = (usuario.rol || '').toLowerCase();
-        if (!['admin', 'administrador', 'super admin', 'super admi', 'super_admin'].includes(rol)) {
-          setLoginError('Acceso denegado. Esta cuenta no tiene permisos administrativos.');
+        const usuario = response.usuario || response.data?.usuario;
+        if (!usuario || !isAllowedInAdminPanel(usuario)) {
+          if (refreshToken) void logoutApi(refreshToken);
+          setLoginError('Acceso denegado. Solo los roles Super Administrador y Administrador pueden ingresar a este panel.');
           return;
         }
         if (rememberMe) localStorage.setItem('rememberedEmail', data.correo);

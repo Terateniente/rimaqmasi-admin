@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { normalizeRole } from '../utils/roles';
+import { isAllowedInAdminPanel, normalizeRole } from '../utils/roles';
 
 const RouteLoading = () => (
   <div className="rq-route-loading" role="status" aria-live="polite">
@@ -16,7 +16,7 @@ export const ProtectedRoute = () => {
     return <RouteLoading />;
   }
 
-  if (!user) {
+  if (!user || !isAllowedInAdminPanel(user)) {
     return <Navigate to="/login" replace />;
   }
 
@@ -30,7 +30,7 @@ export const RoleProtectedRoute = ({ allowedRoles = ['SUPER'] }) => {
     return <RouteLoading />;
   }
 
-  if (!user) {
+  if (!user || !isAllowedInAdminPanel(user)) {
     return <Navigate to="/login" replace />;
   }
 
