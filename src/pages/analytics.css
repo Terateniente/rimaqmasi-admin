@@ -56,15 +56,14 @@
 }
 
 .analytics-header-actions .analytics-export--excel {
-  background: var(--color-success);
+  background: #15803d;
   border-color: rgba(255, 255, 255, 0.14);
 }
 
 .analytics-header-actions .analytics-export--excel:hover:not(:disabled) {
-  background: var(--color-success);
+  background: #166534;
   border-color: rgba(255, 255, 255, 0.14);
-  filter: brightness(1.1);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--color-success) 30%, transparent);
+  box-shadow: 0 6px 16px color-mix(in srgb, #15803d 35%, transparent);
 }
 
 .analytics-header-actions .analytics-export--pdf {

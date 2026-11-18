@@ -54,7 +54,7 @@ export const PublicRoute = () => {
     return <RouteLoading />;
   }
 
-  if (user) {
+  if (user && isAllowedInAdminPanel(user)) {
     return <Navigate to="/dashboard" replace />;
   }
 

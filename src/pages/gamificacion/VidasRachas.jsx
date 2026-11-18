@@ -39,7 +39,7 @@ export const VidasRachas = () => {
     let active = true;
     getConfiguracionVidas()
       .then(data => { if (active) setForm(normalize(data)); })
-      .catch(error => { if (active) toast.error(error.response?.data?.message || 'No se pudo cargar la configuración'); })
+      .catch(error => { if (active) toast.error(error.userMessage || error.response?.data?.message || 'No se pudo cargar la configuración'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -71,7 +71,7 @@ export const VidasRachas = () => {
       setForm(normalize(await updateConfiguracionVidas(form)));
       toast.success('Configuración de vidas actualizada');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'No se pudo guardar la configuración');
+      toast.error(error.userMessage || error.response?.data?.message || 'No se pudo guardar la configuración');
     } finally {
       setSaving(false);
     }

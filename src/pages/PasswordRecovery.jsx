@@ -17,6 +17,7 @@ import './PasswordRecovery.css';
 const EMAIL_KEY = 'rq_password_reset_email';
 const TOKEN_KEY = 'rq_password_reset_token';
 const getApiError = (error, fallback) => {
+  if (error?.userMessage) return error.userMessage;
   if (error?.response?.data?.message) return error.response.data.message;
   if (error?.message === 'Network Error') return 'No se pudo conectar con el servidor. Verifica tu conexión.';
   return error?.message || fallback;

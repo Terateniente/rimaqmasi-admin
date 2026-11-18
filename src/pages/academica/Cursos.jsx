@@ -117,7 +117,7 @@ const CursoCard = ({ curso, idiomas, onView, onEdit, onDelete, onToggleEstado, o
             <Flag src={flagOrigen} alt={idiomaName(origen) || 'Origen'} />
             <span>{idiomaName(origen) || 'Desconocido'}</span>
           </div>
-          <span className="rq-lang-pair__arrow" aria-label="hacia"><ArrowRight size={13} strokeWidth={2.5} /></span>
+          <span className="rq-lang-pair__arrow" role="img" aria-label="hacia"><ArrowRight size={13} strokeWidth={2.5} aria-hidden="true" /></span>
           <div className="rq-lang-pair__side rq-lang-pair__side--target">
             <span>{idiomaName(destino) || '—'}</span>
             <Flag src={flagDestino} alt={idiomaName(destino) || 'Destino'} />

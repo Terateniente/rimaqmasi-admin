@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { FastAverageColor } from 'fast-average-color';
@@ -108,6 +108,7 @@ export const Logros = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [metricaFilter, setMetricaFilter] = useState('__all__');
   const [xpFilter, setXpFilter] = useState('__all__');
+  const imageInputRef = useRef(null);
   const newImageUrl = useObjectUrl(imageFile);
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
@@ -153,6 +154,11 @@ export const Logros = () => {
       return;
     }
     setImageFile(file);
+  };
+
+  const clearImage = () => {
+    setImageFile(null);
+    if (imageInputRef.current) imageInputRef.current.value = '';
   };
 
   const confirmDelete = async () => {
@@ -257,21 +263,21 @@ export const Logros = () => {
               <button type="button" className="rq-icon-close" onClick={() => setEditing(null)} aria-label="Cerrar modal"><X size={18} /></button>
             </div>
 
-            <form className="rq-form academic-modal-scroll" style={{ overflowY: 'auto' }} onSubmit={handleSubmit(setConfirmData)}>
-              <div className="rq-stack">
-                <div className="rq-field">
-                  <label htmlFor="logro-titulo-input" className="rq-field__label">Título del Logro</label>
-                  <input id="logro-titulo-input" {...register('titulo', { required: 'El título es obligatorio' })} placeholder="Primeros Pasos" className={`rq-field__input${errors.titulo ? ' rq-field__input--error' : ''}`} />
-                  {errors.titulo && <span className="rq-field__error">{errors.titulo.message}</span>}
-                </div>
+            <form className="rq-wizard-form" onSubmit={handleSubmit(setConfirmData)}>
+              <div className="academic-modal-scroll rq-modal-body">
+                <div className="rq-stack">
+                  <div className="rq-field">
+                    <label htmlFor="logro-titulo-input" className="rq-field__label">Título del Logro <span className="rq-required">*</span></label>
+                    <input id="logro-titulo-input" {...register('titulo', { required: 'El título es obligatorio' })} placeholder="Primeros Pasos" className={`rq-field__input${errors.titulo ? ' rq-field__input--error' : ''}`} />
+                    {errors.titulo && <span className="rq-field__error">{errors.titulo.message}</span>}
+                  </div>
 
-                <div className="rq-field">
-                  <label htmlFor="logro-descripcion-input" className="rq-field__label">Descripción</label>
-                  <textarea id="logro-descripcion-input" rows={2} {...register('descripcion', { required: 'La descripción es obligatoria' })} placeholder="Describe qué hay que hacer para obtenerlo..." className={`rq-field__input rq-textarea${errors.descripcion ? ' rq-field__input--error' : ''}`} />
-                  {errors.descripcion && <span className="rq-field__error">{errors.descripcion.message}</span>}
-                </div>
+                  <div className="rq-field">
+                    <label htmlFor="logro-descripcion-input" className="rq-field__label">Descripción <span className="rq-required">*</span></label>
+                    <textarea id="logro-descripcion-input" rows={2} {...register('descripcion', { required: 'La descripción es obligatoria' })} placeholder="Describe qué hay que hacer para obtenerlo..." className={`rq-field__input rq-textarea${errors.descripcion ? ' rq-field__input--error' : ''}`} />
+                    {errors.descripcion && <span className="rq-field__error">{errors.descripcion.message}</span>}
+                  </div>
 
-                <div className="rq-form-grid-2">
                   <div className="rq-field">
                     <span className="rq-field__label">Métrica requerida <span className="rq-required">*</span></span>
                     <RimaqSelect
@@ -284,42 +290,66 @@ export const Logros = () => {
                     />
                     {errors.metrica_requerida && <span className="rq-field__error">{errors.metrica_requerida.message}</span>}
                   </div>
-                  <div className="rq-field">
-                    <label htmlFor="logro-valor-input" className="rq-field__label">Valor requerido</label>
-                    <input id="logro-valor-input" type="number" {...register('valor_requerido', { required: 'Requerido' })} placeholder="1" className={`rq-field__input rq-input-number${errors.valor_requerido ? ' rq-field__input--error' : ''}`} />
-                    {errors.valor_requerido && <span className="rq-field__error">{errors.valor_requerido.message}</span>}
-                  </div>
-                </div>
 
-                <div className="rq-form-grid-2">
-                  <div className="rq-field">
-                    <label htmlFor="logro-xp-input" className="rq-field__label">XP de recompensa</label>
-                    <input id="logro-xp-input" type="number" {...register('xp_recompensa', { required: 'Requerido' })} placeholder="50" className={`rq-field__input rq-input-number${errors.xp_recompensa ? ' rq-field__input--error' : ''}`} />
-                    {errors.xp_recompensa && <span className="rq-field__error">{errors.xp_recompensa.message}</span>}
+                  <div className="rq-form-grid-2">
+                    <div className="rq-field">
+                      <label htmlFor="logro-valor-input" className="rq-field__label">Valor requerido <span className="rq-required">*</span></label>
+                      <input id="logro-valor-input" type="number" min="1" {...register('valor_requerido', { required: 'Requerido', min: { value: 1, message: 'Mínimo 1' } })} placeholder="1" className={`rq-field__input rq-input-number${errors.valor_requerido ? ' rq-field__input--error' : ''}`} />
+                      {errors.valor_requerido && <span className="rq-field__error">{errors.valor_requerido.message}</span>}
+                    </div>
+                    <div className="rq-field">
+                      <label htmlFor="logro-xp-input" className="rq-field__label">XP de recompensa <span className="rq-required">*</span></label>
+                      <input id="logro-xp-input" type="number" min="0" step="5" {...register('xp_recompensa', { required: 'Requerido', min: { value: 0, message: 'Mínimo 0' } })} placeholder="50" className={`rq-field__input rq-input-number${errors.xp_recompensa ? ' rq-field__input--error' : ''}`} />
+                      {errors.xp_recompensa && <span className="rq-field__error">{errors.xp_recompensa.message}</span>}
+                    </div>
                   </div>
-                </div>
 
-                <div className="rq-field">
-                  <span className="rq-field__label">Medalla (imagen)</span>
-                  <div className="rq-card__row" style={{ alignItems: 'center', justifyContent: 'flex-start', marginBottom: 0 }}>
-                    {imagePreview ? (
-                      <button type="button" className="rq-thumb-zoom rq-tile rq-tile--lg" onClick={() => setLightboxImage({ src: imagePreview, alt: 'Vista previa de medalla' })} aria-label="Ampliar vista previa de medalla">
-                        <img src={imagePreview} alt="" style={{ objectFit: 'contain' }} />
-                        <span className="rq-thumb-zoom__hint"><ZoomIn size={16} /></span>
-                      </button>
-                    ) : (
-                      <span className="rq-tile rq-tile--lg rq-tile--dashed"><ImagePlus size={22} /></span>
-                    )}
-                    <div className="rq-stack" style={{ gap: 8 }}>
-                      <input id="image-upload" type="file" accept="image/*" hidden onChange={onPickImage} />
-                      <label htmlFor="image-upload" className="rq-button rq-button--ghost rq-button--sm">Seleccionar Imagen</label>
-                      <p className="rq-field__hint">Recomendado: PNG o JPG (máx. 5MB).</p>
+                  <div className="rq-field">
+                    <label htmlFor="image-upload" className="rq-field__label">Medalla (imagen)</label>
+                    <div className="rq-upload-card">
+                      <input ref={imageInputRef} id="image-upload" type="file" accept="image/*" hidden onChange={onPickImage} />
+                      {imagePreview ? (
+                        <div className="rq-upload-card__preview-row">
+                          <button
+                            type="button"
+                            className="rq-upload-card__thumb rq-thumb-zoom"
+                            onClick={() => setLightboxImage({ src: imagePreview, alt: watch('titulo') || 'Vista previa de medalla' })}
+                            aria-label="Ampliar vista previa de medalla"
+                          >
+                            <img src={imagePreview} alt="" style={{ objectFit: 'contain' }} />
+                            <span className="rq-thumb-zoom__hint"><ZoomIn size={16} /></span>
+                          </button>
+                          <div className="rq-upload-card__text">
+                            <span className="rq-upload-card__title">{imageFile ? imageFile.name : 'Medalla actual'}</span>
+                            <span className="rq-upload-card__hint">PNG, JPG o WEBP · Máx. 5MB</span>
+                          </div>
+                          <div className="rq-upload-card__actions">
+                            <label htmlFor="image-upload" className="rq-button rq-button--ghost rq-button--sm">Cambiar</label>
+                            {imageFile && (
+                              <button type="button" className="rq-icon-close" onClick={clearImage} aria-label="Quitar imagen seleccionada">
+                                <X size={16} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <label htmlFor="image-upload" className="rq-upload-card__empty">
+                          <div className="rq-upload-card__info">
+                            <div className="rq-upload-card__icon"><ImagePlus size={20} /></div>
+                            <div className="rq-upload-card__text">
+                              <span className="rq-upload-card__title">Seleccionar imagen de medalla</span>
+                              <span className="rq-upload-card__hint">Recomendado: PNG, JPG o WEBP · Máx. 5MB</span>
+                            </div>
+                          </div>
+                          <span className="rq-button rq-button--ghost rq-button--sm">Subir imagen</span>
+                        </label>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="rq-form__actions">
+              <div className="rq-modal-footer" style={{ flexShrink: 0 }}>
                 <button type="button" className="rq-button rq-button--ghost" onClick={() => setEditing(null)}>Cancelar</button>
                 <button type="submit" className="rq-button rq-button--primary">{isCreate ? 'Crear Logro' : 'Guardar Cambios'}</button>
               </div>

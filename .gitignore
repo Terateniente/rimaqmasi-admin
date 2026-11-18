@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 coverage
+playwright-report
+test-results
 *.local
 
 # Variables locales y de producción
@@ -24,6 +26,7 @@ fix_*.cjs
 *.bak
 
 # Editor directories and files
+.claude/
 .vscode/*
 !.vscode/extensions.json
 .idea

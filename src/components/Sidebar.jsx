@@ -114,7 +114,13 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMo
         aria-label="Navegación principal"
       >
         <div className="sidebar-header">
-          <Link to="/dashboard" className="sidebar-brand" onClick={closeMobile} aria-label="RimaqMasi EDU, ir al inicio">
+          <Link
+            to="/dashboard"
+            className="sidebar-brand"
+            onClick={closeMobile}
+            aria-label={isCollapsed ? 'RimaqMasi Panel administrativo, ir al inicio' : undefined}
+            title="Ir al inicio"
+          >
             <img src="/favicon.svg" alt="" className="sidebar-brand-mark" />
             <span className="sidebar-brand-text">
               <strong>RimaqMasi</strong>
@@ -195,10 +201,10 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileMenuOpen, setIsMo
             type="button"
             className="sidebar-profile"
             onClick={() => setIsProfileModalOpen(true)}
-            title={isCollapsed ? `${fullName} · Mi perfil` : undefined}
-            aria-label={`Abrir mi perfil (${fullName})`}
+            title={`${fullName} · Abrir mi perfil`}
+            aria-label={isCollapsed ? `Abrir mi perfil (${fullName})` : undefined}
           >
-            <span className="sidebar-avatar">
+            <span className="sidebar-avatar" aria-hidden="true">
               {avatarUrl && !avatarLoadFailed
                 ? <img src={avatarUrl} alt="" crossOrigin="anonymous" onError={() => setAvatarLoadFailed(true)} />
                 : (user?.nombres || 'U').charAt(0).toUpperCase()}

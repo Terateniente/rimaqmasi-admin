@@ -59,8 +59,8 @@
 
 ### Requisitos
 
-- Node.js 20 o superior.
-- npm 10 o superior.
+- Node.js `>= 20.19.0` (versión recomendada: **22 LTS**, definida en [`.nvmrc`](.nvmrc)).
+- npm `>= 10.0.0`.
 - API de RimaqMasiEDU en ejecución.
 
 ### Instalación
@@ -95,9 +95,14 @@ en Git.
 |---|---|
 | `npm run dev` | Inicia el entorno de desarrollo |
 | `npm run lint` | Revisa el código con ESLint |
+| `npm test` | Ejecuta pruebas unitarias y de componentes (Vitest) |
+| `npm run test:e2e` | Ejecuta pruebas E2E, WCAG 2.2 AA y compatibilidad (Playwright) |
+| `npm run test:e2e:a11y` | Ejecuta solo la auditoría WCAG 2.2 AA (`@axe-core/playwright`) |
+| `npm run test:e2e:compat` | Ejecuta solo la matriz de compatibilidad multi-navegador |
 | `npm run build` | Genera la aplicación optimizada en `dist/` |
 | `npm run preview` | Previsualiza la compilación |
-| `npm run deploy:package` | Crea el paquete limpio de despliegue |
+| `npm run deploy:package` | Compila, valida `.htaccess` y crea `deploy/admin-rimaqmasi.zip` |
+| `npm run smoke` | Ejecuta smoke test sobre `https://admin.rimaqmasi.com` y la API |
 
 ## Estructura principal
 
@@ -123,18 +128,32 @@ Antes de publicar una modificación:
 
 ```bash
 npm run lint
+npm test
+npm run test:e2e
 npm run build
+npm audit --omit=dev --audit-level=high
 ```
+
+## Documentación técnica y gobernanza
+
+- [Licencia](LICENSE) · [Guía de contribución](CONTRIBUTING.md) · [Propietarios](.github/CODEOWNERS)
+- [Auditoría WCAG 2.2 AA](docs/AUDITORIA_WCAG_22_AA.md)
+- [Matriz QA de compatibilidad](docs/MATRIZ_QA_COMPATIBILIDAD.md)
+- [Inventario UX y estados](docs/INVENTARIO_UX_ESTADOS.md)
+- [Guía de despliegue y smoke test productivo](docs/DESPLIEGUE_PRODUCCION.md)
 
 ## Despliegue
 
 ```powershell
 npm run deploy:package
+npm run smoke
 ```
 
 El script genera una compilación de producción preparada para un servidor web
-estático. `public/.htaccess` permite conservar las rutas internas en Apache o
-cPanel.
+estático. `public/.htaccess` incluye redirección HTTPS, cabeceras de seguridad
+(CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`,
+`Permissions-Policy`), caché inmutable para `/assets/*` y fallback SPA para
+Apache/LiteSpeed/cPanel.
 
 ---
 
