@@ -43,6 +43,8 @@ export const Preguntas = () => {
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
   const watchTipoPregunta = watch('tipo_pregunta');
+  const watchedAudioFiles = watch('audio');
+  const selectedAudioFile = watchedAudioFiles?.[0];
   
   // Opciones Form
   const { register: registerOpt, handleSubmit: handleSubmitOpt, reset: resetOpt } = useForm();
@@ -434,16 +436,16 @@ export const Preguntas = () => {
 
       {/* Modal Pregunta */}
       {isModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(4px)' }}>
-          <div className="modal-content-responsive" style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', boxShadow: 'var(--shadow-level-3)', overflow: 'hidden' }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--color-on-surface)' }}>{modalMode === 'create' ? 'Nueva Pregunta' : 'Editar Pregunta'}</h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--color-outline)', cursor: 'pointer' }}><X size={20} /></button>
+        <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pregunta-modal-title">
+          <div className="modal-content-responsive rq-modal-dialog" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="rq-modal-header">
+              <h2 id="pregunta-modal-title" className="rq-modal-header__title">{modalMode === 'create' ? 'Nueva Pregunta' : 'Editar Pregunta'}</h2>
+              <button type="button" className="rq-icon-close" onClick={() => setIsModalOpen(false)} aria-label="Cerrar modal"><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit(onSubmitPregunta)} style={{ padding: '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Tipo de Pregunta</label>
+                  <label className="rq-field__label">Tipo de Pregunta</label>
                   <input type="hidden" {...register('tipo_pregunta')} />
                   <RimaqSelect
                     value={watchTipoPregunta || 'opcion_multiple'}
@@ -458,32 +460,46 @@ export const Preguntas = () => {
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Instrucción *</label>
-                  <input type="text" {...register('instruccion', { required: true })} placeholder="Selecciona la traducción correcta" style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', outline: 'none' }} />
+                  <label htmlFor="pregunta-instruccion-input" className="rq-field__label">Instrucción *</label>
+                  <input id="pregunta-instruccion-input" type="text" {...register('instruccion', { required: true })} placeholder="Selecciona la traducción correcta" className="rq-field__input" />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Contenido Principal</label>
-                  <input type="text" {...register('contenido_principal')} placeholder="Allin p'unchay" style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', outline: 'none' }} />
+                  <label htmlFor="pregunta-contenido-input" className="rq-field__label">Contenido Principal</label>
+                  <input id="pregunta-contenido-input" type="text" {...register('contenido_principal')} placeholder="Allin p'unchay" className="rq-field__input" />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Audio (.wav, .mp3)</label>
-                  <input type="file" accept="audio/*" {...register('audio')} style={{ padding: '10px 0', color: 'var(--color-on-surface)' }} />
-                </div>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Nivel de Dificultad</label>
-                    <input type="number" min="1" max="5" {...register('nivel_dificultad')} style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', outline: 'none' }} />
+                  <label htmlFor="pregunta-audio-upload" className="rq-field__label">Audio (.wav, .mp3)</label>
+                  <input id="pregunta-audio-upload" type="file" accept="audio/*" {...register('audio')} style={{ display: 'none' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <label htmlFor="pregunta-audio-upload" className="rq-upload-pill">
+                      <span className="rq-upload-pill__icon"><Volume2 size={15} /></span>
+                      <span className={`rq-upload-pill__name ${selectedAudioFile ? 'rq-upload-pill__name--active' : ''}`}>
+                        {selectedAudioFile ? selectedAudioFile.name : 'Seleccionar archivo de audio...'}
+                      </span>
+                      <span className="rq-upload-pill__badge">{selectedAudioFile ? 'Cambiar' : 'Subir audio'}</span>
+                    </label>
+                    {selectedAudioFile && (
+                      <button type="button" className="rq-icon-close" onClick={() => setValue('audio', null)} aria-label="Quitar audio seleccionado">
+                        <X size={16} />
+                      </button>
+                    )}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, marginTop: '24px' }}>
-                    <input type="checkbox" id="activoPreg" {...register('activo')} style={{ width: '18px', height: '18px' }} />
-                    <label htmlFor="activoPreg" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-on-surface)' }}>Pregunta Activa</label>
+                </div>
+                <div className="rq-form-grid-2">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label htmlFor="pregunta-dificultad-input" className="rq-field__label">Nivel de Dificultad</label>
+                    <input id="pregunta-dificultad-input" type="number" min="1" max="5" {...register('nivel_dificultad')} className="rq-field__input" />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '28px' }}>
+                    <input type="checkbox" id="activoPreg" {...register('activo')} style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)', cursor: 'pointer' }} />
+                    <label htmlFor="activoPreg" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-on-surface)', cursor: 'pointer' }}>Pregunta Activa</label>
                   </div>
                 </div>
               </div>
-              <div style={{ padding: '24px 0 0 0', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '12px 24px', background: 'var(--color-surface-container-high)', border: 'none', borderRadius: '8px', color: 'var(--color-on-surface)', fontWeight: 600, cursor: 'pointer' }}>Cancelar</button>
-                <button type="submit" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  <Save size={18} /> Guardar
+              <div style={{ padding: '16px 0 0 0', marginTop: '20px', borderTop: '1px solid var(--color-outline-variant)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <button type="button" className="rq-button rq-button--ghost" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="rq-button rq-button--primary">
+                  <Save size={16} /> Guardar
                 </button>
               </div>
             </form>
@@ -512,7 +528,7 @@ export const Preguntas = () => {
                   <input type="checkbox" id="es_correcta" {...registerOpt('es_correcta')} style={{ width: '16px', height: '16px' }} />
                   <label htmlFor="es_correcta" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface)', cursor: 'pointer' }}>Correcta</label>
                 </div>
-                <button type="submit" style={{ padding: '10px 16px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
+                <button type="submit" style={{ padding: '10px 16px', background: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
                   {editingOpcion ? 'Actualizar' : 'Agregar'}
                 </button>
                 {editingOpcion && (

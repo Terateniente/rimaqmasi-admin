@@ -7,11 +7,22 @@ function App() {
   return (
     <AppErrorBoundary>
       <AuthProvider>
-        <Toaster 
+        <Toaster
           richColors
-          position="top-right" 
+          position="top-center"
+          offset={14}
+          gap={8}
+          visibleToasts={3}
+          duration={3500}
+          closeButton
           toastOptions={{
-            style: { fontSize: '15px', padding: '14px 18px', fontWeight: '600' }
+            style: {
+              fontSize: '13.5px',
+              padding: '11px 14px',
+              fontWeight: '600',
+              borderRadius: '12px',
+              boxShadow: 'var(--shadow-level-2)',
+            },
           }}
         />
         <AppRoutes />

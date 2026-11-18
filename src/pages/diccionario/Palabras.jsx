@@ -400,14 +400,7 @@ export const Palabras = () => {
   };
 
   return (
-    <div style={{ padding: '24px 32px', overflowY: 'auto', flex: 1 }}>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-
-      `}</style>
+    <div style={{ padding: '28px 32px', overflowY: 'auto', flex: 1 }}>
       
       <div className="flex-col-mobile" style={{ justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', gap: '16px' }}>
         <div style={{ flex: 1 }}>
@@ -592,12 +585,12 @@ export const Palabras = () => {
                         {traducciones.length === 0 ? <span style={{ color: 'var(--color-outline)' }}>Sin traducciones</span> : (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '190px' }}>
                             {traducciones.map((traduccion) => (
-                              <div key={traduccion.key} style={{ padding: '9px 11px', borderRadius: '9px', background: 'var(--color-surface-container-low)', borderLeft: '3px solid var(--color-primary)' }}>
+                              <div key={traduccion.key} style={{ padding: '10px 12px', borderRadius: '10px', background: 'var(--color-surface-container-low)', border: '1px solid var(--color-outline-variant)' }}>
                                 <div style={{ fontWeight: 700, color: 'var(--color-on-surface)' }}>{traduccion.termino}</div>
-                                <div style={{ marginTop: '7px', paddingTop: '7px', borderTop: '1px solid var(--color-surface-variant)' }}>
+                                <div style={{ marginTop: '7px', paddingTop: '7px', borderTop: '1px solid var(--color-outline-variant)' }}>
                                   <LanguageBadge idioma={traduccion.idioma} compact />
-                                  <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--color-outline)' }}>
-                                    Traducción creada por: <strong style={{ color: 'var(--color-on-surface-variant)' }}>{getUserDisplayName(traduccion.creadoPor)}</strong>
+                                  <div style={{ marginTop: '6px', fontSize: '11.5px', color: 'var(--color-on-surface-variant)' }}>
+                                    Traducción creada por: <strong style={{ color: 'var(--color-on-surface)' }}>{getUserDisplayName(traduccion.creadoPor)}</strong>
                                   </div>
                                 </div>
                               </div>
@@ -803,14 +796,39 @@ export const Palabras = () => {
                   
                   {/* Imagen */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)', display: 'flex', alignItems: 'center', gap: '6px' }}><ImageIcon size={14} /> Imagen Representativa</label>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', border: '2px dashed var(--color-outline)', borderRadius: '12px', alignItems: 'center', backgroundColor: 'var(--color-surface-container-lowest)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--color-primary)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--color-outline)'} onClick={() => document.getElementById('imagen-upload').click()}>
+                    <label className="rq-field__label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ImageIcon size={14} /> Imagen Representativa</label>
+                    <div className="rq-upload-card">
                       {imagenPreview ? (
-                        <img src={imagenPreview} alt="Preview" style={{ width: '100%', height: '140px', objectFit: 'contain', borderRadius: '8px' }} />
+                        <div className="rq-upload-card__preview-row">
+                          <button
+                            type="button"
+                            className="rq-upload-card__thumb rq-thumb-zoom"
+                            onClick={() => setSelectedImage({ src: imagenPreview, title: watch('termino') || 'Imagen de palabra' })}
+                            title="Haz clic para ampliar"
+                            aria-label="Ampliar imagen representativa"
+                          >
+                            <img src={imagenPreview} alt="Preview" style={{ objectFit: 'contain' }} />
+                            <span className="rq-thumb-zoom__hint"><Eye size={16} /></span>
+                          </button>
+                          <div className="rq-upload-card__text">
+                            <span className="rq-upload-card__title">{imagenFile ? imagenFile.name : 'Imagen cargada'}</span>
+                            <span className="rq-upload-card__hint">Haz clic en la miniatura para ampliarla</span>
+                          </div>
+                          <div className="rq-upload-card__actions">
+                            <button type="button" className="rq-button rq-button--ghost" style={{ minHeight: '36px', padding: '0 12px', fontSize: '12.5px' }} onClick={() => document.getElementById('imagen-upload').click()}>
+                              Cambiar
+                            </button>
+                          </div>
+                        </div>
                       ) : (
-                        <div style={{ textAlign: 'center', color: 'var(--color-outline)' }}>
-                          <Upload size={24} style={{ marginBottom: '8px', margin: '0 auto' }} />
-                          <p style={{ margin: 0, fontSize: '13px' }}>Haz clic para subir una imagen</p>
+                        <div className="rq-upload-card__empty" onClick={() => document.getElementById('imagen-upload').click()}>
+                          <div className="rq-upload-card__info">
+                            <div className="rq-upload-card__icon"><Upload size={18} /></div>
+                            <div className="rq-upload-card__text">
+                              <span className="rq-upload-card__title">Haz clic para subir una imagen</span>
+                              <span className="rq-upload-card__hint">PNG, JPG o WEBP</span>
+                            </div>
+                          </div>
                         </div>
                       )}
                       <input id="imagen-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
@@ -937,9 +955,9 @@ export const Palabras = () => {
                   <button type="button" onClick={() => setCurrentStep(step => step - 1)} style={{ padding: '10px 16px', background: 'transparent', border: '1px solid var(--color-outline-variant)', color: 'var(--color-on-surface)', fontWeight: 600, cursor: 'pointer', borderRadius: '8px' }}>Anterior</button>
                 )}
                 {currentStep < 3 ? (
-                  <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); handleNextWordStep(); }} style={{ padding: '10px 24px', backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(153, 27, 27, 0.2)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>Continuar</button>
+                  <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); handleNextWordStep(); }} style={{ padding: '10px 24px', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(153, 27, 27, 0.2)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>Continuar</button>
                 ) : (
-                  <button type="button" onClick={handleSubmit(handlePreSubmit)} style={{ padding: '10px 24px', backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(153, 27, 27, 0.2)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>{isEditMode ? 'Guardar cambios' : 'Crear Palabra'}</button>
+                  <button type="button" onClick={handleSubmit(handlePreSubmit)} style={{ padding: '10px 24px', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(153, 27, 27, 0.2)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>{isEditMode ? 'Guardar cambios' : 'Crear Palabra'}</button>
                 )}
                 </div>
               </div>
@@ -952,11 +970,11 @@ export const Palabras = () => {
       {confirmData && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1060, backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', width: '360px', padding: '32px 24px', textAlign: 'center', boxShadow: 'var(--shadow-level-3)' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--color-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}><Save size={32} /></div>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}><Save size={32} /></div>
             <h2 style={{ margin: '0 0 8px 0', fontSize: '20px', color: 'var(--color-on-surface)' }}>¿{isEditMode ? 'Guardar cambios' : 'Crear Palabra'}?</h2>
             <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
               <button onClick={() => setConfirmData(null)} style={{ flex: 1, padding: '12px', background: 'var(--color-surface-container-high)', border: 'none', borderRadius: '8px', color: 'var(--color-on-surface)', fontWeight: 600, cursor: 'pointer' }}>Cancelar</button>
-              <button onClick={confirmSubmit} style={{ flex: 1, padding: '12px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Sí, confirmar</button>
+              <button onClick={confirmSubmit} style={{ flex: 1, padding: '12px', background: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Sí, confirmar</button>
             </div>
           </div>
         </div>
@@ -965,12 +983,19 @@ export const Palabras = () => {
       <DeleteConfirmationModal open={Boolean(itemToDelete)} title="¿Eliminar palabra?" itemName={itemToDelete?.termino} onCancel={() => setItemToDelete(null)} onConfirm={confirmDelete} />
 
       {selectedImage && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200, padding: '24px', backdropFilter: 'blur(4px)' }} onClick={() => setSelectedImage(null)}>
-          <div style={{ position: 'relative', maxWidth: '100%', maxHeight: '100%' }} onClick={e => e.stopPropagation()}>
-            <button onClick={() => setSelectedImage(null)} style={{ position: 'absolute', top: '-40px', right: '0', background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '8px' }}>
-              <X size={24} />
-            </button>
-            <img src={getFileUrl(selectedImage.url)} alt={selectedImage.title} style={{ maxWidth: '100%', maxHeight: '85vh', borderRadius: '12px', objectFit: 'contain', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }} crossOrigin="anonymous" />
+        <div className="rq-modal-backdrop rq-lightbox-backdrop" role="dialog" aria-modal="true" aria-label={selectedImage.title || 'Imagen'} onClick={() => setSelectedImage(null)}>
+          <div className="rq-lightbox-dialog" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-on-surface)' }}>
+                {selectedImage.title || 'Vista previa de imagen'}
+              </span>
+              <button type="button" className="rq-icon-close" onClick={() => setSelectedImage(null)} aria-label="Cerrar imagen ampliada">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="rq-lightbox-stage">
+              <img src={selectedImage.src || getFileUrl(selectedImage.url)} alt={selectedImage.title} crossOrigin="anonymous" />
+            </div>
           </div>
         </div>
       )}

@@ -302,7 +302,7 @@ export const PalabraDetalle = () => {
         </div>
       </section>
 
-      <section style={{ background: 'var(--color-surface)', border: '1px solid var(--color-surface-variant)', borderRadius: '16px', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-level-1)' }}>
+      <section style={{ background: 'var(--color-surface)', border: '1px solid var(--color-outline-variant)', borderRadius: 'var(--card-radius)', padding: '20px', marginBottom: '24px', boxShadow: 'var(--shadow-level-1)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <div>
             <h2 style={{ fontSize: '18px', margin: 0, color: 'var(--color-on-surface)' }}>Traducciones disponibles</h2>
@@ -326,10 +326,10 @@ export const PalabraDetalle = () => {
           </div>
         </div>
         {traduccionesVisibles.length === 0 ? <div style={{ padding: '24px', textAlign: 'center', borderRadius: '12px', background: 'var(--color-surface-container-low)', color: 'var(--color-outline)' }}>No hay traducciones registradas para este idioma.</div> : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
             {traduccionesVisibles.map((traduccion) => {
               const flag = getIdiomaBandera(traduccion.idioma);
-              return <article key={traduccion.key} style={{ padding: '18px', borderRadius: '15px', border: '1px solid var(--color-surface-variant)', background: 'var(--color-surface-container-lowest)', borderTop: '4px solid var(--color-primary)', boxShadow: 'var(--shadow-level-1)' }}>
+              return <article key={traduccion.key} className="rq-card" style={{ padding: '20px', background: 'var(--color-surface-container-low)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '10px' }}>
                   {flag ? <img src={getFileUrl(flag)} alt="" style={{ width: '28px', height: '20px', objectFit: 'cover', borderRadius: '4px' }} /> : <Languages size={19} />}
                   <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>{getIdiomaNombre(traduccion.idioma)}</span>
@@ -519,7 +519,7 @@ export const PalabraDetalle = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setIsDefinicionModalOpen(false)} style={{ padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer' }}>Cancelar</button>
-                <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Guardar</button>
+                <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Guardar</button>
               </div>
             </form>
           </div>
@@ -528,25 +528,44 @@ export const PalabraDetalle = () => {
 
       {/* Modal Añadir Ejemplo */}
       {isEjemploModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="modal-content-responsive" style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-level-3)' }}>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: '18px' }}>Añadir Ejemplo</h2>
-            <form onSubmit={submitEj(handleAddEjemplo)} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 600 }}>Ejemplo de Uso</label>
-                <textarea {...regEj('ejemplo_texto', { required: true })} rows={2} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid var(--color-outline)', marginTop: '4px' }} />
+        <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="detalle-ejemplo-modal-title">
+          <div className="modal-content-responsive rq-modal-dialog" style={{ maxWidth: '480px', padding: 0, overflow: 'hidden' }}>
+            <div className="rq-modal-header">
+              <h2 id="detalle-ejemplo-modal-title" className="rq-modal-header__title">Añadir Ejemplo</h2>
+              <button type="button" className="rq-icon-close" onClick={() => setIsEjemploModalOpen(false)} aria-label="Cerrar modal">
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={submitEj(handleAddEjemplo)} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label className="rq-field__label">Ejemplo de Uso</label>
+                <textarea {...regEj('ejemplo_texto', { required: true })} rows={2} className="rq-field__input" style={{ minHeight: '72px', resize: 'vertical' }} />
               </div>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 600 }}>Traducción</label>
-                <textarea {...regEj('traduccion_ejemplo')} rows={2} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid var(--color-outline)', marginTop: '4px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label className="rq-field__label">Traducción</label>
+                <textarea {...regEj('traduccion_ejemplo')} rows={2} className="rq-field__input" style={{ minHeight: '72px', resize: 'vertical' }} />
               </div>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 600 }}>Audio (Opcional)</label>
-                <input type="file" accept="audio/*" onChange={(e) => setEjemploAudioFile(e.target.files[0])} style={{ width: '100%', marginTop: '4px', fontSize: '12px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label htmlFor="detalle-ejemplo-audio-upload" className="rq-field__label">Audio (Opcional)</label>
+                <input id="detalle-ejemplo-audio-upload" type="file" accept="audio/*" onChange={(e) => setEjemploAudioFile(e.target.files[0] || null)} style={{ display: 'none' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label htmlFor="detalle-ejemplo-audio-upload" className="rq-upload-pill">
+                    <span className="rq-upload-pill__icon"><Upload size={15} /></span>
+                    <span className={`rq-upload-pill__name ${ejemploAudioFile ? 'rq-upload-pill__name--active' : ''}`}>
+                      {ejemploAudioFile ? ejemploAudioFile.name : 'Seleccionar archivo de audio...'}
+                    </span>
+                    <span className="rq-upload-pill__badge">{ejemploAudioFile ? 'Cambiar' : 'Subir audio'}</span>
+                  </label>
+                  {ejemploAudioFile && (
+                    <button type="button" className="rq-icon-close" onClick={() => setEjemploAudioFile(null)} aria-label="Quitar audio">
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
-                <button type="button" onClick={() => setIsEjemploModalOpen(false)} style={{ padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer' }}>Cancelar</button>
-                <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Guardar</button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px', paddingTop: '14px', borderTop: '1px solid var(--color-outline-variant)' }}>
+                <button type="button" className="rq-button rq-button--ghost" onClick={() => setIsEjemploModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="rq-button rq-button--primary">Guardar</button>
               </div>
             </form>
           </div>
@@ -555,14 +574,37 @@ export const PalabraDetalle = () => {
 
       {/* Modal Cambiar Audio Palabra */}
       {isAudioModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="modal-content-responsive" style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-level-3)' }}>
-            <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}><FileAudio size={20} /> Actualizar Audio</h2>
-            <form onSubmit={handleUploadPalabraAudio}>
-              <input type="file" accept="audio/*" onChange={(e) => setPalabraAudioFile(e.target.files[0])} style={{ width: '100%', padding: '8px', marginBottom: '24px' }} />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                <button type="button" onClick={() => setIsAudioModalOpen(false)} style={{ padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer' }}>Cancelar</button>
-                <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Subir Audio</button>
+        <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="detalle-audio-modal-title">
+          <div className="modal-content-responsive rq-modal-dialog" style={{ maxWidth: '460px', padding: 0, overflow: 'hidden' }}>
+            <div className="rq-modal-header">
+              <h2 id="detalle-audio-modal-title" className="rq-modal-header__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FileAudio size={20} color="var(--color-primary-text)" /> Actualizar Audio
+              </h2>
+              <button type="button" className="rq-icon-close" onClick={() => setIsAudioModalOpen(false)} aria-label="Cerrar modal">
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleUploadPalabraAudio} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              <div>
+                <input id="detalle-palabra-audio-upload" type="file" accept="audio/*" onChange={(e) => setPalabraAudioFile(e.target.files[0] || null)} style={{ display: 'none' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label htmlFor="detalle-palabra-audio-upload" className="rq-upload-pill">
+                    <span className="rq-upload-pill__icon"><FileAudio size={15} /></span>
+                    <span className={`rq-upload-pill__name ${palabraAudioFile ? 'rq-upload-pill__name--active' : ''}`}>
+                      {palabraAudioFile ? palabraAudioFile.name : 'Seleccionar archivo de audio...'}
+                    </span>
+                    <span className="rq-upload-pill__badge">{palabraAudioFile ? 'Cambiar' : 'Subir audio'}</span>
+                  </label>
+                  {palabraAudioFile && (
+                    <button type="button" className="rq-icon-close" onClick={() => setPalabraAudioFile(null)} aria-label="Quitar audio">
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', paddingTop: '14px', borderTop: '1px solid var(--color-outline-variant)' }}>
+                <button type="button" className="rq-button rq-button--ghost" onClick={() => setIsAudioModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="rq-button rq-button--primary">Subir Audio</button>
               </div>
             </form>
           </div>
@@ -571,12 +613,19 @@ export const PalabraDetalle = () => {
 
       {/* Modal Imagen Completa */}
       {isImageModalOpen && palabra.url_imagen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200, padding: '24px', backdropFilter: 'blur(4px)' }} onClick={() => setIsImageModalOpen(false)}>
-          <div style={{ position: 'relative', maxWidth: '100%', maxHeight: '100%' }} onClick={e => e.stopPropagation()}>
-            <button onClick={() => setIsImageModalOpen(false)} style={{ position: 'absolute', top: '-40px', right: '0', background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '8px' }}>
-              <X size={24} />
-            </button>
-            <img src={getFileUrl(palabra.url_imagen)} alt={palabra.termino} style={{ maxWidth: '100%', maxHeight: '85vh', borderRadius: '12px', objectFit: 'contain', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }} crossOrigin="anonymous" />
+        <div className="rq-modal-backdrop rq-lightbox-backdrop" role="dialog" aria-modal="true" aria-label={palabra.termino} onClick={() => setIsImageModalOpen(false)}>
+          <div className="rq-lightbox-dialog" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-on-surface)' }}>
+                {palabra.termino}
+              </span>
+              <button type="button" className="rq-icon-close" onClick={() => setIsImageModalOpen(false)} aria-label="Cerrar imagen ampliada">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="rq-lightbox-stage">
+              <img src={getFileUrl(palabra.url_imagen)} alt={palabra.termino} crossOrigin="anonymous" />
+            </div>
           </div>
         </div>
       )}

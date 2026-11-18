@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 
 export const IconPicker = ({ value, onChange, error }) => {
@@ -8,6 +8,7 @@ export const IconPicker = ({ value, onChange, error }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const timeoutRef = useRef(null);
+  const inputId = useId();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -66,82 +67,84 @@ export const IconPicker = ({ value, onChange, error }) => {
   const getIconUrl = (iconName) => {
     if (!iconName) return '';
     const [prefix, name] = iconName.split(':');
-    return `https://api.iconify.design/${prefix}/${name}.svg?color=%23475569`;
+    return `https://api.iconify.design/${prefix}/${name}.svg?color=%2394a3b8`;
   };
 
   const defaultIcons = [
-    'lucide:book', 'lucide:graduation-cap', 'lucide:brain', 'lucide:star', 'lucide:award', 
+    'lucide:book', 'lucide:graduation-cap', 'lucide:brain', 'lucide:star', 'lucide:award',
     'lucide:heart', 'lucide:smile', 'lucide:zap', 'lucide:target', 'lucide:flag',
     'lucide:music', 'lucide:message-circle', 'lucide:users', 'lucide:globe', 'lucide:sun',
-    'lucide:moon', 'lucide:cloud', 'lucide:camera', 'lucide:play', 'lucide:check-circle'
+    'lucide:moon', 'lucide:cloud', 'lucide:camera', 'lucide:play', 'lucide:check-circle',
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }} ref={dropdownRef}>
-      <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Ícono (Buscar en API)</label>
+      <label htmlFor={inputId} className="rq-field__label">Ícono (buscar en catálogo)</label>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ 
-          width: '42px', height: '42px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', 
-          backgroundColor: 'var(--color-surface-container-low)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0
-        }}>
+        <div
+          style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '10px',
+            border: '1px solid var(--color-outline-variant)',
+            backgroundColor: 'var(--color-surface-container-low)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
           {value ? (
-            <img src={getIconUrl(value)} alt="Icon preview" style={{ width: '24px', height: '24px' }} />
+            <img src={getIconUrl(value)} alt="Vista previa del ícono" style={{ width: '24px', height: '24px' }} />
           ) : (
-            <ImageIcon size={20} color="var(--color-outline)" opacity={0.5} />
+            <ImageIcon size={20} color="var(--color-text-muted)" />
           )}
         </div>
-        
+
         <div style={{ position: 'relative', flex: 1 }}>
-          <input 
-            type="text" 
-            placeholder="Libro, estrella..." 
+          <input
+            id={inputId}
+            type="text"
+            placeholder="Libro, estrella…"
             value={query}
             onChange={handleQueryChange}
             onFocus={() => setShowDropdown(true)}
-            style={{ 
-              width: '100%', padding: '12px 16px', borderRadius: '8px', 
-              border: `1px solid ${error ? 'var(--color-error)' : 'var(--color-surface-variant)'}`, 
-              backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', 
-              outline: 'none', fontSize: '14px', boxSizing: 'border-box'
-            }} 
+            className={`rq-field__input ${error ? 'rq-field__input--error' : ''}`.trim()}
           />
-          {loading && <span style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '12px', color: 'var(--color-outline)' }}>Buscando...</span>}
+          {loading && (
+            <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: 'var(--color-on-surface-variant)' }}>
+              Buscando…
+            </span>
+          )}
         </div>
       </div>
-      
-      {error && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{error}</span>}
-      {value && !showDropdown && <span style={{ fontSize: '11px', color: 'var(--color-primary)' }}>Seleccionado: {value}</span>}
+
+      {error && <span className="rq-field__error">{error}</span>}
+      {value && !showDropdown && (
+        <span style={{ fontSize: '11.5px', color: 'var(--color-primary-text)', fontWeight: 600 }}>
+          Seleccionado: {value}
+        </span>
+      )}
 
       {showDropdown && (
-        <div style={{ 
-          position: 'absolute', top: '100%', left: '54px', right: 0, marginTop: '4px', 
-          backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-surface-variant)', 
-          borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 9999,
-          maxHeight: '200px', overflowY: 'auto', padding: '12px'
-        }}>
+        <div className="rq-icon-picker__dropdown">
           {icons.length > 0 || query.length === 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(40px, 1fr))', gap: '8px' }}>
-              {(query.length === 0 ? defaultIcons : icons).map(icon => (
+              {(query.length === 0 ? defaultIcons : icons).map((icon) => (
                 <button
                   key={icon}
                   type="button"
                   onClick={() => handleSelectIcon(icon)}
                   title={icon}
-                  style={{
-                    padding: '8px', background: 'var(--color-surface-container-low)', border: '1px solid var(--color-surface-variant)',
-                    borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.background = '#e0f2fe'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--color-surface-variant)'; e.currentTarget.style.background = 'var(--color-surface-container-low)'; }}
+                  aria-label={`Seleccionar ícono ${icon}`}
+                  className="rq-icon-picker__option"
                 >
                   <img src={getIconUrl(icon)} alt={icon} style={{ width: '20px', height: '20px' }} />
                 </button>
               ))}
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '16px', color: 'var(--color-outline)', fontSize: '13px' }}>
+            <div style={{ textAlign: 'center', padding: '16px', color: 'var(--color-on-surface-variant)', fontSize: '13px' }}>
               {!loading && 'No se encontraron íconos'}
             </div>
           )}

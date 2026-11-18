@@ -5,6 +5,7 @@ import {
   ChevronDown, Download, Flame, Edit2, Trash2, ShieldCheck, X, Power, UserPlus, Eye, EyeOff
 } from 'lucide-react';
 import { getUsuarios, deleteUsuario, cambiarEstadoUsuario, createUsuario } from '../../services/userService';
+import { downloadCsv } from '../../services/analyticsService';
 import { matchesSearch } from '../../utils/searchUtils';
 import { AuthContext } from '../../context/AuthContext';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
@@ -142,6 +143,26 @@ export const Usuarios = () => {
     }
   };
 
+  const handleExportCsv = () => {
+    if (!filteredUsuarios.length) {
+      toast.info('No hay usuarios visibles para exportar');
+      return;
+    }
+    const rows = filteredUsuarios.map((u) => ({
+      Nombres: u.nombres || '',
+      Apellidos: u.apellidos || '',
+      Correo: u.correo || '',
+      Rol: u.rol || 'estudiante',
+      Estado: u.estado || 'activo',
+      RachaDias: u.racha_actual || 0,
+      XPTotal: u.xp_total || 0,
+      Registro: u.creado_en ? formatDate(u.creado_en) : '',
+    }));
+    const fecha = new Date().toISOString().slice(0, 10);
+    downloadCsv(`rimaqmasi-usuarios-${activeTab}-${fecha}.csv`, rows);
+    toast.success(`Exportados ${rows.length} usuarios a CSV`);
+  };
+
   const students = usuarios.filter(u => ['student', 'estudiante', 'alumno'].includes(u.rol?.toLowerCase()));
   const activeStudents = students.filter(u => u.estado !== 'desactivado').length;
   const totalXp = students.reduce((acc, u) => acc + (u.xp_total || 0), 0);
@@ -197,9 +218,9 @@ export const Usuarios = () => {
           ))
         ) : (
           [
-            { label: 'Estudiantes Activos', value: activeStudents.toLocaleString(), icon: <GraduationCap size={20} color="var(--color-secondary)" />, bg: 'color-mix(in srgb, var(--color-secondary) 15%, transparent)' },
-            { label: 'XP Total', value: (totalXp >= 1000 ? (totalXp/1000).toFixed(1) + 'k' : totalXp), icon: <Trophy size={20} color="var(--color-tertiary)" />, bg: 'color-mix(in srgb, var(--color-tertiary) 15%, transparent)' },
-            { label: 'Racha Promedio', value: formatDays(avgStreak), icon: <Flame size={20} color="var(--color-error)" />, bg: 'color-mix(in srgb, var(--color-error) 15%, transparent)' }
+            { label: 'Estudiantes Activos', value: activeStudents.toLocaleString(), icon: <GraduationCap size={20} color="var(--color-secondary-text)" />, bg: 'var(--color-secondary-container)' },
+            { label: 'XP Total', value: (totalXp >= 1000 ? (totalXp/1000).toFixed(1) + 'k' : totalXp), icon: <Trophy size={20} color="var(--color-tertiary-text)" />, bg: 'var(--color-tertiary-container)' },
+            { label: 'Racha Promedio', value: formatDays(avgStreak), icon: <Flame size={20} color="var(--color-error-text)" />, bg: 'var(--color-error-container)' }
           ].map((stat, i) => (
             <div key={i} className="stat-card">
               <div className="stat-card-info">
@@ -235,15 +256,16 @@ export const Usuarios = () => {
       {/* Buscador y Filtros */}
       <div className="table-controls">
         <div className="search-input-wrapper">
-          <Search size={16} color="var(--color-outline)" />
+          <Search size={16} color="var(--color-on-surface-variant)" aria-hidden="true" />
           <input 
             type="text" 
             placeholder="Buscar usuarios por nombre o correo..." 
+            aria-label="Buscar usuarios por nombre o correo"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className="btn-secondary">
+        <button type="button" className="btn-secondary" onClick={handleExportCsv}>
           <Download size={16} /> Exportar CSV
         </button>
       </div>
@@ -314,15 +336,15 @@ export const Usuarios = () => {
                       {activeTab === 'estudiantes' && (
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Flame size={16} color="var(--color-error)" />
+                            <Flame size={16} color="var(--color-error-text)" />
                             <span style={{ fontWeight: 600, color: 'var(--color-on-surface)' }}>{formatDays(u.racha_actual || 0)}</span>
                           </div>
                         </td>
                       )}
                       {activeTab === 'estudiantes' && (
                         <td style={{ minWidth: '140px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '11px' }}>
-                            <span style={{ fontWeight: 700, color: 'var(--color-secondary)' }}>{xpTotal.toLocaleString()} XP</span>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '11.5px' }}>
+                            <span style={{ fontWeight: 700, color: 'var(--color-secondary-text)' }}>{xpTotal.toLocaleString()} XP</span>
                             <span style={{ color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>Nvl {level}</span>
                           </div>
                           <div className="xp-progress-bar">
@@ -378,9 +400,9 @@ export const Usuarios = () => {
             <span>Mostrando {filteredUsuarios.length} usuarios</span>
             {/* Paginación mock */}
             <div className="pagination">
-              <button>{'<'}</button>
-              <button className="active">1</button>
-              <button>{'>'}</button>
+              <button type="button" disabled aria-label="Página anterior">{'<'}</button>
+              <button type="button" className="active" aria-current="page">1</button>
+              <button type="button" disabled aria-label="Página siguiente">{'>'}</button>
             </div>
           </div>
         )}
@@ -398,99 +420,110 @@ export const Usuarios = () => {
         confirmDisabled={deleteConfirmText.trim().toLowerCase() !== (usuarioToDelete?.nombres || '').trim().toLowerCase()}
       >
         <div style={{ marginTop: '20px', textAlign: 'left' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>
+          <label htmlFor="delete-user-confirm-input" style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>
             Escribe el nombre del usuario ({(usuarioToDelete?.nombres || '').trim()}) para confirmar
           </label>
-          <input 
-            type="text" 
+          <input
+            id="delete-user-confirm-input"
+            type="text"
             value={deleteConfirmText}
             onChange={(e) => setDeleteConfirmText(e.target.value)}
             placeholder={usuarioToDelete?.nombres}
-            style={{ 
-              width: '100%', padding: '12px 16px', borderRadius: '8px', 
-              border: '1px solid var(--color-outline-variant)', backgroundColor: 'var(--color-surface-container)',
-              color: 'var(--color-on-surface)', fontSize: '15px', outline: 'none', boxSizing: 'border-box',
-              transition: 'border-color 0.2s'
-            }}
-            onFocus={e => e.target.style.borderColor = 'var(--color-error)'}
-            onBlur={e => e.target.style.borderColor = 'var(--color-outline-variant)'}
+            className="rq-field__input"
           />
         </div>
       </DeleteConfirmationModal>
 
       {/* Modal Crear Administrador */}
       {showCreateModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-          <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '20px', padding: '32px', boxShadow: 'var(--shadow-level-3)', width: '100%', maxWidth: '500px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div
+          role="presentation"
+          className="rq-modal-backdrop"
+          onClick={() => !isCreating && setShowCreateModal(false)}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="create-admin-modal-title"
+            className="rq-modal-dialog"
+            style={{ width: 'min(500px, 100%)', padding: '28px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', backgroundColor: 'color-mix(in srgb, var(--color-primary) 15%, transparent)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <UserPlus color="var(--color-primary)" size={20} />
+                <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--color-primary-container)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <UserPlus color="var(--color-primary-text)" size={20} />
                 </div>
-                <h2 style={{ margin: 0, fontSize: '20px', color: 'var(--color-on-surface)', fontWeight: 700 }}>Nuevo Administrador</h2>
+                <h2 id="create-admin-modal-title" style={{ margin: 0, fontSize: '20px', color: 'var(--color-on-surface)', fontWeight: 700 }}>Nuevo Administrador</h2>
               </div>
-              <button onClick={() => setShowCreateModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-outline)' }}>
-                <X size={24} />
+              <button type="button" onClick={() => setShowCreateModal(false)} aria-label="Cerrar modal" className="rq-icon-close">
+                <X size={18} />
               </button>
             </div>
-            
+
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                <div style={{ flex: '1 1 calc(50% - 8px)' }}>
-                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-on-surface-variant)' }}>Nombre</label>
-                  <input 
+              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                <div style={{ flex: '1 1 calc(50% - 7px)' }}>
+                  <label htmlFor="create-admin-nombres" className="rq-field__label" style={{ display: 'block', marginBottom: '6px' }}>Nombre</label>
+                  <input
+                    id="create-admin-nombres"
                     type="text" required
                     value={createData.nombres} onChange={e => setCreateData({...createData, nombres: e.target.value})}
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--color-outline-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', outline: 'none', boxSizing: 'border-box', fontSize: '14px' }}
+                    className="rq-field__input"
                   />
                 </div>
-                <div style={{ flex: '1 1 calc(50% - 8px)' }}>
-                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-on-surface-variant)' }}>Apellido</label>
-                  <input 
+                <div style={{ flex: '1 1 calc(50% - 7px)' }}>
+                  <label htmlFor="create-admin-apellidos" className="rq-field__label" style={{ display: 'block', marginBottom: '6px' }}>Apellido</label>
+                  <input
+                    id="create-admin-apellidos"
                     type="text" required
                     value={createData.apellidos} onChange={e => setCreateData({...createData, apellidos: e.target.value})}
-                    style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--color-outline-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', outline: 'none', boxSizing: 'border-box', fontSize: '14px' }}
+                    className="rq-field__input"
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-on-surface-variant)' }}>Correo Electrónico</label>
-                <input 
+                <label htmlFor="create-admin-correo" className="rq-field__label" style={{ display: 'block', marginBottom: '6px' }}>Correo Electrónico</label>
+                <input
+                  id="create-admin-correo"
                   type="email" required placeholder="admin@rimaqmasi.com"
                   value={createData.correo} onChange={e => setCreateData({...createData, correo: e.target.value})}
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--color-outline-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', outline: 'none', boxSizing: 'border-box', fontSize: '14px' }}
+                  className="rq-field__input"
                 />
               </div>
-              
+
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-on-surface-variant)' }}>Contraseña Provisoria</label>
+                <label htmlFor="create-admin-password" className="rq-field__label" style={{ display: 'block', marginBottom: '6px' }}>Contraseña Provisoria</label>
                 <div style={{ position: 'relative' }}>
-                  <input 
+                  <input
+                    id="create-admin-password"
                     type={showPassword ? "text" : "password"} required minLength={6} placeholder="Mínimo 6 caracteres"
                     value={createData.contrasena} onChange={e => setCreateData({...createData, contrasena: e.target.value})}
-                    style={{ width: '100%', padding: '12px 40px 12px 14px', borderRadius: '10px', border: '1px solid var(--color-outline-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', outline: 'none', boxSizing: 'border-box', fontSize: '14px' }}
+                    className="rq-field__input"
+                    style={{ paddingRight: '42px' }}
                   />
-                  <button 
-                    type="button" 
-                    onClick={() => setShowPassword(!showPassword)} 
-                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--color-outline)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="rq-profile-modal__eye"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                <button type="button" onClick={() => setShowCreateModal(false)} disabled={isCreating} style={{ flex: 1, padding: '12px', borderRadius: '10px', backgroundColor: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)', border: 'none', fontWeight: 600, cursor: 'pointer', transition: 'background-color 0.2s' }} onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)'} onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-container-high)'}>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '8px', paddingTop: '16px', borderTop: '1px solid var(--color-outline-variant)' }}>
+                <button type="button" onClick={() => setShowCreateModal(false)} disabled={isCreating} className="rq-button rq-button--ghost" style={{ flex: 1 }}>
                   Cancelar
                 </button>
-                <button type="submit" disabled={isCreating} style={{ flex: 1, padding: '12px', borderRadius: '10px', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', fontWeight: 600, cursor: isCreating ? 'not-allowed' : 'pointer', opacity: isCreating ? 0.8 : 1, transition: 'all 0.2s', boxShadow: '0 4px 12px color-mix(in srgb, var(--color-primary) 30%, transparent)' }} onMouseOver={e => !isCreating && (e.currentTarget.style.filter = 'brightness(1.1)')} onMouseOut={e => e.currentTarget.style.filter = 'none'}>
-                  {isCreating ? 'Creando...' : 'Crear Administrador'}
+                <button type="submit" disabled={isCreating} className="rq-button rq-button--primary" style={{ flex: 1 }}>
+                  {isCreating ? 'Creando…' : 'Crear Administrador'}
                 </button>
               </div>
             </form>
-          </div>
+          </section>
         </div>
       )}
 

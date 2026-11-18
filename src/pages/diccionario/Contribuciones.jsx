@@ -43,14 +43,14 @@ export const Contribuciones = () => {
       </div>
       <div className="analytics-header-icon"><FileText size={25} /></div>
     </header>
-    <section style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '32px', alignItems: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', background: 'var(--color-surface)', border: '1px solid var(--color-surface-variant)', borderRadius: '12px', padding: '0 16px', height: '48px', flex: '1 1 300px', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
-        <Search size={20} color="var(--color-on-surface-variant)" style={{ marginRight: '12px' }} />
+    <section style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '28px', alignItems: 'center' }}>
+      <div className="rq-search-box rq-search-field" style={{ flex: '1 1 300px' }}>
+        <Search size={18} strokeWidth={2.5} />
         <input 
           value={search} 
           onChange={event => setSearch(event.target.value)} 
           placeholder="Buscar palabra, significado o autor..." 
-          style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '15px', color: 'var(--color-on-surface)' }} 
+          className="rq-search-field__input"
         />
       </div>
 
@@ -90,28 +90,28 @@ export const Contribuciones = () => {
         </p>
       </div>
     ) : <div className="contribution-grid responsive-grid">
-      {filtered.map(item => <article key={item.contribucion_id} className="contribution-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {filtered.map(item => <article key={item.contribucion_id} className="contribution-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: item.estado === 'pendiente' ? '#FEF9C3' : item.estado === 'aprobada' ? '#DCFCE7' : '#FEE2E2', color: item.estado === 'pendiente' ? '#854D0E' : item.estado === 'aprobada' ? '#166534' : '#991B1B' }}>{labels[item.estado]}</span>
-            <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: 'var(--color-surface-variant)', color: 'var(--color-on-surface)' }}>{item.tipo === 'palabra' ? 'Nueva palabra' : 'Nuevo significado'}</span>
+            <span style={{ padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 700, background: item.estado === 'pendiente' ? 'var(--color-warning-container)' : item.estado === 'aprobada' ? 'var(--color-success-container)' : 'var(--color-error-container)', color: item.estado === 'pendiente' ? 'var(--color-on-warning-container)' : item.estado === 'aprobada' ? 'var(--color-on-success-container)' : 'var(--color-on-error-container)' }}>{labels[item.estado]}</span>
+            <span style={{ padding: '4px 12px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface-variant)' }}>{item.tipo === 'palabra' ? 'Nueva palabra' : 'Nuevo significado'}</span>
           </div>
-          <time style={{ fontSize: '13px', color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>{new Date(item.creado_en).toLocaleDateString()}</time>
+          <time style={{ fontSize: '12.5px', color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>{new Date(item.creado_en).toLocaleDateString()}</time>
         </div>
-        <h2 style={{ fontSize: '24px', margin: 0, color: 'var(--color-primary)', fontWeight: 800 }}>{item.termino || item.palabra?.termino}</h2>
-        <div style={{ padding: '12px', background: 'var(--color-surface-variant)', borderRadius: '12px' }}>
-          <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--color-on-surface)', fontWeight: 600 }}>{item.idioma?.nombre} → significado en {item.idiomaSignificado?.nombre}</p>
-          <p style={{ margin: 0, fontSize: '15px', color: 'var(--color-on-surface)', lineHeight: 1.5 }}>{item.significado}</p>
+        <h2 style={{ fontSize: '22px', margin: 0, color: 'var(--color-primary-text)', fontWeight: 800 }}>{item.termino || item.palabra?.termino}</h2>
+        <div style={{ padding: '12px 14px', background: 'var(--color-surface-container-low)', border: '1px solid var(--color-outline-variant)', borderRadius: '10px' }}>
+          <p style={{ margin: '0 0 6px 0', fontSize: '13.5px', color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>{item.idioma?.nombre} → significado en {item.idiomaSignificado?.nombre}</p>
+          <p style={{ margin: 0, fontSize: '14.5px', color: 'var(--color-on-surface)', lineHeight: 1.5 }}>{item.significado}</p>
         </div>
-        {item.tipo_gramatical && <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: '1px solid var(--color-outline-variant)', width: 'fit-content', color: 'var(--color-on-surface-variant)' }}>{item.tipo_gramatical}</span>}
+        {item.tipo_gramatical && <span style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: '1px solid var(--color-outline-variant)', width: 'fit-content', color: 'var(--color-on-surface-variant)' }}>{item.tipo_gramatical}</span>}
         <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-on-surface-variant)' }}>Enviado por <strong>{item.usuario?.nombres} {item.usuario?.apellidos}</strong> · {item.usuario?.correo}</p>
-        {item.motivo_revision && <div style={{ padding: '12px', borderRadius: '8px', border: '1px solid #FECACA', background: '#FEF2F2', fontSize: '14px', color: '#991B1B' }}><strong>Motivo de rechazo:</strong> {item.motivo_revision}</div>}
-        {item.estado === 'pendiente' && <div style={{ display: 'flex', gap: '12px', marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid var(--color-surface-variant)' }}>
-          <button onClick={() => review(item, 'aprobar')} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '10px', borderRadius: '8px', border: 'none', background: '#22c55e', color: 'white', fontWeight: 600, cursor: 'pointer' }}><CheckCircle2 size={18} /> Aprobar</button>
-          <button onClick={() => { setReviewing(item); setMotivo(''); }} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '10px', borderRadius: '8px', border: 'none', background: '#ef4444', color: 'white', fontWeight: 600, cursor: 'pointer' }}><XCircle size={18} /> Rechazar</button>
+        {item.motivo_revision && <div style={{ padding: '12px', borderRadius: '8px', border: '1px solid color-mix(in srgb, var(--color-error-text) 28%, transparent)', background: 'var(--color-error-container)', fontSize: '13.5px', color: 'var(--color-on-error-container)' }}><strong>Motivo de rechazo:</strong> {item.motivo_revision}</div>}
+        {item.estado === 'pendiente' && <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid var(--color-outline-variant)' }}>
+          <button type="button" onClick={() => review(item, 'aprobar')} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--color-success)', color: 'var(--color-on-primary)', fontWeight: 700, cursor: 'pointer' }}><CheckCircle2 size={17} /> Aprobar</button>
+          <button type="button" onClick={() => { setReviewing(item); setMotivo(''); }} style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--color-error)', color: 'var(--color-on-error)', fontWeight: 700, cursor: 'pointer' }}><XCircle size={17} /> Rechazar</button>
         </div>}
       </article>)}
     </div>}
-    {reviewing && <div className="analytics-modal-backdrop" role="dialog" aria-modal="true"><div className="analytics-modal modal-content-responsive"><h2>Rechazar aporte</h2><p>Explica el motivo a {reviewing.usuario?.nombres}; podrá verlo desde su aplicación.</p><textarea value={motivo} onChange={event => setMotivo(event.target.value)} rows="4" placeholder="Ej. La escritura correcta es..." autoFocus /><div><button className="btn-secondary" onClick={() => setReviewing(null)}>Cancelar</button><button className="btn-reject" onClick={() => review(reviewing, 'rechazar')}>Confirmar rechazo</button></div></div></div>}
+    {reviewing && <div className="analytics-modal-backdrop" role="dialog" aria-modal="true"><div className="analytics-modal modal-content-responsive"><h2>Rechazar aporte</h2><p>Explica el motivo a {reviewing.usuario?.nombres}; podrá verlo desde su aplicación.</p><textarea value={motivo} onChange={event => setMotivo(event.target.value)} rows="4" placeholder="Ej. La escritura correcta es..." autoFocus /><div><button type="button" className="btn-secondary" onClick={() => setReviewing(null)}>Cancelar</button><button type="button" className="btn-reject" onClick={() => review(reviewing, 'rechazar')}>Confirmar rechazo</button></div></div></div>}
   </div>;
 };

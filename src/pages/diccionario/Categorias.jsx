@@ -130,13 +130,7 @@ export const Categorias = () => {
   );
 
   return (
-    <div style={{ padding: '24px 32px', overflowY: 'auto', flex: 1 }}>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+    <div style={{ padding: '28px 32px', overflowY: 'auto', flex: 1 }}>
       
       {/* Header */}
       <div className="flex-col-mobile" style={{ justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', gap: '16px' }}>
@@ -280,24 +274,25 @@ export const Categorias = () => {
       {isModalOpen && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)',
+          backgroundColor: 'var(--color-modal-backdrop)', backdropFilter: 'blur(6px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
           padding: '24px'
         }}>
           <div className="modal-content-responsive" style={{
-            backgroundColor: 'var(--color-surface)', borderRadius: '24px', 
-            boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)', overflow: 'hidden', display: 'flex', flexDirection: 'column',
+            backgroundColor: 'var(--color-surface)', borderRadius: 'var(--modal-radius)',
+            border: '1px solid var(--color-outline-variant)',
+            boxShadow: 'var(--shadow-level-3)', overflow: 'hidden', display: 'flex', flexDirection: 'column',
             maxHeight: '90vh'
           }}>
-            <div style={{ padding: '24px', borderBottom: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '22px 24px', borderBottom: '1px solid var(--color-outline-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--color-on-surface)' }}>
                 {isEditMode ? 'Editar Categoría' : 'Nueva Categoría'}
               </h2>
               <button 
+                type="button"
+                aria-label="Cerrar modal"
                 onClick={() => setIsModalOpen(false)}
-                style={{ background: 'var(--color-surface-variant)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-on-surface-variant)', transition: 'background 0.2s' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)'}
+                className="rq-icon-close"
               >
                 <X size={16} />
               </button>
@@ -363,7 +358,7 @@ export const Categorias = () => {
                 form="categoriaForm"
                 style={{
                   padding: '10px 24px', borderRadius: '10px', fontSize: '14px', fontWeight: 600,
-                  backgroundColor: 'var(--color-primary)', color: 'white', border: 'none',
+                  backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none',
                   cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
                   boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)', transition: 'all 0.2s'
                 }}
@@ -408,7 +403,7 @@ export const Categorias = () => {
               </button>
               <button 
                 onClick={confirmSubmit}
-                style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 600, backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', cursor: 'pointer' }}
+                style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 600, backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', cursor: 'pointer' }}
               >
                 Confirmar
               </button>

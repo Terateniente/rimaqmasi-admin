@@ -11,12 +11,12 @@ import { RimaqSelect } from '../components/RimaqSelect';
 import './analytics.css';
 
 const RIMAQ_PALETTE = Object.freeze({
-  red: '#B9212E',
-  yellow: '#E4B221',
-  green: '#3F8A4A',
-  blue: '#1F5FA9',
-  purple: '#6D3B8C',
-  orange: '#D96C2F',
+  red: '#F43F5E',
+  yellow: '#F59E0B',
+  green: '#22C55E',
+  blue: '#3B82F6',
+  purple: '#A78BFA',
+  orange: '#FB923C',
   white: '#FFFFFF',
 });
 const CHART_COLORS = [
@@ -380,7 +380,7 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
               ]}
             />
           </div>
-          <button type="button" className="analytics-refresh" aria-label={loading ? 'Actualizando datos' : 'Actualizar datos'} onClick={() => load()} disabled={loading} style={{ border: '1px solid var(--color-surface-variant)', background: 'var(--color-surface)', color: 'var(--color-on-surface)', minHeight: 44, width: 44, borderRadius: 10, display: 'grid', placeItems: 'center', cursor: 'pointer' }}>
+          <button type="button" className="analytics-refresh" aria-label={loading ? 'Actualizando datos' : 'Actualizar datos'} onClick={() => load()} disabled={loading} style={{ border: '1px solid var(--color-outline-variant)', background: 'var(--color-surface)', color: 'var(--color-on-surface)', minHeight: 42, width: 42, padding: 0, borderRadius: 10, display: 'grid', placeItems: 'center', cursor: 'pointer' }}>
             <RefreshCw size={16} className={loading ? 'spinning' : ''} aria-hidden="true" />
           </button>
           {view !== 'exports' && (
@@ -592,10 +592,10 @@ const HorizontalBarChart = ({ title, data, dataKey = "value", nameKey = "label",
             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-surface-variant)" />
             <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }} />
             <YAxis dataKey={nameKey} type="category" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: 'var(--color-on-surface)', fontWeight: 500 }} width={120} />
-            <Tooltip 
-              cursor={{ fill: 'color-mix(in srgb, var(--color-on-surface) 5%, transparent)' }} 
-              contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface-variant)', borderRadius: '12px', color: 'var(--color-on-surface)', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }} 
-              itemStyle={{ fontWeight: 700, color: 'var(--color-on-surface)' }} 
+            <Tooltip
+              cursor={{ fill: 'color-mix(in srgb, var(--color-on-surface) 5%, transparent)' }}
+              contentStyle={{ backgroundColor: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-strong)', borderRadius: '12px', color: 'var(--color-on-surface)', boxShadow: 'var(--shadow-level-3)' }}
+              itemStyle={{ fontWeight: 700, color: 'var(--color-on-surface)' }}
               labelStyle={{ display: 'none' }}
               formatter={(value, name, props) => [value, props.payload[nameKey]]}
             />
@@ -711,7 +711,7 @@ const HistoryTable = ({ items, onSeeAll }) => {
           </tbody>
         </table>
       </div>
-      <a onClick={onSeeAll} className="at-footer-link" style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '16px 0 0', color: RIMAQ_PALETTE.red, fontWeight: 600, textDecoration: 'none', cursor: 'pointer' }}>
+      <a onClick={onSeeAll} className="at-footer-link">
         Ver todo el historial <ArrowRight size={16} />
       </a>
     </article>
@@ -792,7 +792,7 @@ const LineChart = ({ title, data, series }) => {
               padding={{ left: 10, right: 10 }}
             />
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }} />
-            <Tooltip labelFormatter={value => formatChartDate(value, true)} contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface-variant)', borderRadius: '16px', color: 'var(--color-on-surface)', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }} itemStyle={{ fontWeight: 700, padding: '4px 0' }} labelStyle={{ color: 'var(--color-on-surface-variant)', marginBottom: '8px', fontWeight: 600 }} />
+            <Tooltip labelFormatter={value => formatChartDate(value, true)} contentStyle={{ backgroundColor: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-strong)', borderRadius: '12px', color: 'var(--color-on-surface)', boxShadow: 'var(--shadow-level-3)' }} itemStyle={{ fontWeight: 700, padding: '4px 0' }} labelStyle={{ color: 'var(--color-on-surface-variant)', marginBottom: '8px', fontWeight: 600 }} />
             <Legend iconType="circle" wrapperStyle={{ fontSize: '13px', paddingTop: '16px', fontWeight: 600 }} />
             {series.map(([key, color]) => (
               <Area key={key} type="monotone" dataKey={key} name={key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')} stroke={color} strokeWidth={3} fillOpacity={1} fill={`url(#color${key})`} activeDot={{ r: 6, strokeWidth: 0 }} />
@@ -826,7 +826,7 @@ const DonutChart = ({ title, data, total, infoText, colors = CHART_COLORS }) => 
                   <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} itemStyle={{ color: 'var(--color-on-surface)', fontWeight: 700 }} />
+              <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface-elevated)', borderRadius: '12px', border: '1px solid var(--color-border-strong)', boxShadow: 'var(--shadow-level-3)' }} itemStyle={{ color: 'var(--color-on-surface)', fontWeight: 700 }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="donut-center-text">

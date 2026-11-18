@@ -14,7 +14,10 @@ export const DeleteConfirmationModal = ({
   secondaryLabel,
   onSecondary,
   children,
+  tone = 'danger',
+  icon: Icon = Trash2,
 }) => {
+  const isDanger = tone === 'danger';
   const cancelButtonRef = useRef(null);
   const onCancelRef = useRef(onCancel);
 
@@ -41,36 +44,54 @@ export const DeleteConfirmationModal = ({
   return (
     <div
       role="presentation"
+      className="rq-modal-backdrop"
       onClick={busy ? undefined : onCancel}
-      style={{ position: 'fixed', inset: 0, zIndex: 1400, display: 'grid', placeItems: 'center', padding: '20px', background: 'rgba(15, 23, 42, .58)', backdropFilter: 'blur(3px)' }}
     >
       <section
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="delete-confirmation-title"
+        className="rq-modal-dialog rq-delete-dialog"
         onClick={(event) => event.stopPropagation()}
-        style={{ width: 'min(360px, 100%)', padding: '32px 24px 24px', borderRadius: '20px', background: 'var(--color-surface)', color: 'var(--color-on-surface)', textAlign: 'center', boxShadow: '0 22px 60px rgba(0, 0, 0, .28)' }}
       >
-        <div style={{ width: '64px', height: '64px', margin: '0 auto 22px', borderRadius: '50%', display: 'grid', placeItems: 'center', background: 'var(--color-error-container)', color: 'var(--color-on-error-container)', boxShadow: '0 4px 12px color-mix(in srgb, var(--color-error) 18%, transparent)' }}>
-          <Trash2 size={30} strokeWidth={2.4} />
+        <div className={`rq-delete-dialog__icon${isDanger ? '' : ' rq-delete-dialog__icon--primary'}`}>
+          <Icon size={28} strokeWidth={2.2} />
         </div>
 
-        <h2 id="delete-confirmation-title" style={{ margin: '0 0 12px', fontSize: '24px', lineHeight: 1.25, fontWeight: 800 }}>
+        <h2 id="delete-confirmation-title" className="rq-delete-dialog__title">
           {title}
         </h2>
-        <p style={{ margin: '0 auto', maxWidth: '290px', color: 'var(--color-on-surface-variant)', fontSize: '15px', lineHeight: 1.5 }}>
+        <p className="rq-delete-dialog__description">
           {description || <>Se eliminará <strong>“{itemName}”</strong> del sistema. Esta acción es irreversible.</>}
         </p>
         {children}
 
-        <div style={{ display: 'grid', gridTemplateColumns: secondaryLabel ? '1fr 1fr' : '1fr 1fr', gap: '12px', marginTop: '26px' }}>
-          <button ref={cancelButtonRef} type="button" onClick={onCancel} disabled={busy} style={{ minHeight: '44px', padding: '10px 14px', border: 'none', borderRadius: '9px', background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? .65 : 1, transition: 'background-color 0.2s' }} onMouseOver={e => !busy && (e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)')} onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-container-high)'}>
+        <div className="rq-delete-dialog__actions">
+          <button
+            ref={cancelButtonRef}
+            type="button"
+            onClick={onCancel}
+            disabled={busy}
+            className="rq-button rq-button--ghost"
+          >
             Cancelar
           </button>
-          {secondaryLabel && <button type="button" onClick={onSecondary} disabled={busy} style={{ minHeight: '44px', padding: '10px 14px', border: '1px solid var(--color-primary)', borderRadius: '9px', background: 'var(--color-surface)', color: 'var(--color-primary)', fontWeight: 700, cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? .65 : 1 }}>
-            {secondaryLabel}
-          </button>}
-          <button type="button" onClick={onConfirm} disabled={busy || confirmDisabled} style={{ gridColumn: secondaryLabel ? '1 / -1' : 'auto', minHeight: '44px', padding: '10px 14px', border: 'none', borderRadius: '9px', background: 'var(--color-error)', color: 'var(--color-on-error, #fff)', fontWeight: 700, cursor: busy || confirmDisabled ? 'not-allowed' : 'pointer', opacity: busy || confirmDisabled ? .55 : 1, transition: 'filter 0.2s' }} onMouseOver={e => !busy && !confirmDisabled && (e.currentTarget.style.filter = 'brightness(1.1)')} onMouseOut={e => e.currentTarget.style.filter = 'none'}>
+          {secondaryLabel && (
+            <button
+              type="button"
+              onClick={onSecondary}
+              disabled={busy}
+              className="rq-button rq-button--outline"
+            >
+              {secondaryLabel}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={busy || confirmDisabled}
+            className={`rq-button rq-button--${isDanger ? 'danger' : 'primary'} ${secondaryLabel ? 'rq-delete-dialog__confirm-full' : ''}`.trim()}
+          >
             {busy ? 'Procesando…' : confirmLabel}
           </button>
         </div>
@@ -78,3 +99,6 @@ export const DeleteConfirmationModal = ({
     </div>
   );
 };
+
+/** Mismo diálogo para confirmaciones no destructivas (crear/guardar). */
+export const ConfirmDialog = (props) => <DeleteConfirmationModal tone="primary" confirmLabel="Sí, confirmar" {...props} />;

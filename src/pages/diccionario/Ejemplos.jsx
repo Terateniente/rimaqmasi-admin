@@ -162,13 +162,7 @@ export const Ejemplos = () => {
   );
 
   return (
-    <div style={{ padding: '24px 32px', overflowY: 'auto', flex: 1 }}>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+    <div style={{ padding: '28px 32px', overflowY: 'auto', flex: 1 }}>
       <div className="flex-col-mobile" style={{ justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', gap: '16px' }}>
         <div style={{ flex: 1 }}>
           <div className="rq-page-heading">
@@ -259,11 +253,12 @@ export const Ejemplos = () => {
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <button 
+                        type="button"
                         onClick={() => handleToggleEstado(ej)}
                         style={{
-                          padding: '4px 8px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px', textTransform: 'uppercase',
-                          backgroundColor: ej.estado === 'aprobado' ? '#dcfce7' : ej.estado === 'rechazado' ? '#fee2e2' : 'var(--color-surface-variant)',
-                          color: ej.estado === 'aprobado' ? '#166534' : ej.estado === 'rechazado' ? '#dc2626' : 'var(--color-on-surface-variant)'
+                          padding: '4px 10px', borderRadius: '999px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '11.5px', textTransform: 'uppercase',
+                          backgroundColor: ej.estado === 'aprobado' ? 'var(--color-success-container)' : ej.estado === 'rechazado' ? 'var(--color-error-container)' : 'var(--color-surface-container-high)',
+                          color: ej.estado === 'aprobado' ? 'var(--color-on-success-container)' : ej.estado === 'rechazado' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)'
                         }}
                       >
                         {ej.estado || 'pendiente'}
@@ -289,34 +284,26 @@ export const Ejemplos = () => {
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-          padding: '24px'
-        }}>
-          <div className="modal-content-responsive" style={{
-            backgroundColor: 'var(--color-surface)', borderRadius: '24px', 
-            boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)', overflow: 'hidden', display: 'flex', flexDirection: 'column',
-            maxHeight: '90vh',
-            width: '100%', maxWidth: '540px'
-          }}>
-            <div style={{ padding: '24px', borderBottom: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--color-on-surface)' }}>
+        <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="ejemplo-modal-title">
+          <div className="modal-content-responsive rq-modal-dialog rq-modal-dialog--wizard" style={{ maxWidth: '540px' }}>
+            <div className="rq-modal-header">
+              <h2 id="ejemplo-modal-title" className="rq-modal-header__title">
                 {modalMode === 'edit' ? 'Editar Ejemplo' : 'Nuevo Ejemplo'}
               </h2>
               <button 
+                type="button"
+                className="rq-icon-close"
                 onClick={() => setIsModalOpen(false)}
-                style={{ background: 'var(--color-surface-variant)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--color-on-surface-variant)', transition: 'background 0.2s' }}
+                aria-label="Cerrar modal"
               >
-                <X size={16} />
+                <X size={18} />
               </button>
             </div>
             <div style={{ padding: '24px', overflowY: 'auto' }}>
-              <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ fontSize: '13px', fontWeight: 600 }}>Palabra</label>
-                  <div style={{ marginTop: '4px' }}>
+                  <label className="rq-field__label">Palabra</label>
+                  <div style={{ marginTop: '6px' }}>
                     <RimaqSelect
                       value={String(selectedPalabraId || '')}
                       onValueChange={(val) => {
@@ -334,9 +321,9 @@ export const Ejemplos = () => {
                   </div>
                 </div>
                 <div>
-                  <label style={{ fontSize: '13px', fontWeight: 600 }}>Definición</label>
+                  <label className="rq-field__label">Definición</label>
                   <input type="hidden" {...register('definicion_id', { required: true })} />
-                  <div style={{ marginTop: '4px' }}>
+                  <div style={{ marginTop: '6px' }}>
                     <RimaqSelect
                       value={String(selectedDefinicionId || '')}
                       onValueChange={(val) => setValue('definicion_id', val, { shouldValidate: true })}
@@ -350,21 +337,46 @@ export const Ejemplos = () => {
                     />
                   </div>
                 </div>
-                <div>
-                  <label style={{ fontSize: '13px', fontWeight: 600 }}>Ejemplo de Texto</label>
-                  <textarea {...register('ejemplo_texto', { required: true })} rows={2} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid var(--color-outline)', marginTop: '4px' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label htmlFor="ejemplo-texto-input" className="rq-field__label">Ejemplo de Texto</label>
+                  <textarea id="ejemplo-texto-input" {...register('ejemplo_texto', { required: true })} rows={2} className="rq-field__input" style={{ minHeight: '72px', resize: 'vertical' }} />
                 </div>
-                <div>
-                  <label style={{ fontSize: '13px', fontWeight: 600 }}>Traducción</label>
-                  <textarea {...register('traduccion_ejemplo')} rows={2} style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid var(--color-outline)', marginTop: '4px' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label htmlFor="ejemplo-traduccion-input" className="rq-field__label">Traducción</label>
+                  <textarea id="ejemplo-traduccion-input" {...register('traduccion_ejemplo')} rows={2} className="rq-field__input" style={{ minHeight: '72px', resize: 'vertical' }} />
                 </div>
-                <div>
-                  <label style={{ fontSize: '13px', fontWeight: 600 }}>Audio (Opcional)</label>
-                  <input type="file" accept="audio/*" onChange={(e) => setAudioFile(e.target.files[0])} style={{ width: '100%', marginTop: '4px', fontSize: '12px' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label htmlFor="ejemplo-audio-upload" className="rq-field__label">Audio (Opcional)</label>
+                  <input
+                    id="ejemplo-audio-upload"
+                    type="file"
+                    accept="audio/*"
+                    onChange={(e) => setAudioFile(e.target.files[0] || null)}
+                    style={{ display: 'none' }}
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <label htmlFor="ejemplo-audio-upload" className="rq-upload-pill">
+                      <span className="rq-upload-pill__icon"><Volume2 size={15} /></span>
+                      <span className={`rq-upload-pill__name ${audioFile ? 'rq-upload-pill__name--active' : ''}`}>
+                        {audioFile ? audioFile.name : 'Seleccionar archivo de audio...'}
+                      </span>
+                      <span className="rq-upload-pill__badge">{audioFile ? 'Cambiar' : 'Subir audio'}</span>
+                    </label>
+                    {audioFile && (
+                      <button
+                        type="button"
+                        className="rq-icon-close"
+                        onClick={() => setAudioFile(null)}
+                        aria-label="Quitar audio seleccionado"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
-                  <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer' }}>Cancelar</button>
-                  <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Guardar</button>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px', paddingTop: '16px', borderTop: '1px solid var(--color-outline-variant)' }}>
+                  <button type="button" className="rq-button rq-button--ghost" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                  <button type="submit" className="rq-button rq-button--primary">Guardar</button>
                 </div>
               </form>
             </div>

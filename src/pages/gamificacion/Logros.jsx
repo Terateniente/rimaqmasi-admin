@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getLogros, createLogro, updateLogro, deleteLogro } from '../../services/logroService';
 import { toast } from 'sonner';
-import { Search, Plus, Edit2, Trash2, Award, X, ImagePlus, Save } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Award, X, ImagePlus, Save, ZoomIn } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { FastAverageColor } from 'fast-average-color';
 import { matchesSearch } from '../../utils/searchUtils';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { ImageLightboxModal } from '../../components/ImageLightboxModal';
 import { resolveMediaUrl } from '../../services/api';
 
 const METRICAS_LOGRO = [
@@ -20,11 +21,13 @@ const METRICAS_LOGRO = [
   { value: 'errores_recuperados', label: 'Errores recuperados al segundo intento' },
 ];
 
-const LogroCard = ({ logro, getImageUrl, handleOpenEdit, handleDelete }) => {
+const LogroCard = ({ logro, getImageUrl, handleOpenEdit, handleDelete, onPreviewImage }) => {
   const [topColor, setTopColor] = useState('var(--color-primary)');
+  const [imgFailed, setImgFailed] = useState(false);
   const imageUrl = getImageUrl(logro.url_imagen_medalla);
 
   useEffect(() => {
+    setImgFailed(false);
     if (imageUrl) {
       const fac = new FastAverageColor();
       fac.getColorAsync(imageUrl, { crossOrigin: 'anonymous' })
@@ -41,56 +44,37 @@ const LogroCard = ({ logro, getImageUrl, handleOpenEdit, handleDelete }) => {
   }, [imageUrl]);
 
   return (
-    <div style={{
-      backgroundColor: 'var(--color-surface)',
-      borderRadius: '12px',
-      border: '1px solid var(--color-surface-variant)',
-      borderTop: `4px solid ${topColor}`,
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      boxShadow: 'var(--shadow-level-1)',
-      transition: 'border-color 0.3s ease'
-    }}>
-      <div style={{ padding: '16px', flex: 1 }}>
-        <div style={{ 
-          width: '40px', height: '40px', 
-          borderRadius: '10px', 
-          backgroundColor: 'var(--color-surface-container)', 
-          display: 'flex', alignItems: 'center', justifyContent: 'center', 
-          overflow: 'hidden',
-          marginBottom: '12px'
-        }}>
-          {imageUrl ? (
-            <img src={imageUrl} alt={logro.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} crossOrigin="anonymous" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-          ) : null}
-          <span style={{ display: imageUrl ? 'none' : 'flex', color: 'var(--color-primary)', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-            <Award size={20} />
-          </span>
-        </div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' }}>
-          <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--color-on-surface)', fontWeight: 700 }}>
-            {logro.titulo}
-          </h3>
-          <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-on-surface-variant)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {logro.descripcion}
-          </p>
-        </div>
+    <div className="rq-card">
+      <div className="rq-card__body">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '14px' }}>
+          {imageUrl && !imgFailed ? (
+            <button
+              type="button"
+              className="rq-thumb-zoom"
+              style={{ width: '42px', height: '42px', borderRadius: '11px' }}
+              onClick={() => onPreviewImage?.(imageUrl, logro.titulo)}
+              title="Ampliar medalla"
+              aria-label={`Ampliar medalla ${logro.titulo}`}
+            >
+              <img src={imageUrl} alt={logro.titulo} crossOrigin="anonymous" onError={() => setImgFailed(true)} />
+              <span className="rq-thumb-zoom__hint"><ZoomIn size={15} /></span>
+            </button>
+          ) : (
+            <div style={{ 
+              width: '42px', height: '42px', 
+              borderRadius: '11px', 
+              backgroundColor: `color-mix(in srgb, ${topColor} 16%, var(--color-surface-container))`,
+              border: `1px solid color-mix(in srgb, ${topColor} 32%, var(--color-outline-variant))`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              overflow: 'hidden',
+              flexShrink: 0
+            }}>
+              <span style={{ display: 'flex', color: 'var(--color-primary-text)', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                <Award size={20} />
+              </span>
+            </div>
+          )}
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px' }}>
-          <span style={{ 
-            backgroundColor: 'var(--color-secondary-container)', 
-            color: 'var(--color-on-secondary-container)', 
-            padding: '3px 8px', 
-            borderRadius: '6px', 
-            fontWeight: 700,
-            fontSize: '10px',
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase'
-          }}>
-            {logro.metrica_requerida}: {logro.valor_requerido}
-          </span>
           <span style={{ 
             backgroundColor: 'var(--color-tertiary-container)', 
             color: 'var(--color-on-tertiary-container)', 
@@ -101,30 +85,49 @@ const LogroCard = ({ logro, getImageUrl, handleOpenEdit, handleDelete }) => {
             letterSpacing: '0.5px',
             textTransform: 'uppercase'
           }}>
-            XP: {logro.xp_recompensa}
+            +{logro.xp_recompensa} XP
+          </span>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+          <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--color-on-surface)', fontWeight: 700, lineHeight: 1.3 }}>
+            {logro.titulo}
+          </h3>
+          <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.45, minHeight: '38px', color: 'var(--color-on-surface-variant)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            {logro.descripcion}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: 'auto' }}>
+          <span style={{ 
+            backgroundColor: 'var(--color-secondary-container)', 
+            color: 'var(--color-on-secondary-container)', 
+            padding: '4px 9px', 
+            borderRadius: '6px', 
+            fontWeight: 700,
+            fontSize: '10.5px',
+            letterSpacing: '0.4px',
+            textTransform: 'uppercase'
+          }}>
+            {logro.metrica_requerida}: {logro.valor_requerido}
           </span>
         </div>
       </div>
 
-      <div style={{ 
-        backgroundColor: 'var(--color-surface-container-low)', 
-        padding: '12px 16px', 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        borderTop: '1px solid var(--color-surface-variant)'
-      }}>
-        <span style={{ fontSize: '12px', color: 'var(--color-outline)', fontWeight: 600 }}>
+      <div className="rq-card__footer">
+        <span style={{ fontSize: '12px', color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>
           ID: {logro.logros_id}
         </span>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button 
+            type="button"
             onClick={() => handleOpenEdit(logro)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-primary)', fontSize: '12px', fontWeight: 700, padding: 0 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-primary-text)', fontSize: '12px', fontWeight: 700, padding: '4px 6px', borderRadius: '6px' }}
           >
             Detalles <Edit2 size={12} strokeWidth={3} />
           </button>
           <button 
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(logro);
@@ -136,16 +139,17 @@ const LogroCard = ({ logro, getImageUrl, handleOpenEdit, handleDelete }) => {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              color: 'var(--color-outline)', 
+              color: 'var(--color-on-surface-variant)', 
               padding: '6px', 
               borderRadius: '6px',
-              transition: 'all 0.2s'
+              transition: 'background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out)'
             }}
-            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#fee2e2'; e.currentTarget.style.color = '#ef4444'; }}
-            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--color-outline)'; }}
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-error-container)'; e.currentTarget.style.color = 'var(--color-error-text)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--color-on-surface-variant)'; }}
             title="Eliminar"
+            aria-label="Eliminar logro"
           >
-            <Trash2 size={16} />
+            <Trash2 size={15} />
           </button>
         </div>
       </div>
@@ -165,6 +169,7 @@ export const Logros = () => {
   
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [lightboxImage, setLightboxImage] = useState(null);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [metricaFilter, setMetricaFilter] = useState('__all__');
@@ -326,18 +331,14 @@ export const Logros = () => {
 
       {/* Filtros */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', backgroundColor: 'var(--color-surface)',
-          borderRadius: '10px', padding: '0 16px', flex: 1, minWidth: '240px', height: '44px',
-          border: '1px solid var(--color-surface-variant)', boxShadow: 'var(--shadow-level-1)'
-        }}>
-          <Search size={18} color="var(--color-outline)" />
+        <div className="rq-search-box rq-search-field" style={{ flex: 1, minWidth: '240px' }}>
+          <Search size={18} strokeWidth={2.5} />
           <input 
             type="text" 
             placeholder="Buscar por título o descripción..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', marginLeft: '12px', width: '100%', fontSize: '14px', color: 'var(--color-on-surface)' }}
+            className="rq-search-field__input"
           />
         </div>
 
@@ -373,30 +374,26 @@ export const Logros = () => {
       {/* Grid de Logros */}
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
-        gap: '16px' 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))', 
+        gap: '20px' 
       }}>
         {loading ? (
           <>
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} style={{
-                backgroundColor: 'var(--color-surface)',
-                borderRadius: '12px',
-                border: '1px solid var(--color-surface-variant)',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '180px'
-              }}>
-                <div style={{ padding: '16px', flex: 1 }}>
-                  <div className="skeleton" style={{ width: '40px', height: '40px', borderRadius: '10px', marginBottom: '12px' }}></div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div className="skeleton" style={{ width: '120px', height: '20px', borderRadius: '4px' }}></div>
+              <div key={i} className="rq-card" style={{ minHeight: '198px' }}>
+                <div className="rq-card__body">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <div className="skeleton" style={{ width: '42px', height: '42px', borderRadius: '11px' }}></div>
+                    <div className="skeleton" style={{ width: '54px', height: '20px', borderRadius: '6px' }}></div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                    <div className="skeleton" style={{ width: '65%', height: '20px', borderRadius: '4px' }}></div>
                     <div className="skeleton" style={{ width: '100%', height: '16px', borderRadius: '4px' }}></div>
                     <div className="skeleton" style={{ width: '80%', height: '16px', borderRadius: '4px' }}></div>
                   </div>
+                  <div className="skeleton" style={{ width: '110px', height: '22px', borderRadius: '6px', marginTop: 'auto' }}></div>
                 </div>
-                <div style={{ backgroundColor: 'var(--color-surface-container-low)', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-surface-variant)' }}>
+                <div className="rq-card__footer">
                   <div className="skeleton" style={{ width: '40px', height: '16px', borderRadius: '4px' }}></div>
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <div className="skeleton" style={{ width: '60px', height: '16px', borderRadius: '4px' }}></div>
@@ -424,6 +421,7 @@ export const Logros = () => {
               getImageUrl={getImageUrl}
               handleOpenEdit={handleOpenEdit}
               handleDelete={handleDelete}
+              onPreviewImage={(src, alt) => setLightboxImage({ src, alt })}
             />
           ))
         )}
@@ -431,135 +429,116 @@ export const Logros = () => {
 
       {/* Modal Formulario */}
       {isModalOpen && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div className="modal-content-responsive" style={{
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: '16px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: 'var(--shadow-level-3)',
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', color: 'var(--color-on-surface)' }}>
+        <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="logro-modal-title">
+          <div className="modal-content-responsive rq-modal-dialog rq-modal-dialog--wizard">
+            <div className="rq-modal-header">
+              <h2 id="logro-modal-title" className="rq-modal-header__title">
                 {modalMode === 'create' ? 'Nuevo Logro' : 'Editar Logro'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--color-outline)', cursor: 'pointer' }}>
-                <X size={20} />
+              <button type="button" className="rq-icon-close" onClick={() => setIsModalOpen(false)} aria-label="Cerrar modal">
+                <X size={18} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit(handlePreSubmit)} style={{ padding: '24px' }}>
+            <form onSubmit={handleSubmit(handlePreSubmit)} style={{ padding: '24px', overflowY: 'auto' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 
                 {/* Campo Título */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Título del Logro</label>
+                  <label htmlFor="logro-titulo-input" className="rq-field__label">Título del Logro</label>
                   <input 
+                    id="logro-titulo-input"
                     {...register('titulo', { required: 'El título es obligatorio' })}
                     placeholder="Primeros Pasos"
-                    style={{ 
-                      padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)',
-                      backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none'
-                    }}
-                    onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
-                    onBlur={e => e.target.style.borderColor = 'var(--color-surface-variant)'}
+                    className={`rq-field__input ${errors.titulo ? 'rq-field__input--error' : ''}`}
                   />
-                  {errors.titulo && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.titulo.message}</span>}
+                  {errors.titulo && <span className="rq-field__error">{errors.titulo.message}</span>}
                 </div>
 
                 {/* Campo Descripción */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Descripción</label>
+                  <label htmlFor="logro-descripcion-input" className="rq-field__label">Descripción</label>
                   <textarea 
+                    id="logro-descripcion-input"
                     {...register('descripcion', { required: 'La descripción es obligatoria' })}
                     rows="2"
                     placeholder="Describe qué hay que hacer para obtenerlo..."
-                    style={{ 
-                      padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)',
-                      backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none', resize: 'vertical'
-                    }}
-                    onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
-                    onBlur={e => e.target.style.borderColor = 'var(--color-surface-variant)'}
+                    className={`rq-field__input ${errors.descripcion ? 'rq-field__input--error' : ''}`}
+                    style={{ resize: 'vertical', minHeight: '72px' }}
                   />
-                  {errors.descripcion && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.descripcion.message}</span>}
+                  {errors.descripcion && <span className="rq-field__error">{errors.descripcion.message}</span>}
                 </div>
 
                 {/* Campos Métrica y Valor */}
-                <div className="flex-col-mobile" style={{ gap: '16px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Métrica Requerida *</label>
+                <div className="rq-form-grid-2">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: 0 }}>
+                    <label className="rq-field__label">Métrica Requerida *</label>
                     <RimaqSelect
                       ariaLabel="Seleccionar métrica requerida"
                       placeholder="Selecciona una métrica..."
                       value={watch('metrica_requerida') || ''}
                       onValueChange={(val) => setValue('metrica_requerida', val, { shouldValidate: true })}
                       options={METRICAS_LOGRO}
+                      className="rimaq-select--full-width"
                     />
-                    {errors.metrica_requerida && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.metrica_requerida.message}</span>}
+                    {errors.metrica_requerida && <span className="rq-field__error">{errors.metrica_requerida.message}</span>}
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Valor Requerido</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: 0 }}>
+                    <label htmlFor="logro-valor-input" className="rq-field__label">Valor Requerido</label>
                     <input 
+                      id="logro-valor-input"
                       type="number"
                       {...register('valor_requerido', { required: 'Requerido' })}
                       placeholder="1"
-                      style={{ 
-                        padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)',
-                        backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none'
-                      }}
-                      onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
-                      onBlur={e => e.target.style.borderColor = 'var(--color-surface-variant)'}
+                      className={`rq-field__input ${errors.valor_requerido ? 'rq-field__input--error' : ''}`}
                     />
-                    {errors.valor_requerido && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.valor_requerido.message}</span>}
+                    {errors.valor_requerido && <span className="rq-field__error">{errors.valor_requerido.message}</span>}
                   </div>
                 </div>
 
                 {/* Campo XP Recompensa */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '50%', paddingRight: '8px', boxSizing: 'border-box' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>XP de Recompensa</label>
-                  <input 
-                    type="number"
-                    {...register('xp_recompensa', { required: 'Requerido' })}
-                    placeholder="50"
-                    style={{ 
-                      padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)',
-                      backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none'
-                    }}
-                    onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
-                    onBlur={e => e.target.style.borderColor = 'var(--color-surface-variant)'}
-                  />
-                  {errors.xp_recompensa && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.xp_recompensa.message}</span>}
+                <div className="rq-form-grid-2">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: 0 }}>
+                    <label htmlFor="logro-xp-input" className="rq-field__label">XP de Recompensa</label>
+                    <input 
+                      id="logro-xp-input"
+                      type="number"
+                      {...register('xp_recompensa', { required: 'Requerido' })}
+                      placeholder="50"
+                      className={`rq-field__input ${errors.xp_recompensa ? 'rq-field__input--error' : ''}`}
+                    />
+                    {errors.xp_recompensa && <span className="rq-field__error">{errors.xp_recompensa.message}</span>}
+                  </div>
                 </div>
 
                 {/* Campo Ícono (File Upload) */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Medalla (Imagen)</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ 
-                      width: '64px', height: '64px', borderRadius: '12px', 
-                      backgroundColor: 'var(--color-surface-container)', 
-                      border: '1px dashed var(--color-outline)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      overflow: 'hidden',
-                      flexShrink: 0
-                    }}>
-                      {imagePreview ? (
-                        <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                      ) : (
-                        <ImagePlus size={24} color="var(--color-outline)" />
-                      )}
-                    </div>
+                  <label className="rq-field__label">Medalla (Imagen)</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    {imagePreview ? (
+                      <button
+                        type="button"
+                        className="rq-thumb-zoom"
+                        style={{ width: '64px', height: '64px', borderRadius: '12px' }}
+                        onClick={() => setLightboxImage({ src: imagePreview, alt: 'Vista previa de medalla' })}
+                        title="Haz clic para ampliar"
+                        aria-label="Ampliar vista previa de medalla"
+                      >
+                        <img src={imagePreview} alt="Preview" style={{ objectFit: 'contain' }} />
+                        <span className="rq-thumb-zoom__hint"><ZoomIn size={16} /></span>
+                      </button>
+                    ) : (
+                      <div style={{ 
+                        width: '64px', height: '64px', borderRadius: '12px', 
+                        backgroundColor: 'var(--color-surface-container-low)', 
+                        border: '1px dashed var(--color-border-strong)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        overflow: 'hidden',
+                        flexShrink: 0
+                      }}>
+                        <ImagePlus size={22} color="var(--color-outline)" />
+                      </div>
+                    )}
                     <div style={{ flex: 1 }}>
                       <input 
                         type="file" 
@@ -581,24 +560,12 @@ export const Logros = () => {
                       />
                       <label 
                         htmlFor="image-upload"
-                        style={{
-                          display: 'inline-block',
-                          padding: '8px 16px',
-                          backgroundColor: 'var(--color-surface-container-high)',
-                          border: '1px solid var(--color-surface-variant)',
-                          borderRadius: '6px',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          color: 'var(--color-on-surface)',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.2s'
-                        }}
-                        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)'}
-                        onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-container-high)'}
+                        className="rq-button rq-button--ghost"
+                        style={{ minHeight: '38px', padding: '0 14px', fontSize: '13px' }}
                       >
                         Seleccionar Imagen
                       </label>
-                      <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'var(--color-outline)' }}>
+                      <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'var(--color-on-surface-variant)' }}>
                         Recomendado: PNG o JPG (máx. 2MB).
                       </p>
                     </div>
@@ -606,17 +573,17 @@ export const Logros = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '32px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '28px', paddingTop: '16px', borderTop: '1px solid var(--color-outline-variant)' }}>
                 <button 
                   type="button" 
+                  className="rq-button rq-button--ghost"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ padding: '10px 16px', background: 'transparent', border: 'none', color: 'var(--color-on-surface-variant)', fontWeight: 600, cursor: 'pointer', borderRadius: '8px' }}
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit" 
-                  style={{ padding: '10px 20px', backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+                  className="rq-button rq-button--primary"
                 >
                   {modalMode === 'create' ? 'Crear Logro' : 'Guardar Cambios'}
                 </button>
@@ -630,30 +597,15 @@ export const Logros = () => {
 
       {/* Modal de Confirmación de Guardar/Crear */}
       {confirmData && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1060,
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div className="modal-content-responsive" style={{
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: '16px',
-            padding: '32px 24px',
-            boxShadow: 'var(--shadow-level-3)',
-            textAlign: 'center'
-          }}>
+        <div className="rq-modal-backdrop rq-modal-backdrop--confirm" role="dialog" aria-modal="true">
+          <div className="modal-content-responsive rq-modal-dialog" style={{ width: 'min(420px, 100%)', padding: '32px 24px', textAlign: 'center' }}>
             <div style={{ 
-              width: '64px', height: '64px', borderRadius: '50%', 
-              backgroundColor: 'var(--color-primary)', color: '#ffffff', 
+              width: '60px', height: '60px', borderRadius: '50%', 
+              backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', 
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 16px auto'
             }}>
-              <Save size={32} />
+              <Save size={28} />
             </div>
             <h2 style={{ margin: '0 0 8px 0', fontSize: '20px', color: 'var(--color-on-surface)' }}>
               {modalMode === 'create' ? `¿Crear ${confirmData.titulo}?` : `¿Guardar cambios?`}
@@ -663,16 +615,18 @@ export const Logros = () => {
                 ? `Estás a punto de crear el nuevo logro "${confirmData.titulo}".` 
                 : `Estás guardando los cambios del logro "${originalLogro?.titulo}".`}
             </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               <button 
+                type="button"
+                className="rq-button rq-button--ghost"
                 onClick={() => setConfirmData(null)}
-                style={{ flex: 1, padding: '12px', background: 'var(--color-surface-container-high)', border: 'none', borderRadius: '8px', color: 'var(--color-on-surface)', fontWeight: 600, cursor: 'pointer' }}
               >
                 Cancelar
               </button>
               <button 
+                type="button"
+                className="rq-button rq-button--primary"
                 onClick={confirmSubmit}
-                style={{ flex: 1, padding: '12px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
               >
                 {modalMode === 'create' ? 'Sí, crear' : 'Sí, guardar'}
               </button>
@@ -680,6 +634,13 @@ export const Logros = () => {
           </div>
         </div>
       )}
+
+      <ImageLightboxModal
+        src={lightboxImage?.src}
+        alt={lightboxImage?.alt}
+        title={lightboxImage?.alt}
+        onClose={() => setLightboxImage(null)}
+      />
 
     </div>
   );

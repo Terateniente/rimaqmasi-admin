@@ -166,13 +166,7 @@ export const Definiciones = () => {
   );
 
   return (
-    <div style={{ padding: '24px 32px', overflowY: 'auto', flex: 1 }}>
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+    <div style={{ padding: '28px 32px', overflowY: 'auto', flex: 1 }}>
       <div className="flex-col-mobile" style={{ justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', gap: '16px' }}>
         <div style={{ flex: 1 }}>
           <div className="rq-page-heading">
@@ -255,11 +249,12 @@ export const Definiciones = () => {
                     <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)' }}>{def.orden_acepcion}</td>
                     <td style={{ padding: '12px 16px' }}>
                       <button 
+                        type="button"
                         onClick={() => handleToggleEstado(def)}
                         style={{
-                          padding: '4px 8px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px', textTransform: 'uppercase',
-                          backgroundColor: def.estado === 'aprobado' ? '#dcfce7' : def.estado === 'rechazado' ? '#fee2e2' : 'var(--color-surface-variant)',
-                          color: def.estado === 'aprobado' ? '#166534' : def.estado === 'rechazado' ? '#dc2626' : 'var(--color-on-surface-variant)'
+                          padding: '4px 10px', borderRadius: '999px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '11.5px', textTransform: 'uppercase',
+                          backgroundColor: def.estado === 'aprobado' ? 'var(--color-success-container)' : def.estado === 'rechazado' ? 'var(--color-error-container)' : 'var(--color-surface-container-high)',
+                          color: def.estado === 'aprobado' ? 'var(--color-on-success-container)' : def.estado === 'rechazado' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)'
                         }}
                       >
                         {def.estado || 'pendiente'}
@@ -344,7 +339,7 @@ export const Definiciones = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                   <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer' }}>Cancelar</button>
-                  <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Guardar</button>
+                  <button type="submit" style={{ padding: '8px 16px', background: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Guardar</button>
                 </div>
               </form>
             </div>

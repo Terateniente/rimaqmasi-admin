@@ -5,7 +5,7 @@ import '@fontsource-variable/inter';
 import './index.css';
 
 const savedTheme = localStorage.getItem('rq_admin_theme');
-document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
+document.documentElement.dataset.theme = savedTheme === 'light' ? 'light' : 'dark';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

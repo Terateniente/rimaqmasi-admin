@@ -18,8 +18,8 @@ export const ModernPageSkeleton = ({
           flexDirection: 'column',
           gap: 10,
           padding: '14px 18px',
-          marginBottom: 18,
-          borderRadius: 16,
+          marginBottom: 8,
+          borderRadius: 'var(--card-radius)',
           background: 'var(--color-surface)',
           border: '1px solid var(--color-outline-variant)',
           boxShadow: 'var(--shadow-level-1)',
@@ -29,11 +29,11 @@ export const ModernPageSkeleton = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span
               style={{
-                width: 10,
-                height: 10,
+                width: 8,
+                height: 8,
                 borderRadius: '50%',
-                background: 'var(--color-primary)',
-                boxShadow: '0 0 0 4px color-mix(in srgb, var(--color-primary) 16%, transparent)',
+                background: 'var(--color-primary-text)',
+                boxShadow: '0 0 0 4px color-mix(in srgb, var(--color-primary-text) 18%, transparent)',
               }}
             />
             <strong style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-on-surface)' }}>
@@ -50,7 +50,7 @@ export const ModernPageSkeleton = ({
             height: 4,
             borderRadius: 999,
             overflow: 'hidden',
-            background: 'color-mix(in srgb, var(--color-primary) 14%, transparent)',
+            background: 'var(--color-surface-container-high)',
           }}
         >
           <div
@@ -58,7 +58,7 @@ export const ModernPageSkeleton = ({
               width: '45%',
               height: '100%',
               borderRadius: 999,
-              background: 'linear-gradient(90deg, var(--color-primary), var(--color-tertiary))',
+              background: 'linear-gradient(90deg, var(--color-primary), var(--color-primary-text))',
             }}
           />
         </div>
@@ -67,10 +67,10 @@ export const ModernPageSkeleton = ({
     {showHeading && (
       <div>
         <div className="rq-modern-skeleton__heading">
-          <Block width={6} height={32} radius={4} />
-          <Block width="min(280px, 70%)" height={28} radius={7} />
+          <Block width={4} height={28} radius={999} />
+          <Block width="min(280px, 70%)" height={26} radius={7} />
         </div>
-        <div style={{ marginTop: 10 }}><Block width="min(560px, 90%)" height={14} /></div>
+        <div style={{ marginTop: 10 }}><Block width="min(540px, 90%)" height={14} /></div>
       </div>
     )}
     <div className="rq-modern-skeleton__grid">
@@ -82,6 +82,6 @@ export const ModernPageSkeleton = ({
         </div>
       ))}
     </div>
-    {!compact && <Block height={210} radius={16} />}
+    {!compact && <Block height={210} radius={14} />}
   </div>
 );
