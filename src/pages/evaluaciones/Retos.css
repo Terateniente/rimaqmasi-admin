@@ -61,7 +61,6 @@
 }
 
 .retos-save-route:hover:not(:disabled) {
-  transform: translateY(-1px);
   background: var(--color-primary-hover);
   box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 32%, transparent);
 }
@@ -114,7 +113,6 @@
 .retos-metric:hover {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-level-2);
-  transform: translateY(-2px);
 }
 
 .retos-metric__icon {
@@ -204,7 +202,6 @@
 .retos-generate-button:hover:not(:disabled),
 .retos-primary-button:hover:not(:disabled),
 .retos-header-save:hover:not(:disabled) {
-  transform: translateY(-1px);
   background: var(--color-primary-hover);
   box-shadow: 0 7px 16px color-mix(in srgb, var(--color-primary) 32%, transparent);
 }
@@ -266,7 +263,7 @@
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
-.retos-empty-action:hover { background: var(--color-primary-container); transform: translateY(-1px); }
+.retos-empty-action:hover { background: var(--color-primary-container); }
 
 .retos-workspace { margin: 0; }
 .retos-workspace__header { display: flex; align-items: center; gap: 12px; margin: -2px 0 22px; padding-bottom: 18px; border-bottom: 1px solid var(--color-outline-variant); }
@@ -348,7 +345,7 @@
   transition: border-color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
-.retos-word-card:hover { border-color: var(--color-border-strong); transform: translateY(-1px); }
+.retos-word-card:hover { border-color: var(--color-border-strong); }
 .retos-word-card.selected { border: 2px solid var(--color-primary-text); padding: 11px; background: var(--color-primary-container); }
 .retos-word-card input { grid-row: 1 / 4; width: 16px; height: 16px; margin-top: 2px; accent-color: var(--color-primary); }
 .retos-word-card strong { min-width: 0; color: var(--color-on-surface); font-size: 14px; }

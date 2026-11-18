@@ -9,113 +9,114 @@ import {
   getCategorias, deleteCategoria, createCategoria
 } from '../../services/diccionarioService';
 import { toast } from 'sonner';
+import { COLOR_FAMILIES, getColorByOrder } from '../../utils/colorPalette';
 import dictionaryData from './dictionary.json';
 
 const curriculum = [
   {
-    nombre: "Introduccion al quechua", orden: 1, color: "#B3262E",
+    nombre: "Introduccion al quechua", orden: 1, color: COLOR_FAMILIES.rojo[3],
     sesiones: [
-      { titulo: "El quechua, origen y caracteristicas", orden_clasificacion: 1, color: "#B3262E",
+      { titulo: "El quechua, origen y caracteristicas", orden_clasificacion: 1, color: COLOR_FAMILIES.rojo[2],
         lecciones: [
-          { titulo: "El origen del quechua", descripcion: "Aprende los origenes historicos y geograficos del idioma quechua." },
-          { titulo: "Caracteristicas del quechua", descripcion: "Conoce la estructura basica y tipologia de esta lengua aglutinante." }
+          { titulo: "El origen del quechua", descripcion: "Aprende los origenes historicos y geograficos del idioma quechua.", color: COLOR_FAMILIES.rojo[1] },
+          { titulo: "Caracteristicas del quechua", descripcion: "Conoce la estructura basica y tipologia de esta lengua aglutinante.", color: COLOR_FAMILIES.rojo[2] }
         ]
       },
-      { titulo: "Alfabeto del quechua sureno", orden_clasificacion: 2, color: "#B3262E",
+      { titulo: "Alfabeto del quechua sureno", orden_clasificacion: 2, color: COLOR_FAMILIES.rojo[3],
         lecciones: [
-          { titulo: "Alfabeto quechua sureno", descripcion: "Una vision general de las letras que componen el quechua chanca y collao." },
-          { titulo: "Vocales del quechua (A, I y U)", descripcion: "Aprende sobre las 3 vocales del quechua y como cambian su sonido." },
-          { titulo: "Grafias simples", descripcion: "Las consonantes de pronunciacion suave." },
-          { titulo: "Grafias aspiradas", descripcion: "Aprende a pronunciar las consonantes con aire adicional." },
-          { titulo: "Grafias glotales", descripcion: "Domina los sonidos explosivos del quechua." }
+          { titulo: "Alfabeto quechua sureno", descripcion: "Una vision general de las letras que componen el quechua chanca y collao.", color: COLOR_FAMILIES.rojo[0] },
+          { titulo: "Vocales del quechua (A, I y U)", descripcion: "Aprende sobre las 3 vocales del quechua y como cambian su sonido.", color: COLOR_FAMILIES.rojo[1] },
+          { titulo: "Grafias simples", descripcion: "Las consonantes de pronunciacion suave.", color: COLOR_FAMILIES.rojo[2] },
+          { titulo: "Grafias aspiradas", descripcion: "Aprende a pronunciar las consonantes con aire adicional.", color: COLOR_FAMILIES.rojo[3] },
+          { titulo: "Grafias glotales", descripcion: "Domina los sonidos explosivos del quechua.", color: COLOR_FAMILIES.rojo[4] }
         ]
       }
     ]
   },
   {
-    nombre: "Mi familia", orden: 2, color: "#34783E",
+    nombre: "Mi familia", orden: 2, color: COLOR_FAMILIES.verde[3],
     sesiones: [
-      { titulo: "Vocabulario basico I", orden_clasificacion: 1, color: "#34783E",
+      { titulo: "Vocabulario basico I", orden_clasificacion: 1, color: COLOR_FAMILIES.verde[2],
         lecciones: [
-          { titulo: "Familia-Ayllu", descripcion: "Vocabulario para identificar a los miembros de la familia." },
-          { titulo: "Animales-Uywakuna", descripcion: "Aprende los nombres de los animales mas comunes." },
-          { titulo: "Plantas-Qachukuna/Yurakuna", descripcion: "Vocabulario relacionado con la flora andina." },
-          { titulo: "Numeros-Yupaykuna", descripcion: "Aprende a contar en quechua del 1 al 10." },
-          { titulo: "Colores-Llimpikuna", descripcion: "Descubre como se dicen los colores principales." },
-          { titulo: "Fenomenos naturales-Pachamama munaynin", descripcion: "Terminos para el clima y la naturaleza." }
+          { titulo: "Familia-Ayllu", descripcion: "Vocabulario para identificar a los miembros de la familia.", color: COLOR_FAMILIES.verde[0] },
+          { titulo: "Animales-Uywakuna", descripcion: "Aprende los nombres de los animales mas comunes.", color: COLOR_FAMILIES.verde[1] },
+          { titulo: "Plantas-Qachukuna/Yurakuna", descripcion: "Vocabulario relacionado con la flora andina.", color: COLOR_FAMILIES.verde[2] },
+          { titulo: "Numeros-Yupaykuna", descripcion: "Aprende a contar en quechua del 1 al 10.", color: COLOR_FAMILIES.verde[3] },
+          { titulo: "Colores-Llimpikuna", descripcion: "Descubre como se dicen los colores principales.", color: COLOR_FAMILIES.verde[4] },
+          { titulo: "Fenomenos naturales-Pachamama munaynin", descripcion: "Terminos para el clima y la naturaleza.", color: COLOR_FAMILIES.verde[5] }
         ]
       },
-      { titulo: "Vocabulario basico II", orden_clasificacion: 2, color: "#34783E",
+      { titulo: "Vocabulario basico II", orden_clasificacion: 2, color: COLOR_FAMILIES.verde[3],
         lecciones: [
-          { titulo: "Alimentos_Mikuykuna", descripcion: "Comidas y productos basicos de la dieta andina." },
-          { titulo: "Metales-Chuqikuna", descripcion: "Terminos para metales y minerales." },
-          { titulo: "El cuerpo_Ukhunchikmanta", descripcion: "Aprende las partes del cuerpo humano." },
-          { titulo: "Objetos-Kaqkunamanta", descripcion: "Cosas cotidianas y herramientas." },
-          { titulo: "Dias de la semana_Punchawkuna", descripcion: "Como nombrar los dias de la semana en quechua contemporaneo." },
-          { titulo: "Meses del ano-Wata killakuna", descripcion: "Conoce el ciclo anual quechua." }
+          { titulo: "Alimentos_Mikuykuna", descripcion: "Comidas y productos basicos de la dieta andina.", color: COLOR_FAMILIES.verde[0] },
+          { titulo: "Metales-Chuqikuna", descripcion: "Terminos para metales y minerales.", color: COLOR_FAMILIES.verde[1] },
+          { titulo: "El cuerpo_Ukhunchikmanta", descripcion: "Aprende las partes del cuerpo humano.", color: COLOR_FAMILIES.verde[2] },
+          { titulo: "Objetos-Kaqkunamanta", descripcion: "Cosas cotidianas y herramientas.", color: COLOR_FAMILIES.verde[3] },
+          { titulo: "Dias de la semana_Punchawkuna", descripcion: "Como nombrar los dias de la semana en quechua contemporaneo.", color: COLOR_FAMILIES.verde[4] },
+          { titulo: "Meses del ano-Wata killakuna", descripcion: "Conoce el ciclo anual quechua.", color: COLOR_FAMILIES.verde[5] }
         ]
       },
-      { titulo: "Palabra quechua", orden_clasificacion: 3, color: "#34783E",
+      { titulo: "Palabra quechua", orden_clasificacion: 3, color: COLOR_FAMILIES.verde[4],
         lecciones: [
-          { titulo: "Palabras simples", descripcion: "La unidad basica de significado." },
-          { titulo: "Silaba", descripcion: "Como se estructuran las silabas en quechua." },
-          { titulo: "Raiz", descripcion: "El nucleo de toda palabra aglutinada." },
-          { titulo: "Sufijos", descripcion: "Las piezas que dan vida y contexto al quechua." },
-          { titulo: "Palabras compuestas", descripcion: "Formando nuevos conceptos uniendo palabras." }
+          { titulo: "Palabras simples", descripcion: "La unidad basica de significado.", color: COLOR_FAMILIES.verde[1] },
+          { titulo: "Silaba", descripcion: "Como se estructuran las silabas en quechua.", color: COLOR_FAMILIES.verde[2] },
+          { titulo: "Raiz", descripcion: "El nucleo de toda palabra aglutinada.", color: COLOR_FAMILIES.verde[3] },
+          { titulo: "Sufijos", descripcion: "Las piezas que dan vida y contexto al quechua.", color: COLOR_FAMILIES.verde[4] },
+          { titulo: "Palabras compuestas", descripcion: "Formando nuevos conceptos uniendo palabras.", color: COLOR_FAMILIES.verde[5] }
         ]
       }
     ]
   },
   {
-    nombre: "Nuestra comunidad", orden: 3, color: "#2B5899",
+    nombre: "Nuestra comunidad", orden: 3, color: COLOR_FAMILIES.azul[3],
     sesiones: [
-      { titulo: "Sustantivo quechua", orden_clasificacion: 1, color: "#2B5899",
+      { titulo: "Sustantivo quechua", orden_clasificacion: 1, color: COLOR_FAMILIES.azul[2],
         lecciones: [
-          { titulo: "Sustantivos", descripcion: "Que son los sustantivos (Sutikuna)." },
-          { titulo: "Sustantivos propios", descripcion: "Nombres de lugares y personas." },
-          { titulo: "Sustantivos comunes", descripcion: "Cosas generales de nuestro entorno." }
+          { titulo: "Sustantivos", descripcion: "Que son los sustantivos (Sutikuna).", color: COLOR_FAMILIES.azul[1] },
+          { titulo: "Sustantivos propios", descripcion: "Nombres de lugares y personas.", color: COLOR_FAMILIES.azul[2] },
+          { titulo: "Sustantivos comunes", descripcion: "Cosas generales de nuestro entorno.", color: COLOR_FAMILIES.azul[3] }
         ]
       },
-      { titulo: "Genero y numero", orden_clasificacion: 2, color: "#2B5899",
+      { titulo: "Genero y numero", orden_clasificacion: 2, color: COLOR_FAMILIES.azul[3],
         lecciones: [
-          { titulo: "Genero en las personas", descripcion: "Como distinguir masculino y femenino en humanos." },
-          { titulo: "Genero en los animales", descripcion: "Diferenciar machos y hembras en los animales." },
-          { titulo: "Numero", descripcion: "El sufijo pluralizador -kuna." }
+          { titulo: "Genero en las personas", descripcion: "Como distinguir masculino y femenino en humanos.", color: COLOR_FAMILIES.azul[2] },
+          { titulo: "Genero en los animales", descripcion: "Diferenciar machos y hembras en los animales.", color: COLOR_FAMILIES.azul[3] },
+          { titulo: "Numero", descripcion: "El sufijo pluralizador -kuna.", color: COLOR_FAMILIES.azul[4] }
         ]
       },
-      { titulo: "Adjetivo quechua", orden_clasificacion: 3, color: "#2B5899",
+      { titulo: "Adjetivo quechua", orden_clasificacion: 3, color: COLOR_FAMILIES.azul[4],
         lecciones: [
-          { titulo: "Adjetivos en personas", descripcion: "Cualidades para describir gente." },
-          { titulo: "Adjetivos en animales", descripcion: "Describiendo la fauna." },
-          { titulo: "Adjetivos en cosas u objetos", descripcion: "Atributos para los objetos." },
-          { titulo: "Adjetivos en productos", descripcion: "Calificando alimentos y cosechas." },
-          { titulo: "Adjetivos en plantas", descripcion: "Describiendo la flora." },
-          { titulo: "Adjetivos en partes del cuerpo", descripcion: "Descripciones fisicas anatomicas." }
+          { titulo: "Adjetivos en personas", descripcion: "Cualidades para describir gente.", color: COLOR_FAMILIES.azul[0] },
+          { titulo: "Adjetivos en animales", descripcion: "Describiendo la fauna.", color: COLOR_FAMILIES.azul[1] },
+          { titulo: "Adjetivos en cosas u objetos", descripcion: "Atributos para los objetos.", color: COLOR_FAMILIES.azul[2] },
+          { titulo: "Adjetivos en productos", descripcion: "Calificando alimentos y cosechas.", color: COLOR_FAMILIES.azul[3] },
+          { titulo: "Adjetivos en plantas", descripcion: "Describiendo la flora.", color: COLOR_FAMILIES.azul[4] },
+          { titulo: "Adjetivos en partes del cuerpo", descripcion: "Descripciones fisicas anatomicas.", color: COLOR_FAMILIES.azul[5] }
         ]
       }
     ]
   },
   {
-    nombre: "Nuestras actividades", orden: 4, color: "#C26229",
+    nombre: "Nuestras actividades", orden: 4, color: COLOR_FAMILIES.naranja[3],
     sesiones: [
-      { titulo: "Verbos I", orden_clasificacion: 1, color: "#C26229",
+      { titulo: "Verbos I", orden_clasificacion: 1, color: COLOR_FAMILIES.naranja[2],
         lecciones: [
-          { titulo: "Verbos usados en la escuela", descripcion: "Acciones de aprendizaje y estudio." },
-          { titulo: "Verbos usados en la cocina", descripcion: "Acciones para preparar alimentos." },
-          { titulo: "Verbos usados en la chacra", descripcion: "Acciones del trabajo agricola." },
-          { titulo: "Verbos usados en la crianza", descripcion: "Verbos para el cuidado de animales." },
-          { titulo: "Verbos usados en el juego", descripcion: "Acciones recreativas y ludicas." },
-          { titulo: "Verbos usados en la casa", descripcion: "Labores y rutinas hogarenas." }
+          { titulo: "Verbos usados en la escuela", descripcion: "Acciones de aprendizaje y estudio.", color: COLOR_FAMILIES.naranja[0] },
+          { titulo: "Verbos usados en la cocina", descripcion: "Acciones para preparar alimentos.", color: COLOR_FAMILIES.naranja[1] },
+          { titulo: "Verbos usados en la chacra", descripcion: "Acciones del trabajo agricola.", color: COLOR_FAMILIES.naranja[2] },
+          { titulo: "Verbos usados en la crianza", descripcion: "Verbos para el cuidado de animales.", color: COLOR_FAMILIES.naranja[3] },
+          { titulo: "Verbos usados en el juego", descripcion: "Acciones recreativas y ludicas.", color: COLOR_FAMILIES.naranja[4] },
+          { titulo: "Verbos usados en la casa", descripcion: "Labores y rutinas hogarenas.", color: COLOR_FAMILIES.naranja[5] }
         ]
       },
-      { titulo: "Verbos II", orden_clasificacion: 2, color: "#C26229",
+      { titulo: "Verbos II", orden_clasificacion: 2, color: COLOR_FAMILIES.naranja[3],
         lecciones: [
-          { titulo: "Verbos usados en emociones", descripcion: "Expresando sentimientos en quechua." },
-          { titulo: "Verbos usados en construccion", descripcion: "Acciones de construir y reparar." },
-          { titulo: "Verbos usados en caza y pesca", descripcion: "Supervivencia y recoleccion en el campo." },
-          { titulo: "Verbos usados en la danza y canto", descripcion: "Expresiones artisticas." },
-          { titulo: "Verbos usados en cosecha", descripcion: "Recolectando los frutos de la tierra." },
-          { titulo: "Otros verbos", descripcion: "Verbos variados de alta frecuencia." }
+          { titulo: "Verbos usados en emociones", descripcion: "Expresando sentimientos en quechua.", color: COLOR_FAMILIES.naranja[0] },
+          { titulo: "Verbos usados en construccion", descripcion: "Acciones de construir y reparar.", color: COLOR_FAMILIES.naranja[1] },
+          { titulo: "Verbos usados en caza y pesca", descripcion: "Supervivencia y recoleccion en el campo.", color: COLOR_FAMILIES.naranja[2] },
+          { titulo: "Verbos usados en la danza y canto", descripcion: "Expresiones artisticas.", color: COLOR_FAMILIES.naranja[3] },
+          { titulo: "Verbos usados en cosecha", descripcion: "Recolectando los frutos de la tierra.", color: COLOR_FAMILIES.naranja[4] },
+          { titulo: "Otros verbos", descripcion: "Verbos variados de alta frecuencia.", color: COLOR_FAMILIES.naranja[5] }
         ]
       }
     ]
@@ -248,20 +249,24 @@ export const SeedQuechua = () => {
     try {
       for (const u of curriculum) {
         log(`mkdir UNIDAD "${u.nombre}"`);
-        const cu = await createUnidad({ curso_id: parseInt(selectedCurso), codigo: null, nombre: u.nombre, orden: u.orden, color: u.color, estado: 'activo', creado_por_id: currentUserId });
+        const unitColor = u.color || getColorByOrder(COLOR_FAMILIES.rojo[3], u.orden);
+        const cu = await createUnidad({ curso_id: parseInt(selectedCurso), codigo: null, nombre: u.nombre, orden: u.orden, color: unitColor, estado: 'activo', creado_por_id: currentUserId });
         log(`  -> response: ${JSON.stringify(cu).substring(0, 120)}`);
         const uid = cu.data?.unidad_id || cu.data?.id || cu.unidad_id || cu.id;
         if (!uid) { log(`  ERR: no unidad ID in response`); continue; }
         for (const s of u.sesiones) {
           log(`  mkdir SESION "${s.titulo}"`);
-          const cs = await createSesion({ unidad_id: parseInt(uid), titulo: s.titulo, orden: s.orden_clasificacion, color: s.color, url_imagen: null, estado: 'activo', creado_por_id: currentUserId });
+          const sesionColor = s.color || getColorByOrder(unitColor, s.orden_clasificacion);
+          const cs = await createSesion({ unidad_id: parseInt(uid), titulo: s.titulo, orden: s.orden_clasificacion, color: sesionColor, url_imagen: null, estado: 'activo', creado_por_id: currentUserId });
           log(`    -> response: ${JSON.stringify(cs).substring(0, 120)}`);
           const sid = cs.data?.sesion_id || cs.data?.id || cs.sesion_id || cs.id;
           if (!sid) { log(`    ERR: no sesion ID in response`); continue; }
           let o = 1;
           for (const l of s.lecciones) {
+            const leccionOrder = o++;
+            const leccionColor = l.color || getColorByOrder(sesionColor, leccionOrder);
             log(`    touch LECCION "${l.titulo}"`);
-            const cl = await createLeccion({ sesion_id: parseInt(sid), titulo: l.titulo, descripcion: l.descripcion, orden: o++, xp_recompensa: 100, color: s.color, url_icono: null, estado: 'activo', creado_por_id: currentUserId });
+            const cl = await createLeccion({ sesion_id: parseInt(sid), titulo: l.titulo, descripcion: l.descripcion, orden: leccionOrder, xp_recompensa: 100, color: leccionColor, url_icono: null, estado: 'activo', creado_por_id: currentUserId });
             log(`      -> response: ${JSON.stringify(cl).substring(0, 100)}`);
           }
         }

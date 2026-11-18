@@ -178,7 +178,11 @@
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+:is(.rq-icon-btn, .rq-text-btn):not(:disabled):active {
+  transform: scale(0.94);
 }
 
 .rq-text-btn:hover {
@@ -1220,7 +1224,6 @@ label.rq-button {
 
 .rq-button--success:not(:disabled):hover {
   filter: brightness(1.08);
-  transform: translateY(-1px);
 }
 
 button.rq-badge--button {

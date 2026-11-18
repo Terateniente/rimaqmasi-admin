@@ -28,7 +28,6 @@
 .lives-metric:hover {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-level-2);
-  transform: translateY(-2px);
 }
 
 .lives-metric__icon {
@@ -285,7 +284,6 @@
 
 .lives-save:hover:not(:disabled) {
   background: var(--color-primary-hover);
-  transform: translateY(-1px);
   box-shadow: 0 8px 20px color-mix(in srgb, var(--color-primary) 34%, transparent);
 }
 

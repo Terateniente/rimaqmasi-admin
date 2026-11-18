@@ -47,7 +47,6 @@
 .rq-form-actions > button:last-child:hover:not(:disabled),
 .rq-form-actions > div > button:last-child:hover:not(:disabled) {
   background: var(--color-primary-hover);
-  transform: translateY(-1px);
 }
 
 .rq-form-actions button > svg {
@@ -73,7 +72,6 @@
 .rq-main [style*='position: fixed'] form button[type='submit']:hover:not(:disabled),
 [style*='position: fixed'] form button[type='submit']:hover:not(:disabled) {
   background: var(--color-primary-hover);
-  transform: translateY(-1px);
 }
 
 .rq-main [style*='position: fixed'] form > div:last-child:has(button[type='submit']) button[type='button'],
