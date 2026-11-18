@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { downloadCsv, getAdminAnalytics, getAdminExport } from '../services/analyticsService';
 import { useAuth } from '../hooks/useAuth';
-import { isSuperAdmin } from '../utils/roles';
-import { drawWhitePdfLogo, loadWhitePdfLogo } from '../utils/pdfBranding';
+import { isSuperAdmin, normalizeRole } from '../utils/roles';
+import { generateAnalyticsPdf } from '../utils/analyticsPdf';
 import { RimaqSelect } from '../components/RimaqSelect';
 import './analytics.css';
 
@@ -50,6 +50,16 @@ const formatExportTime = value => {
 };
 const percent = (value, total) => total > 0 ? Number(((Number(value || 0) / total) * 100).toFixed(2)) : 0;
 
+const ADMIN_ROLES = new Set(['admin', 'super_admin', 'cajero']);
+
+const isStudentExportRow = (row) => {
+  if (!row || typeof row !== 'object') return false;
+  const roleKey = Object.keys(row).find((key) => /^(rol|role|tipo_usuario)$/i.test(key.trim()));
+  if (roleKey) return normalizeRole(row[roleKey]) === 'estudiante';
+  if ('Estado' in row) return !ADMIN_ROLES.has(normalizeRole(row.Estado));
+  return true;
+};
+
 const buildExportReport = (data, kind) => {
   const distributions = data?.distributions || {};
   const totals = data?.totals || {};
@@ -59,14 +69,18 @@ const buildExportReport = (data, kind) => {
     Cantidad: Number(item.value || 0),
     'Porcentaje (%)': percent(item.value, total),
   }));
+  const studentCount = Number(totals.estudiantes || 0);
+  const studentDistributions = (distributions.usuarios_estado || []).filter(
+    (item) => !ADMIN_ROLES.has(normalizeRole(item.label || item.key))
+  );
 
   const reports = {
     users: {
-      title: 'Listado completo de usuarios',
-      description: 'Perfiles, roles, accesos, XP, rachas y participación.',
-      summary: `${formatNumber(totals.usuarios)} usuarios analizados`,
+      title: 'Listado completo de estudiantes',
+      description: 'Perfiles, accesos, XP, rachas y participación estudiantil.',
+      summary: `${formatNumber(studentCount)} ${studentCount === 1 ? 'estudiante analizado' : 'estudiantes analizados'}`,
       periodSensitive: false,
-      rows: distributionRows(distributions.usuarios_estado, totals.usuarios),
+      rows: distributionRows(studentDistributions, studentCount),
     },
     courses: {
       title: 'Listado completo de cursos',
@@ -254,6 +268,12 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
       const fallback = buildExportReport(data, kind);
       const detail = detailKinds.includes(kind) ? await getAdminExport(kind, days) : null;
       const report = detail ? { ...fallback, ...detail, rows: detail.rows || [] } : fallback;
+      if (kind === 'users') {
+        report.rows = (report.rows || []).filter(isStudentExportRow);
+        report.title = fallback.title;
+        report.description = fallback.description;
+        report.summary = `${formatNumber(report.rows.length)} ${report.rows.length === 1 ? 'estudiante analizado' : 'estudiantes analizados'}`;
+      }
       const rows = report.rows;
       if (!rows.length) {
         toast.error('No existen registros para exportar con el alcance seleccionado', { id: toastId });
@@ -285,60 +305,7 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
         XLSX.utils.book_append_sheet(workbook, dataSheet, 'Datos');
         XLSX.writeFile(workbook, `${filename}.xlsx`, { compression: true });
       } else if (format === 'pdf') {
-        const [{ jsPDF }, { autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
-        const allColumns = Object.keys(rows[0]);
-        const columns = (report.pdf_columns || allColumns.slice(0, 9)).filter(column => allColumns.includes(column));
-        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-        const whiteLogo = await loadWhitePdfLogo();
-        const pageWidth = doc.internal.pageSize.getWidth();
-        doc.setFillColor(185, 33, 46);
-        doc.rect(0, 0, pageWidth, 38, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('helvetica', 'bold');
-        drawWhitePdfLogo(doc, whiteLogo, 14, 4, 62);
-        doc.setFontSize(18);
-        doc.text(report.title, 14, 25);
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor(243, 224, 226);
-        doc.text(doc.splitTextToSize(report.description, pageWidth - 28), 14, 32);
-
-        const scope = report.scope || (report.periodSensitive === false ? 'Corte actual' : `Últimos ${days} días`);
-        const summary = [['REGISTROS', String(rows.length)], ['ALCANCE', scope], ['COLUMNAS EN EXCEL', String(allColumns.length)], ['GENERADO', new Date().toLocaleDateString('es-PE')]];
-        const gap = 5;
-        const cardWidth = (pageWidth - 28 - gap * 3) / 4;
-        summary.forEach(([label, value], index) => {
-          const x = 14 + index * (cardWidth + gap);
-          doc.setFillColor(248, 244, 245);
-          doc.roundedRect(x, 43, cardWidth, 14, 2, 2, 'F');
-          doc.setTextColor(185, 33, 46);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(6.5);
-          doc.text(label, x + 4, 48);
-          doc.setTextColor(35, 47, 66);
-          doc.setFontSize(index === 1 ? 8 : 10);
-          doc.text(doc.splitTextToSize(value, cardWidth - 8)[0], x + 4, 54);
-        });
-        autoTable(doc, {
-          head: [columns],
-          body: rows.map(row => columns.map(column => String(row[column] ?? ''))),
-          startY: 63,
-          margin: { left: 14, right: 14, bottom: 15 },
-          theme: 'grid',
-          headStyles: { fillColor: [100, 31, 39], textColor: 255, fontStyle: 'bold', lineColor: [130, 63, 71] },
-          styles: { fontSize: 6.5, cellPadding: 2.2, overflow: 'linebreak', lineColor: [224, 218, 219], lineWidth: .15, textColor: [41, 50, 65] },
-          alternateRowStyles: { fillColor: [249, 246, 247] },
-          didDrawPage: () => {
-            const pageHeight = doc.internal.pageSize.getHeight();
-            doc.setDrawColor(220, 220, 220);
-            doc.line(14, pageHeight - 11, pageWidth - 14, pageHeight - 11);
-            doc.setFontSize(8);
-            doc.setTextColor(110, 120, 136);
-            doc.text('RIMAQMASI · Sistema de aprendizaje de idiomas', 14, pageHeight - 6);
-            doc.text(`Página ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 14, pageHeight - 6, { align: 'right' });
-          },
-        });
-        doc.save(`${filename}.pdf`);
+        await generateAnalyticsPdf({ report, rows, days, filename, generatedBy: user });
       }
       toast.success(`${format === 'excel' ? 'Excel' : format.toUpperCase()} descargado correctamente`, { id: toastId });
     } catch (error) {
@@ -927,7 +894,7 @@ const ActivityTimeline = ({ items }) => {
 
 const ExportCenter = ({ data, onExport, exporting, isSuper }) => {
   const expectedRows = {
-    users: data.totals.usuarios, courses: data.totals.cursos, learning: data.totals.respuestas || data.totals.intentos,
+    users: data.totals.estudiantes || 0, courses: data.totals.cursos, learning: data.totals.respuestas || data.totals.intentos,
     enrollments: data.totals.matriculas, dictionary: data.totals.palabras, activity: null,
   };
   const cards = [

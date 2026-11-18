@@ -14,6 +14,7 @@ import { getIdiomas } from '../../services/idiomaService';
 import { getUsuarios } from '../../services/userService';
 import api, { resolveMediaUrl } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+import { useObjectUrl } from '../../hooks/useObjectUrl';
 import { matchesSearch } from '../../utils/searchUtils';
 import { getColorByOrder } from '../../utils/colorPalette';
 import { DeleteConfirmationModal, ConfirmDialog } from '../../components/DeleteConfirmationModal';
@@ -51,18 +52,6 @@ const xpOf = (l) => l?.xp_recompensa ?? l?.xp_recompensa_base ?? 10;
 const nivelLabel = (c) => {
   const nivel = c?.nivel || 'A1';
   return { A: `${nivel} - Básico`, B: `${nivel} - Intermedio`, C: `${nivel} - Avanzado` }[nivel[0]] || nivel;
-};
-
-/** URL temporal para previsualizar un archivo local; se libera al cambiarlo. */
-const useObjectUrl = (file) => {
-  const [url, setUrl] = useState(null);
-  useEffect(() => {
-    if (!file) { setUrl(null); return undefined; }
-    const next = URL.createObjectURL(file);
-    setUrl(next);
-    return () => URL.revokeObjectURL(next);
-  }, [file]);
-  return url;
 };
 
 const LessonIcon = ({ icon, color }) => {
@@ -797,7 +786,13 @@ export const Lecciones = () => {
       {viewing && (
         <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="leccion-view-title">
           <div className="modal-content-responsive rq-modal-dialog rq-modal-dialog--wizard" style={{ width: 'min(640px, 100%)', maxWidth: 640 }}>
-            <div className="rq-detail-banner" style={{ '--banner': viewing.color || DEFAULT_COLOR }}>
+            <div
+              className={`rq-detail-banner${isUploadedIcon(viewingIcon) ? ' rq-detail-banner--image' : ''}`}
+              style={{
+                '--banner': viewing.color || DEFAULT_COLOR,
+                backgroundImage: isUploadedIcon(viewingIcon) ? `url(${resolveMediaUrl(viewingIcon)})` : undefined,
+              }}
+            >
               <div className="rq-detail-banner__row">
                 <div className="rq-inline" style={{ gap: 16, minWidth: 0 }}>
                   <span className="rq-detail-banner__icon" aria-hidden="true"><BookOpen size={28} /></span>

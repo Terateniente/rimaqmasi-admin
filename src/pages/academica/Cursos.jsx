@@ -275,7 +275,7 @@ export const Cursos = () => {
           const sesionId = sesion.sesion_id || sesion.sesiones_id || sesion.id;
           return { ...sesion, lecciones: sesionId ? normalizeList(await getLeccionesBySesion(sesionId)) : [] };
         }));
-        return { ...unidad, sesiones };
+        return { ...unidad, url_imagen: resolveMediaUrl(unidad.url_imagen || unidad.imagen), sesiones };
       }));
       const fileName = await generateCurriculumPdf({
         curso: cursoCompleto,

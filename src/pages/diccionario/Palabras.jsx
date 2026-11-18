@@ -1,20 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { getPalabras, createPalabra, updatePalabra, updatePalabraStatus, deletePalabra, getCategorias } from '../../services/diccionarioService';
-import { getIdiomas } from '../../services/idiomaService';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Search, Plus, Trash2, Volume2, X, Save, Eye, Filter, CheckCircle, XCircle, Upload, Image as ImageIcon, FileAudio, Edit2, FileDown } from 'lucide-react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { Search, Plus, Trash2, Volume2, X, Save, Eye, CheckCircle, XCircle, Upload, Image as ImageIcon, FileAudio, Edit2, FileDown, BookA } from 'lucide-react';
+import { getPalabras, createPalabra, updatePalabra, updatePalabraStatus, deletePalabra, getCategorias } from '../../services/diccionarioService';
+import { getIdiomas } from '../../services/idiomaService';
+import { resolveMediaUrl } from '../../services/api';
+import { useObjectUrl } from '../../hooks/useObjectUrl';
 import { matchesSearch } from '../../utils/searchUtils';
 import { findIdioma, getIdiomaBandera, getIdiomaNombre, getUserDisplayName, getWordTranslations } from '../../utils/dictionaryViewUtils';
 import { generateDictionaryPdf } from '../../utils/dictionaryPdf';
-import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
+import { DeleteConfirmationModal, ConfirmDialog } from '../../components/DeleteConfirmationModal';
 import { WizardProgress } from '../../components/WizardProgress';
 import { RimaqSelect } from '../../components/RimaqSelect';
+import { ImageLightboxModal } from '../../components/ImageLightboxModal';
+import { PageHeader, EmptyState, Pagination } from '../../components/PageKit';
 import './Palabras.css';
-import { resolveMediaUrl } from '../../services/api';
 
-const WORD_CONTEXT_DRAFT_KEY = 'rimaqmasi:palabra-contexto-borrador';
+const ITEMS_PER_PAGE = 10;
+const CONTEXT_KEY = 'rimaqmasi:palabra-contexto-borrador';
+const STEPS = [
+  { label: 'Configuración', description: 'Selecciona el idioma, las categorías y la dificultad.' },
+  { label: 'Término y multimedia', description: 'Escribe el término y agrega su imagen y audio.' },
+  { label: 'Traducciones', description: 'Agrega una o más acepciones con sus ejemplos de uso.' },
+];
+const STEP_FIELDS = { 1: ['idiomas_id', 'categorias_ids', 'nivel_dificultad'], 2: ['termino'] };
+const ESTADOS = {
+  publicado: { label: 'Publicado', tone: 'success' },
+  revision: { label: 'En revisión', tone: 'warning' },
+  borrador: { label: 'Borrador', tone: 'neutral' },
+  archivado: { label: 'Archivado', tone: 'danger' },
+};
+const EMPTY_BLOCK = { idioma_definicion_id: '', termino_traducido: '', definicion_origen: '', definicion_destino: '', ejemplo_texto: '', traduccion_ejemplo: '' };
+
+const list = (r) => (Array.isArray(r) ? r : r?.data || []);
+const palabraId = (p) => p?.palabra_id ?? p?.palabras_id ?? p?.id;
+const categoriaId = (c) => String(c.categoria_id ?? c.categorias_vocabulario_id ?? c.categorias_id ?? c.id);
+const idiomaKey = (i) => String(i.idioma_id || i.idiomas_id || i.id);
+const idiomaLabel = (i) => i.nombre || i.nombres;
+
+const LanguageChip = ({ idioma, compact = false }) => {
+  const flag = getIdiomaBandera(idioma);
+  return (
+    <span className={`lang-chip${compact ? ' lang-chip--compact' : ''}`}>
+      {flag
+        ? <img src={resolveMediaUrl(flag)} alt="" className="lang-chip__flag" />
+        : <span className="lang-chip__flag" aria-hidden="true">{String(idioma?.codigo_iso || '?').slice(0, 2).toUpperCase()}</span>}
+      {getIdiomaNombre(idioma, 'Sin idioma')}
+    </span>
+  );
+};
+
+/** Lee la configuración guardada (idioma, categorías, dificultad) para nuevas palabras. */
+const readSavedContext = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CONTEXT_KEY) || 'null');
+    return saved?.idiomas_id && saved?.categorias_ids?.length && saved?.nivel_dificultad ? saved : null;
+  } catch {
+    localStorage.removeItem(CONTEXT_KEY);
+    return null;
+  }
+};
+
+/** Convierte las traducciones guardadas de una palabra en bloques del formulario. */
+const toTranslationBlocks = (palabra, sourceLanguageId) => (palabra.traduccionesOrigen || palabra.traducciones_origen || []).map((relation) => {
+  const destination = relation.palabraDestino || relation.palabra_destino;
+  const destId = destination?.idioma_id ?? destination?.idiomas_id ?? destination?.idioma?.idioma_id;
+  const sourceDef = (palabra.definiciones || []).find((d) => String(d.idioma_definicion_id) === String(sourceLanguageId));
+  const destDef = (destination?.definiciones || []).find((d) => String(d.idioma_definicion_id) === String(destId));
+  const example = (palabra.ejemplos || []).find((e) => !e.idioma_significado_id || String(e.idioma_significado_id) === String(destId));
+  return {
+    traduccion_palabra_id: relation.traduccion_palabra_id || relation.id,
+    idioma_definicion_id: String(destId || ''),
+    termino_traducido: destination?.termino || '',
+    definicion_origen: sourceDef?.definicion || '',
+    definicion_destino: destDef?.definicion || '',
+    ejemplo_texto: example?.texto_ejemplo || example?.ejemplo_texto || '',
+    traduccion_ejemplo: example?.texto_significado || example?.traduccion_ejemplo || '',
+  };
+});
 
 export const Palabras = () => {
   const navigate = useNavigate();
@@ -23,61 +87,41 @@ export const Palabras = () => {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-  
-  // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIdioma, setSelectedIdioma] = useState('');
   const [selectedEstado, setSelectedEstado] = useState('');
   const [selectedCategoria, setSelectedCategoria] = useState('');
-  const [categoriaSearchTerm, setCategoriaSearchTerm] = useState('');
-
-  // Pagination
+  const [categoriaSearch, setCategoriaSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // Modals
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
-  const [confirmData, setConfirmData] = useState(null);
+  const [editing, setEditing] = useState(null); // null = cerrado, {} = nueva, palabra = edición
   const [currentStep, setCurrentStep] = useState(1);
   const [rememberContext, setRememberContext] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [confirmData, setConfirmData] = useState(null);
+  const [lightbox, setLightbox] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [imagenFile, setImagenFile] = useState(null);
-  const [audioPreview, setAudioPreview] = useState(null);
-  const [imagenPreview, setImagenPreview] = useState(null);
+  const audioRef = useRef(null);
+  const newAudioUrl = useObjectUrl(audioFile);
+  const newImagenUrl = useObjectUrl(imagenFile);
 
   const { register, handleSubmit, reset, setValue, getValues, watch, control, trigger, formState: { errors } } = useForm({
-    defaultValues: {
-      definiciones: [{ definicion: '', ejemplo_texto: '', traduccion_ejemplo: '' }]
-    }
+    defaultValues: { definiciones: [EMPTY_BLOCK] },
   });
-  
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'definiciones'
-  });
-  
-  const selectedCategoriasIds = watch('categorias_ids') || [];
-  const selectedSourceLanguageId = watch('idiomas_id');
-  const getPalabraId = (palabra) => palabra?.palabra_id ?? palabra?.palabras_id ?? palabra?.id;
-  const getFileUrl = (url) => resolveMediaUrl(url);
+  const { fields, append, remove } = useFieldArray({ control, name: 'definiciones' });
+  const sourceLanguageId = watch('idiomas_id');
+  const isCreate = editing && !palabraId(editing);
+  const audioPreview = newAudioUrl || (editing?.url_audio ? resolveMediaUrl(editing.url_audio) : null);
+  const imagenPreview = newImagenUrl || (editing?.url_imagen ? resolveMediaUrl(editing.url_imagen) : null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [palabrasRes, idiomasRes, catsRes] = await Promise.all([
-        getPalabras(selectedIdioma),
-        getIdiomas(),
-        getCategorias()
-      ]);
-      
-      const fetchedPalabras = palabrasRes.data || palabrasRes || [];
-      setPalabras(fetchedPalabras);
-      setIdiomas(idiomasRes.data || idiomasRes || []);
-      setCategorias(Array.isArray(catsRes) ? catsRes : (catsRes.data || []));
-    } catch (error) {
+      const [p, i, c] = await Promise.all([getPalabras(selectedIdioma), getIdiomas(), getCategorias()]);
+      setPalabras(list(p));
+      setIdiomas(list(i));
+      setCategorias(list(c));
+    } catch {
       toast.error('Error al cargar datos');
       setPalabras([]);
     } finally {
@@ -85,194 +129,110 @@ export const Palabras = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedIdioma]);
+  useEffect(() => { fetchData(); }, [selectedIdioma]);
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedIdioma, selectedEstado, selectedCategoria]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedIdioma, selectedEstado, selectedCategoria]);
-
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editId, setEditId] = useState(null);
-
-  const handleOpenCreate = () => {
-    let savedContext = null;
-    try {
-      savedContext = JSON.parse(localStorage.getItem(WORD_CONTEXT_DRAFT_KEY) || 'null');
-    } catch {
-      localStorage.removeItem(WORD_CONTEXT_DRAFT_KEY);
-    }
-    const hasSavedContext = Boolean(savedContext?.idiomas_id && savedContext?.categorias_ids?.length && savedContext?.nivel_dificultad);
-    setCurrentStep(hasSavedContext ? 2 : 1);
-    reset({
-      termino: '',
-      idiomas_id: savedContext?.idiomas_id || '',
-      transcripcion_fonetica: '',
-      nivel_dificultad: savedContext?.nivel_dificultad || 1,
-      categorias_ids: savedContext?.categorias_ids || [],
-      definiciones: [{ 
-        idioma_definicion_id: '', 
-        termino_traducido: '',
-        definicion_origen: '',
-        definicion_destino: '',
-        ejemplo_texto: '', 
-        traduccion_ejemplo: '' 
-      }]
-    });
+  const openForm = (palabra = {}) => {
+    const isNew = !palabraId(palabra);
+    const saved = isNew ? readSavedContext() : null;
+    const sourceId = palabra.idioma_id ?? palabra.idiomas_id ?? palabra.idioma?.idioma_id;
+    reset(isNew
+      ? {
+        termino: '',
+        idiomas_id: saved?.idiomas_id || '',
+        transcripcion_fonetica: '',
+        nivel_dificultad: saved?.nivel_dificultad || 1,
+        categorias_ids: saved?.categorias_ids || [],
+        definiciones: [EMPTY_BLOCK],
+      }
+      : {
+        termino: palabra.termino,
+        idiomas_id: String(sourceId || ''),
+        transcripcion_fonetica: palabra.transcripcion_fonetica || '',
+        nivel_dificultad: palabra.dificultad ?? palabra.nivel_dificultad ?? 1,
+        categorias_ids: palabra.categorias?.map(categoriaId) || [],
+        definiciones: toTranslationBlocks(palabra, sourceId),
+      });
     setAudioFile(null);
     setImagenFile(null);
-    setAudioPreview(null);
-    setImagenPreview(null);
-    setCategoriaSearchTerm('');
-    setRememberContext(hasSavedContext);
-    setIsEditMode(false);
-    setEditId(null);
-    setIsModalOpen(true);
+    setCategoriaSearch('');
+    setRememberContext(Boolean(saved));
+    setCurrentStep(saved ? 2 : 1);
+    setEditing(palabra);
   };
 
-  const handleOpenEdit = (palabra) => {
-    setCurrentStep(1);
-    setRememberContext(false);
-    const sourceLanguageId = palabra.idioma_id ?? palabra.idiomas_id ?? palabra.idioma?.idioma_id;
-    const translationBlocks = (palabra.traduccionesOrigen || palabra.traducciones_origen || []).map((relation) => {
-      const destination = relation.palabraDestino || relation.palabra_destino;
-      const destinationLanguageId = destination?.idioma_id ?? destination?.idiomas_id ?? destination?.idioma?.idioma_id;
-      const sourceDefinition = (palabra.definiciones || []).find((definition) => String(definition.idioma_definicion_id) === String(sourceLanguageId));
-      const destinationDefinition = (destination?.definiciones || []).find((definition) => String(definition.idioma_definicion_id) === String(destinationLanguageId));
-      const example = (palabra.ejemplos || []).find((item) => !item.idioma_significado_id || String(item.idioma_significado_id) === String(destinationLanguageId));
-      return {
-        traduccion_palabra_id: relation.traduccion_palabra_id || relation.id,
-        idioma_definicion_id: String(destinationLanguageId || ''),
-        termino_traducido: destination?.termino || '',
-        definicion_origen: sourceDefinition?.definicion || '',
-        definicion_destino: destinationDefinition?.definicion || '',
-        ejemplo_texto: example?.texto_ejemplo || example?.ejemplo_texto || '',
-        traduccion_ejemplo: example?.texto_significado || example?.traduccion_ejemplo || ''
-      };
-    });
-    reset({
-      termino: palabra.termino,
-      idiomas_id: String(sourceLanguageId || ''),
-      transcripcion_fonetica: palabra.transcripcion_fonetica || '',
-      nivel_dificultad: palabra.dificultad ?? palabra.nivel_dificultad ?? 1,
-      categorias_ids: palabra.categorias?.map(c => String(c.categoria_id || c.categorias_vocabulario_id || c.categorias_id || c.id)) || [],
-      definiciones: translationBlocks
-    });
-    setAudioFile(null);
-    setImagenFile(null);
-    setAudioPreview(palabra.url_audio ? getFileUrl(palabra.url_audio) : null);
-    setImagenPreview(palabra.url_imagen ? getFileUrl(palabra.url_imagen) : null);
-    setCategoriaSearchTerm('');
-    setIsEditMode(true);
-    setEditId(getPalabraId(palabra));
-    setIsModalOpen(true);
-  };
-
-  const handlePreSubmit = (data) => {
-    setConfirmData(data);
-  };
-
-  const saveWordContextDraft = () => {
-    if (isEditMode) return;
+  const saveContext = () => {
     const { idiomas_id, categorias_ids, nivel_dificultad } = getValues();
-    if (!idiomas_id || !categorias_ids?.length || !nivel_dificultad) return;
-    localStorage.setItem(WORD_CONTEXT_DRAFT_KEY, JSON.stringify({ idiomas_id, categorias_ids, nivel_dificultad }));
+    if (idiomas_id && categorias_ids?.length && nivel_dificultad) {
+      localStorage.setItem(CONTEXT_KEY, JSON.stringify({ idiomas_id, categorias_ids, nivel_dificultad }));
+    }
   };
 
-  const handleRememberContextToggle = async () => {
+  const toggleRemember = async () => {
     if (rememberContext) {
-      localStorage.removeItem(WORD_CONTEXT_DRAFT_KEY);
+      localStorage.removeItem(CONTEXT_KEY);
       setRememberContext(false);
       toast.success('La configuración ya no se reutilizará automáticamente.');
       return;
     }
-    const isValid = await trigger(['idiomas_id', 'categorias_ids', 'nivel_dificultad']);
-    if (!isValid) return;
-    saveWordContextDraft();
+    if (!(await trigger(STEP_FIELDS[1]))) return;
+    saveContext();
     setRememberContext(true);
     toast.success('Idioma, categoría y dificultad guardados para las siguientes palabras.');
   };
 
-  const handleNextWordStep = async () => {
-    if (currentStep === 1) {
-      const isValid = await trigger(['idiomas_id', 'categorias_ids', 'nivel_dificultad']);
-      if (!isValid) return;
-      if (rememberContext) saveWordContextDraft();
-      setCurrentStep(2);
-      return;
-    }
-
-    const isValid = await trigger(['termino']);
-    if (isValid) setCurrentStep(3);
+  const handleNextStep = async () => {
+    if (!(await trigger(STEP_FIELDS[currentStep]))) return;
+    if (currentStep === 1 && isCreate && rememberContext) saveContext();
+    setCurrentStep((s) => s + 1);
   };
 
   const confirmSubmit = async () => {
-    if (!confirmData) return;
     const data = confirmData;
-    const isEditing = isEditMode;
-    const actionText = isEditing ? 'Editando' : 'Creando';
-    const successText = isEditing ? 'editada' : 'creada/enviada a revisión';
-    const toastId = toast.loading(`${actionText} palabra "${data.termino}"...`);
-    
+    const toastId = toast.loading(`${isCreate ? 'Creando' : 'Editando'} palabra "${data.termino}"...`);
     try {
       const payload = {
         termino: data.termino,
         idioma_id: parseInt(data.idiomas_id, 10),
         nivel_dificultad: parseInt(data.nivel_dificultad, 10),
         transcripcion_fonetica: data.transcripcion_fonetica,
-        categorias_ids: data.categorias_ids ? data.categorias_ids.map(id => parseInt(id, 10)) : []
+        categorias_ids: (data.categorias_ids || []).map((id) => parseInt(id, 10)),
+        ...(data.definiciones?.length && {
+          traducciones: data.definiciones.map((b) => ({
+            traduccion_palabra_id: b.traduccion_palabra_id ? parseInt(b.traduccion_palabra_id, 10) : undefined,
+            idioma_destino_id: parseInt(b.idioma_definicion_id, 10),
+            termino_traducido: b.termino_traducido.trim(),
+            definicion_origen: b.definicion_origen?.trim() || data.termino.trim(),
+            definicion_destino: b.definicion_destino?.trim() || b.termino_traducido.trim(),
+            ejemplo_origen: b.ejemplo_texto?.trim() || undefined,
+            ejemplo_traduccion: b.traduccion_ejemplo?.trim() || undefined,
+          })),
+        }),
+        ...(audioFile && { audio: audioFile }),
+        ...(imagenFile && { imagen: imagenFile }),
       };
-
-      if (data.definiciones && data.definiciones.length > 0) {
-        payload.traducciones = data.definiciones.map((block) => ({
-          traduccion_palabra_id: block.traduccion_palabra_id ? parseInt(block.traduccion_palabra_id, 10) : undefined,
-          idioma_destino_id: parseInt(block.idioma_definicion_id, 10),
-          termino_traducido: block.termino_traducido.trim(),
-          definicion_origen: block.definicion_origen?.trim() || data.termino.trim(),
-          definicion_destino: block.definicion_destino?.trim() || block.termino_traducido.trim(),
-          ejemplo_origen: block.ejemplo_texto?.trim() || undefined,
-          ejemplo_traduccion: block.traduccion_ejemplo?.trim() || undefined,
-        }));
-      }
-
-      if (audioFile) payload.audio = audioFile;
-      if (imagenFile) payload.imagen = imagenFile;
-
-      if (isEditing) {
-        await updatePalabra(editId, payload);
-      } else {
-        await createPalabra(payload);
-      }
-      
-      toast.success(`Palabra ${successText} exitosamente`, { id: toastId });
-      
-      setIsModalOpen(false);
+      if (isCreate) await createPalabra(payload);
+      else await updatePalabra(palabraId(editing), payload);
+      toast.success(`Palabra ${isCreate ? 'creada/enviada a revisión' : 'editada'} exitosamente`, { id: toastId });
+      setEditing(null);
       setConfirmData(null);
-      setIsEditMode(false);
-      setEditId(null);
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.message || `Error al guardar`, { id: toastId });
+      toast.error(error.response?.data?.message || 'Error al guardar', { id: toastId });
     }
   };
 
-  const handleDelete = (palabra) => {
-    setItemToDelete(palabra);
-  };
-
   const confirmDelete = async () => {
-    if (!itemToDelete) return;
-    const palabraId = getPalabraId(itemToDelete);
-    if (!palabraId) {
+    const id = palabraId(itemToDelete);
+    if (!id) {
       toast.error('No se pudo identificar la palabra seleccionada');
       setItemToDelete(null);
       return;
     }
     const toastId = toast.loading(`Eliminando "${itemToDelete.termino}"...`);
     try {
-      await deletePalabra(palabraId);
-      toast.success(`Palabra eliminada exitosamente`, { id: toastId });
+      await deletePalabra(id);
+      toast.success('Palabra eliminada exitosamente', { id: toastId });
       fetchData();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error al eliminar', { id: toastId });
@@ -281,46 +241,48 @@ export const Palabras = () => {
     }
   };
 
-  const filteredPalabras = palabras.filter(p => {
-    const searchMatched = matchesSearch(p.termino, searchTerm);
-    const matchesCat = selectedCategoria
-      ? p.categorias?.some(c => String(c.categoria_id ?? c.categorias_vocabulario_id ?? c.categorias_id ?? c.id) === String(selectedCategoria))
-      : true;
-    const matchesIdioma = selectedIdioma ? String(p.idioma_id ?? p.idiomas_id) === String(selectedIdioma) : true;
-    const matchesEstado = selectedEstado ? String(p.estado) === String(selectedEstado) : true;
-    return searchMatched && matchesCat && matchesIdioma && matchesEstado;
-  }).sort((a, b) => a.termino.localeCompare(b.termino));
+  const handleUpdateStatus = async (palabra, estado) => {
+    const toastId = toast.loading(`Cambiando estado a ${ESTADOS[estado]?.label.toLowerCase() || estado}...`);
+    try {
+      await updatePalabraStatus(palabraId(palabra), estado);
+      toast.success('Estado actualizado exitosamente', { id: toastId });
+      fetchData();
+    } catch {
+      toast.error('Error al cambiar el estado', { id: toastId });
+    }
+  };
 
-  const totalPages = Math.ceil(filteredPalabras.length / itemsPerPage) || 1;
-  const paginatedPalabras = filteredPalabras.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const playAudio = (path) => {
+    audioRef.current?.pause();
+    audioRef.current = new Audio(resolveMediaUrl(path));
+    audioRef.current.play().catch(() => toast.error('No se pudo reproducir el audio'));
+  };
+
+  const filtered = palabras
+    .filter((p) => matchesSearch(p.termino, searchTerm)
+      && (!selectedCategoria || p.categorias?.some((c) => categoriaId(c) === String(selectedCategoria)))
+      && (!selectedIdioma || String(p.idioma_id ?? p.idiomas_id) === String(selectedIdioma))
+      && (!selectedEstado || String(p.estado) === String(selectedEstado)))
+    .sort((a, b) => a.termino.localeCompare(b.termino));
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+  const visible = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const visibleCategorias = categorias.filter((c) => matchesSearch(c.nombre, categoriaSearch));
 
   const handleExportPdf = async () => {
-    if (filteredPalabras.length === 0) {
+    if (filtered.length === 0) {
       toast.error('No hay palabras para exportar con los filtros seleccionados');
       return;
     }
-
     const toastId = toast.loading('Generando PDF del diccionario...');
     setIsExportingPdf(true);
     try {
-      const selectedLanguage = findIdioma(idiomas, selectedIdioma);
-      const selectedCategory = categorias.find((category) =>
-        String(category.categoria_id ?? category.categorias_vocabulario_id ?? category.categorias_id ?? category.id) === String(selectedCategoria)
-      );
-      const stateLabels = {
-        publicado: 'Publicado',
-        revision: 'En revisión',
-        borrador: 'Borrador',
-        archivado: 'Archivado',
-      };
-
       const fileName = await generateDictionaryPdf({
-        palabras: filteredPalabras,
+        palabras: filtered,
         idiomas,
         filtros: {
-          idioma: selectedIdioma ? getIdiomaNombre(selectedLanguage, 'Idioma seleccionado') : '',
-          estado: selectedEstado ? stateLabels[selectedEstado] || selectedEstado : '',
-          categoria: selectedCategory?.nombre || '',
+          idioma: selectedIdioma ? getIdiomaNombre(findIdioma(idiomas, selectedIdioma), 'Idioma seleccionado') : '',
+          estado: selectedEstado ? ESTADOS[selectedEstado]?.label || selectedEstado : '',
+          categoria: categorias.find((c) => categoriaId(c) === String(selectedCategoria))?.nombre || '',
           busqueda: searchTerm.trim(),
         },
       });
@@ -333,314 +295,158 @@ export const Palabras = () => {
     }
   };
 
-  const playAudio = (path) => {
-    if (!path) return;
-    const url = getFileUrl(path);
-    const audio = new Audio(url);
-    audio.play().catch(e => toast.error('No se pudo reproducir el audio'));
-  };
-
-  const getIdiomaName = (id) => {
-    const idioma = idiomas.find(i => i.idiomas_id === id || i.id === id);
-    return idioma ? idioma.nombre : `ID: ${id}`;
-  };
-
-  const getStatusColor = (estado) => {
-    switch (estado) {
-      case 'publicado': return { bg: 'var(--color-primary-container)', color: 'var(--color-on-primary-container)' };
-      case 'revision': return { bg: 'var(--color-tertiary-container)', color: 'var(--color-on-tertiary-container)' };
-      case 'archivado': return { bg: 'var(--color-error-container)', color: 'var(--color-on-error-container)' };
-      case 'borrador': return { bg: 'var(--color-surface-container-high)', color: 'var(--color-on-surface-variant)' };
-      default: return { bg: 'var(--color-surface-variant)', color: 'var(--color-on-surface-variant)' };
-    }
-  };
-
-  const handleUpdateStatus = async (palabra, nuevoEstado) => {
-    const id = getPalabraId(palabra);
-    const toastId = toast.loading(`Cambiando estado a ${nuevoEstado}...`);
-    try {
-      await updatePalabraStatus(id, nuevoEstado);
-      toast.success(`Estado actualizado exitosamente`, { id: toastId });
-      fetchData();
-    } catch (error) {
-      toast.error('Error al cambiar el estado', { id: toastId });
-    }
-  };
-
-  const SkeletonRow = ({ cols }) => (
-    <tr style={{ borderBottom: '1px solid var(--color-surface-variant)' }}>
-      {Array(cols).fill(0).map((_, i) => (
-        <td key={i} style={{ padding: '16px' }}>
-          <div style={{ height: '20px', backgroundColor: 'var(--color-surface-variant)', borderRadius: '4px', opacity: 0.6, animation: 'pulse 1.5s ease-in-out infinite' }} />
-        </td>
-      ))}
-    </tr>
-  );
-
-  const LanguageBadge = ({ idioma, compact = false }) => {
-    const flag = getIdiomaBandera(idioma);
-    return (
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', minWidth: 0 }}>
-        {flag ? (
-          <img
-            src={getFileUrl(flag)}
-            alt={`Bandera de ${getIdiomaNombre(idioma)}`}
-            style={{ width: compact ? '22px' : '28px', height: compact ? '16px' : '20px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--color-surface-variant)', boxShadow: '0 1px 3px rgba(0,0,0,.14)', flexShrink: 0 }}
-          />
-        ) : (
-          <span style={{ width: compact ? '22px' : '28px', height: compact ? '16px' : '20px', borderRadius: '4px', background: 'var(--color-surface-container-high)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 800, flexShrink: 0 }}>
-            {String(idioma?.codigo_iso || '?').slice(0, 2).toUpperCase()}
-          </span>
-        )}
-        <span style={{ fontWeight: 600, color: 'var(--color-on-surface)', whiteSpace: 'nowrap' }}>
-          {getIdiomaNombre(idioma, 'Sin idioma')}
-        </span>
-      </span>
-    );
-  };
-
   return (
-    <div style={{ padding: '28px 32px', overflowY: 'auto', flex: 1 }}>
-      
-      <div className="flex-col-mobile" style={{ justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', gap: '16px' }}>
-        <div style={{ flex: 1 }}>
-          <div className="rq-page-heading">
-            <div className="rq-page-heading__accent"></div>
-            <h1 className="rq-page-heading__title">Diccionario</h1>
+    <div>
+      <PageHeader
+        title="Diccionario"
+        description="Gestiona el repertorio de palabras, filtra por idioma y estado, y edita a detalle cada término."
+        actions={(
+          <>
+            <button type="button" className="rq-button rq-button--outline" onClick={handleExportPdf} disabled={isExportingPdf || loading}>
+              <FileDown size={18} strokeWidth={2.4} /> {isExportingPdf ? 'Generando...' : 'Exportar PDF'}
+            </button>
+            <button type="button" className="rq-button rq-button--primary" onClick={() => openForm()}>
+              <Plus size={18} strokeWidth={2.5} /> Crear Palabra
+            </button>
+          </>
+        )}
+      />
+
+      <div className="rq-toolbar" style={{ gridTemplateColumns: 'minmax(240px, 2fr) repeat(3, minmax(170px, 1fr))' }}>
+        <div className="rq-filter">
+          <label htmlFor="palabra-search">Palabra clave</label>
+          <div className="rq-search-box">
+            <Search size={18} strokeWidth={2.5} aria-hidden="true" />
+            <input id="palabra-search" type="search" placeholder="Buscar por término..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
-          <p style={{ color: 'var(--color-on-surface-variant)', margin: 0, fontSize: '15px', maxWidth: '600px', lineHeight: '1.5' }}>
-            Gestiona el repertorio de palabras, filtra por idioma y estado, y edita a detalle cada término.
-          </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <button
-            onClick={handleExportPdf}
-            disabled={isExportingPdf || loading}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '12px 20px',
-              backgroundColor: 'var(--color-surface)',
-              color: 'var(--color-primary)',
-              border: '2px solid var(--color-primary)',
-              borderRadius: '10px',
-              fontSize: '14px',
-              fontWeight: 700,
-              cursor: isExportingPdf || loading ? 'not-allowed' : 'pointer',
-              opacity: isExportingPdf || loading ? 0.6 : 1,
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <FileDown size={18} strokeWidth={2.4} />
-            {isExportingPdf ? 'Generando...' : 'Exportar PDF'}
-          </button>
-          <button
-            onClick={handleOpenCreate}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '12px 24px',
-              backgroundColor: 'var(--color-primary)',
-              color: 'var(--color-on-primary)',
-              border: '2px solid var(--color-primary)',
-              borderRadius: '10px',
-              fontSize: '14px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
-          >
-            <Plus size={18} strokeWidth={2.5} />
-            Crear Palabra
-          </button>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', backgroundColor: 'var(--color-surface)',
-          borderRadius: '8px', padding: '12px 16px', flex: 1, minWidth: '250px',
-          border: '1px solid var(--color-surface-variant)', boxShadow: 'var(--shadow-level-1)'
-        }}>
-          <Search size={18} color="var(--color-outline)" />
-          <input 
-            type="text" 
-            placeholder="Buscar por término..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', marginLeft: '12px', width: '100%', fontSize: '14px', color: 'var(--color-on-surface)' }}
-          />
-        </div>
-
-        {/* Filtro por Idioma con RimaqSelect */}
-        <div style={{ minWidth: '180px', flex: '0 1 200px' }}>
-          <RimaqSelect 
+        <div className="rq-filter">
+          <label>Idioma</label>
+          <RimaqSelect
             ariaLabel="Filtrar por idioma"
-            value={selectedIdioma || '__all__'} 
+            value={selectedIdioma || '__all__'}
             onValueChange={(val) => setSelectedIdioma(val === '__all__' ? '' : val)}
-            options={[
-              { value: '__all__', label: 'Todos los Idiomas' },
-              ...idiomas.map(i => ({
-                value: String(i.idioma_id || i.idiomas_id || i.id),
-                label: i.nombre || i.nombres
-              }))
-            ]}
+            options={[{ value: '__all__', label: 'Todos los idiomas' }, ...idiomas.map((i) => ({ value: idiomaKey(i), label: idiomaLabel(i) }))]}
           />
         </div>
-
-        {/* Filtro por Estado con RimaqSelect */}
-        <div style={{ minWidth: '180px', flex: '0 1 200px' }}>
-          <RimaqSelect 
+        <div className="rq-filter">
+          <label>Estado</label>
+          <RimaqSelect
             ariaLabel="Filtrar por estado"
-            value={selectedEstado || '__all__'} 
+            value={selectedEstado || '__all__'}
             onValueChange={(val) => setSelectedEstado(val === '__all__' ? '' : val)}
-            options={[
-              { value: '__all__', label: 'Todos los Estados' },
-              { value: 'publicado', label: 'Publicado' },
-              { value: 'revision', label: 'En revisión' },
-              { value: 'borrador', label: 'Borrador' },
-              { value: 'archivado', label: 'Archivado' }
-            ]}
+            options={[{ value: '__all__', label: 'Todos los estados' }, ...Object.entries(ESTADOS).map(([value, e]) => ({ value, label: e.label }))]}
           />
         </div>
-
-        {/* Filtro por Categoría con RimaqSelect */}
-        <div style={{ minWidth: '200px', flex: '0 1 220px' }}>
-          <RimaqSelect 
+        <div className="rq-filter">
+          <label>Categoría</label>
+          <RimaqSelect
             ariaLabel="Filtrar por categoría"
-            value={selectedCategoria || '__all__'} 
+            value={selectedCategoria || '__all__'}
             onValueChange={(val) => setSelectedCategoria(val === '__all__' ? '' : val)}
-            options={[
-              { value: '__all__', label: 'Todas las Categorías' },
-              ...categorias.map(c => {
-                const categoriaId = String(c.categoria_id ?? c.categorias_vocabulario_id ?? c.categorias_id ?? c.id);
-                return { value: categoriaId, label: c.nombre };
-              })
-            ]}
+            options={[{ value: '__all__', label: 'Todas las categorías' }, ...categorias.map((c) => ({ value: categoriaId(c), label: c.nombre }))]}
           />
         </div>
       </div>
 
-      <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-surface-variant)', borderRadius: '12px', overflow: 'hidden', boxShadow: 'var(--shadow-level-1)' }}>
+      <div className="rq-table-card">
         <div className="table-responsive-container">
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+          <table className="rq-table" aria-busy={loading}>
             <thead>
-              <tr style={{ backgroundColor: 'var(--color-surface-container-low)', borderBottom: '2px solid var(--color-surface-variant)' }}>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>TÉRMINO</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>IDIOMA ORIGEN</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>TRADUCCIÓN</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>CREADO POR</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>FONÉTICA</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)' }}>CATEGORÍAS</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)', textAlign: 'center' }}>ESTADO</th>
-                <th style={{ padding: '16px', fontWeight: 700, color: 'var(--color-on-surface-variant)', textAlign: 'center' }}>ACCIONES</th>
+              <tr>
+                <th>Término</th>
+                <th>Idioma origen</th>
+                <th>Traducción</th>
+                <th>Creado por</th>
+                <th>Fonética</th>
+                <th>Categorías</th>
+                <th style={{ textAlign: 'center' }}>Estado</th>
+                <th className="rq-col-actions">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <>
-                  <SkeletonRow cols={8} />
-                  <SkeletonRow cols={8} />
-                  <SkeletonRow cols={8} />
-                  <SkeletonRow cols={8} />
-                  <SkeletonRow cols={7} />
-                </>
-              ) : filteredPalabras.length === 0 ? (
-                <tr><td colSpan={8} style={{ padding: '48px 32px', textAlign: 'center', color: 'var(--color-outline)' }}>No se encontraron palabras.</td></tr>
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} aria-hidden="true">
+                    {[120, 100, 180, 120, 80, 100, 80, 90].map((w, j) => (
+                      <td key={j}><div className="skeleton" style={{ width: w, height: 20, borderRadius: 6 }} /></td>
+                    ))}
+                  </tr>
+                ))
+              ) : visible.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="rq-empty-cell">
+                    <EmptyState icon={BookA} title="No se encontraron palabras" hint="Prueba con otros filtros o crea una palabra nueva" />
+                  </td>
+                </tr>
               ) : (
-                paginatedPalabras.map((palabra) => {
-                  const statusInfo = getStatusColor(palabra.estado);
-                  const idiomaOrigen = findIdioma(idiomas, palabra.idioma_id || palabra.idiomas_id, palabra.idioma);
+                visible.map((palabra) => {
+                  const id = palabraId(palabra);
+                  const estado = ESTADOS[palabra.estado];
                   const traducciones = getWordTranslations(palabra, idiomas);
                   return (
-                    <tr key={getPalabraId(palabra)} style={{ borderBottom: '1px solid var(--color-surface-variant)', transition: 'background-color 0.2s' }} onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-container-lowest)'} onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>
-                      <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--color-on-surface)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <tr key={id}>
+                      <td>
+                        <span className="rq-inline rq-strong">
                           {palabra.url_imagen && (
-                            <img 
-                              src={getFileUrl(palabra.url_imagen)} 
-                              alt={palabra.termino} 
-                              onClick={() => setSelectedImage({ url: palabra.url_imagen, title: palabra.termino })}
-                              title="Ver imagen completa"
-                              style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'cover', cursor: 'pointer', transition: 'transform 0.2s', border: '1px solid var(--color-surface-variant)' }} 
-                              crossOrigin="anonymous" 
-                              onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
-                              onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-                            />
+                            <button
+                              type="button"
+                              className="rq-thumb-zoom rq-tile rq-tile--sm"
+                              style={{ width: 32, height: 32 }}
+                              onClick={() => setLightbox({ src: resolveMediaUrl(palabra.url_imagen), alt: palabra.termino })}
+                              aria-label={`Ver imagen de ${palabra.termino}`}
+                            >
+                              <img src={resolveMediaUrl(palabra.url_imagen)} alt="" crossOrigin="anonymous" />
+                            </button>
                           )}
                           {palabra.termino}
                           {palabra.url_audio && (
-                            <button onClick={() => playAudio(palabra.url_audio)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <button type="button" className="rq-icon-btn" onClick={() => playAudio(palabra.url_audio)} aria-label={`Escuchar ${palabra.termino}`} title="Escuchar pronunciación">
                               <Volume2 size={16} />
                             </button>
                           )}
+                        </span>
+                      </td>
+                      <td><LanguageChip idioma={findIdioma(idiomas, palabra.idioma_id || palabra.idiomas_id, palabra.idioma)} /></td>
+                      <td style={{ minWidth: 190 }}>
+                        {traducciones.length === 0 ? <span className="rq-muted">Sin traducciones</span> : traducciones.map((t) => (
+                          <div key={t.key} className="word-translation">
+                            <div className="rq-strong">{t.termino}</div>
+                            <div className="word-translation__meta">
+                              <LanguageChip idioma={t.idioma} compact />
+                              <div style={{ marginTop: 6 }}>Traducción creada por: <strong>{getUserDisplayName(t.creadoPor)}</strong></div>
+                            </div>
+                          </div>
+                        ))}
+                      </td>
+                      <td style={{ minWidth: 150 }}>
+                        <div className="rq-cell-stack">
+                          <span className="rq-strong" style={{ fontWeight: 600 }}>{getUserDisplayName(palabra.creadoPor || palabra.creado_por)}</span>
+                          {palabra.creado_en && <span className="rq-muted">{new Intl.DateTimeFormat('es-PE').format(new Date(palabra.creado_en))}</span>}
                         </div>
                       </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)' }}>
-                        <LanguageBadge idioma={idiomaOrigen} />
+                      <td className="rq-muted">{palabra.transcripcion_fonetica || '—'}</td>
+                      <td>
+                        {palabra.categorias?.length
+                          ? <div className="rq-inline" style={{ flexWrap: 'wrap', gap: 4 }}>{palabra.categorias.map((c) => <span key={categoriaId(c)} className="rq-badge" style={{ textTransform: 'none', letterSpacing: 0 }}>{c.nombre}</span>)}</div>
+                          : <span className="rq-muted">—</span>}
                       </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)' }}>
-                        {traducciones.length === 0 ? <span style={{ color: 'var(--color-outline)' }}>Sin traducciones</span> : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '190px' }}>
-                            {traducciones.map((traduccion) => (
-                              <div key={traduccion.key} style={{ padding: '10px 12px', borderRadius: '10px', background: 'var(--color-surface-container-low)', border: '1px solid var(--color-outline-variant)' }}>
-                                <div style={{ fontWeight: 700, color: 'var(--color-on-surface)' }}>{traduccion.termino}</div>
-                                <div style={{ marginTop: '7px', paddingTop: '7px', borderTop: '1px solid var(--color-outline-variant)' }}>
-                                  <LanguageBadge idioma={traduccion.idioma} compact />
-                                  <div style={{ marginTop: '6px', fontSize: '11.5px', color: 'var(--color-on-surface-variant)' }}>
-                                    Traducción creada por: <strong style={{ color: 'var(--color-on-surface)' }}>{getUserDisplayName(traduccion.creadoPor)}</strong>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)', minWidth: '150px' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--color-on-surface)' }}>{getUserDisplayName(palabra.creadoPor || palabra.creado_por)}</div>
-                        {palabra.creado_en && <div style={{ marginTop: '3px', fontSize: '11px', color: 'var(--color-outline)' }}>{new Intl.DateTimeFormat('es-PE').format(new Date(palabra.creado_en))}</div>}
-                      </td>
-                      <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)' }}>{palabra.transcripcion_fonetica || '-'}</td>
-                      <td style={{ padding: '12px 16px', color: 'var(--color-on-surface-variant)' }}>
-                        {(!palabra.categorias || palabra.categorias.length === 0) ? '-' : (
-                          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                            {palabra.categorias.map(c => (
-                              <span key={c.categoria_id || c.categorias_vocabulario_id || c.categorias_id || c.id} style={{ backgroundColor: 'var(--color-surface-container-high)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', whiteSpace: 'nowrap' }}>
-                                {c.nombre}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ 
-                            backgroundColor: statusInfo.bg, color: statusInfo.color, 
-                            padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, textTransform: 'capitalize'
-                          }}>
-                            {palabra.estado}
-                          </span>
+                      <td style={{ textAlign: 'center' }}>
+                        <div className="rq-cell-stack" style={{ alignItems: 'center' }}>
+                          <span className={`rq-badge rq-badge--${estado?.tone || 'neutral'}`}>{estado?.label || palabra.estado}</span>
                           {palabra.estado === 'revision' && (
-                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                              <button onClick={() => handleUpdateStatus(palabra, 'publicado')} style={{ background: 'none', border: 'none', color: '#16a34a', cursor: 'pointer', padding: 0 }} title="Publicar"><CheckCircle size={18} /></button>
-                              <button onClick={() => handleUpdateStatus(palabra, 'archivado')} style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', padding: 0 }} title="Archivar"><XCircle size={18} /></button>
+                            <div className="rq-inline" style={{ gap: 2 }}>
+                              <button type="button" className="rq-icon-btn rq-icon-btn--success" onClick={() => handleUpdateStatus(palabra, 'publicado')} title="Publicar" aria-label={`Publicar ${palabra.termino}`}><CheckCircle size={18} /></button>
+                              <button type="button" className="rq-icon-btn rq-icon-btn--danger" onClick={() => handleUpdateStatus(palabra, 'archivado')} title="Archivar" aria-label={`Archivar ${palabra.termino}`}><XCircle size={18} /></button>
                             </div>
                           )}
                         </div>
                       </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                          <button onClick={() => navigate(`/diccionario/palabras/${getPalabraId(palabra)}`)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', padding: 0 }} title="Ver detalles">
-                            <Eye size={20} strokeWidth={2} />
-                          </button>
-                          <button onClick={() => handleOpenEdit(palabra)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', padding: 0 }} title="Editar">
-                            <Edit2 size={20} strokeWidth={2} />
-                          </button>
-                          <button onClick={() => handleDelete(palabra)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', padding: 0 }} title="Eliminar">
-                            <Trash2 size={20} strokeWidth={2} />
-                          </button>
+                      <td className="rq-col-actions">
+                        <div>
+                          <button type="button" className="rq-icon-btn" onClick={() => navigate(`/diccionario/palabras/${id}`)} title="Ver detalles" aria-label={`Ver detalles de ${palabra.termino}`}><Eye size={17} /></button>
+                          <button type="button" className="rq-icon-btn" onClick={() => openForm(palabra)} title="Editar" aria-label={`Editar ${palabra.termino}`}><Edit2 size={17} /></button>
+                          <button type="button" className="rq-icon-btn rq-icon-btn--danger" onClick={() => setItemToDelete(palabra)} title="Eliminar" aria-label={`Eliminar ${palabra.termino}`}><Trash2 size={17} /></button>
                         </div>
                       </td>
                     </tr>
@@ -652,313 +458,224 @@ export const Palabras = () => {
         </div>
       </div>
 
-      {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '24px', marginBottom: '24px' }}>
-          <button 
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            style={{ 
-              padding: '8px 16px', borderRadius: '8px', 
-              border: '1px solid var(--color-surface-variant)', 
-              backgroundColor: currentPage === 1 ? 'var(--color-surface-variant)' : 'var(--color-surface)', 
-              color: currentPage === 1 ? 'var(--color-outline)' : 'var(--color-on-surface)',
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              fontWeight: 600, fontSize: '13px',
-              transition: 'all 0.2s'
-            }}
-          >
-            Anterior
-          </button>
-          <span style={{ fontSize: '14px', color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>
-            Página {currentPage} de {totalPages}
-          </span>
-          <button 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            style={{ 
-              padding: '8px 16px', borderRadius: '8px', 
-              border: '1px solid var(--color-surface-variant)', 
-              backgroundColor: currentPage === totalPages ? 'var(--color-surface-variant)' : 'var(--color-surface)', 
-              color: currentPage === totalPages ? 'var(--color-outline)' : 'var(--color-on-surface)',
-              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              fontWeight: 600, fontSize: '13px',
-              transition: 'all 0.2s'
-            }}
-          >
-            Siguiente
-          </button>
-        </div>
-      )}
+      <Pagination page={currentPage} totalPages={totalPages} onChange={setCurrentPage} />
 
-      {isModalOpen && (
-        <div className="word-editor-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="modal-content-responsive word-editor-modal" role="dialog" aria-modal="true" aria-labelledby="word-editor-title" style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--shadow-level-3)', display: 'flex', flexDirection: 'column' }}>
-            <div className="word-editor-header" style={{ borderBottom: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h2 id="word-editor-title" style={{ margin: 0, fontSize: '18px', color: 'var(--color-on-surface)' }}>{isEditMode ? 'Editar Palabra' : 'Crear Nueva Palabra'}</h2>
-              </div>
-              <button className="word-editor-close" aria-label="Cerrar formulario de palabra" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--color-outline)', cursor: 'pointer' }}><X size={20} /></button>
+      {editing && (
+        <div className="rq-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="word-editor-title">
+          <div className="modal-content-responsive rq-modal-dialog rq-modal-dialog--wizard rq-modal-dialog--wide">
+            <div className="rq-modal-header">
+              <h2 id="word-editor-title" className="rq-modal-header__title">{isCreate ? 'Crear Nueva Palabra' : 'Editar Palabra'}</h2>
+              <button type="button" className="rq-icon-close" onClick={() => setEditing(null)} aria-label="Cerrar formulario de palabra"><X size={18} /></button>
             </div>
-            
-            <form className="word-editor-form" onSubmit={(event) => { event.preventDefault(); if (currentStep < 3) handleNextWordStep(); }} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1 }}>
-              <div className="word-editor-body" style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-              <WizardProgress
-                currentStep={currentStep}
-                steps={[
-                  { label: 'Configuración', description: 'Selecciona el idioma, las categorías y la dificultad.' },
-                  { label: 'Término y multimedia', description: 'Escribe el término y agrega su imagen y audio.' },
-                  { label: 'Traducciones', description: 'Agrega una o más acepciones con sus ejemplos de uso.' }
-                ]}
-              />
 
-              {currentStep === 1 && (
-                <div className="word-editor-step word-editor-step--settings" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div className="word-editor-fields-row" style={{ display: 'flex' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: 0 }}>
-                      <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Idioma</label>
-                      <input type="hidden" {...register('idiomas_id', { required: 'Selecciona un idioma' })} />
-                      <RimaqSelect
-                        value={String(selectedSourceLanguageId || '')}
-                        onValueChange={(val) => setValue('idiomas_id', val, { shouldValidate: true })}
-                        placeholder="Seleccione..."
-                        options={idiomas.map(i => ({
-                          value: String(i.idioma_id || i.idiomas_id || i.id),
-                          label: i.nombre || i.nombres
-                        }))}
-                        className="rimaq-select--full-width"
-                      />
-                      {errors.idiomas_id && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.idiomas_id.message}</span>}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: 0 }}>
-                      <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Nivel de dificultad</label>
-                      <input type="number" {...register('nivel_dificultad', { required: 'Indica la dificultad', min: { value: 1, message: 'Mínimo 1' }, max: { value: 5, message: 'Máximo 5' } })} min="1" max="5" style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none' }} />
-                      {errors.nivel_dificultad && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.nivel_dificultad.message}</span>}
-                    </div>
-                  </div>
+            <form className="rq-wizard-form" onSubmit={(e) => { e.preventDefault(); if (currentStep < 3) handleNextStep(); }}>
+              <div className="academic-modal-scroll rq-modal-body">
+                <WizardProgress currentStep={currentStep} steps={STEPS} />
 
-                  <div className="word-editor-categories" style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div className="word-editor-section-heading">
-                      <label htmlFor="word-category-search" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Categorías</label>
-                      <span>{categorias.filter(c => matchesSearch(c.nombre, categoriaSearchTerm)).length} disponibles</span>
-                    </div>
-                    <div className="word-editor-search">
-                      <Search size={16} aria-hidden="true" />
-                      <input id="word-category-search" type="search" placeholder="Buscar categoría..." value={categoriaSearchTerm} onChange={(e) => setCategoriaSearchTerm(e.target.value)} />
-                    </div>
-                    <div className="word-editor-category-list">
-                      {categorias.filter(c => matchesSearch(c.nombre, categoriaSearchTerm)).length === 0 ? (
-                        <p className="word-editor-category-empty">No hay categorías que coincidan.</p>
-                      ) : (
-                        categorias.filter(c => matchesSearch(c.nombre, categoriaSearchTerm)).map(c => (
-                          <label className="word-editor-category-option" key={c.categoria_id || c.categorias_vocabulario_id || c.categorias_id || c.id}>
-                            <input type="checkbox" value={c.categoria_id || c.categorias_vocabulario_id || c.categorias_id || c.id} {...register('categorias_ids', { validate: value => (Array.isArray(value) ? value.length > 0 : Boolean(value)) || 'Selecciona al menos una categoría' })} style={{ cursor: 'pointer', width: '16px', height: '16px' }} />
-                            <span style={{ fontSize: '14px', color: 'var(--color-on-surface)' }}>{c.nombre}</span>
-                          </label>
-                        ))
-                      )}
-                    </div>
-                    {errors.categorias_ids && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.categorias_ids.message}</span>}
-                  </div>
-
-                  {!isEditMode && (
-                    <div className="word-editor-remember" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--color-surface-container-low)' }}>
-                      <div>
-                        <strong style={{ display: 'block', color: 'var(--color-on-surface)', fontSize: '13px' }}>Guardar para reutilizar</strong>
-                        <span style={{ display: 'block', marginTop: '3px', color: 'var(--color-on-surface-variant)', fontSize: '11px' }}>Recordar este idioma, categoría y dificultad en las próximas palabras.</span>
+                {currentStep === 1 && (
+                  <div className="rq-step">
+                    <div className="rq-form-grid-2">
+                      <div className="rq-field">
+                        <span className="rq-field__label">Idioma</span>
+                        <input type="hidden" {...register('idiomas_id', { required: 'Selecciona un idioma' })} />
+                        <RimaqSelect
+                          ariaLabel="Idioma de la palabra"
+                          value={String(sourceLanguageId || '')}
+                          onValueChange={(val) => setValue('idiomas_id', val, { shouldValidate: true })}
+                          placeholder="Seleccione..."
+                          options={idiomas.map((i) => ({ value: idiomaKey(i), label: idiomaLabel(i) }))}
+                          className="rimaq-select--full-width"
+                        />
+                        {errors.idiomas_id && <span className="rq-field__error">{errors.idiomas_id.message}</span>}
                       </div>
-                      <button type="button" role="switch" aria-checked={rememberContext} onClick={handleRememberContextToggle} style={{ position: 'relative', flex: '0 0 auto', width: '44px', height: '24px', minHeight: '24px', padding: 0, border: 'none', borderRadius: '99px', cursor: 'pointer', backgroundColor: rememberContext ? 'var(--color-primary)' : 'var(--color-surface-variant)', transition: 'background-color .2s' }}>
-                        <span style={{ position: 'absolute', top: '3px', left: rememberContext ? '23px' : '3px', width: '18px', height: '18px', borderRadius: '50%', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,.25)', transition: 'left .2s' }} />
-                      </button>
+                      <div className="rq-field">
+                        <label htmlFor="palabra-dificultad" className="rq-field__label">Nivel de dificultad</label>
+                        <input
+                          id="palabra-dificultad"
+                          type="number"
+                          min="1"
+                          max="5"
+                          {...register('nivel_dificultad', { required: 'Indica la dificultad', min: { value: 1, message: 'Mínimo 1' }, max: { value: 5, message: 'Máximo 5' } })}
+                          className={`rq-field__input rq-input-number${errors.nivel_dificultad ? ' rq-field__input--error' : ''}`}
+                        />
+                        {errors.nivel_dificultad && <span className="rq-field__error">{errors.nivel_dificultad.message}</span>}
+                      </div>
                     </div>
-                  )}
-                </div>
-              )}
 
-              {currentStep === 2 && (
-                <div className="responsive-grid" style={{ gap: '32px' }}>
-                  
-                  {/* Columna Izquierda: Datos Básicos */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Término</label>
-                    <input {...register('termino', { required: 'Requerido' })} placeholder="Sumaq" style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none' }} />
-                    {errors.termino && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.termino.message}</span>}
-                  </div>
+                    <div className="rq-field">
+                      <div className="word-categories__heading">
+                        <label htmlFor="word-category-search" className="rq-field__label">Categorías</label>
+                        <span className="word-categories__count">{visibleCategorias.length} disponibles</span>
+                      </div>
+                      <div className="rq-search-box">
+                        <Search size={16} aria-hidden="true" />
+                        <input id="word-category-search" type="search" placeholder="Buscar categoría..." value={categoriaSearch} onChange={(e) => setCategoriaSearch(e.target.value)} />
+                      </div>
+                      <div className="word-categories__list">
+                        {visibleCategorias.length === 0
+                          ? <p className="word-categories__empty">No hay categorías que coincidan.</p>
+                          : visibleCategorias.map((c) => (
+                            <label className="word-categories__option" key={categoriaId(c)}>
+                              <input
+                                type="checkbox"
+                                value={categoriaId(c)}
+                                {...register('categorias_ids', { validate: (v) => (Array.isArray(v) ? v.length > 0 : Boolean(v)) || 'Selecciona al menos una categoría' })}
+                              />
+                              <span>{c.nombre}</span>
+                            </label>
+                          ))}
+                      </div>
+                      {errors.categorias_ids && <span className="rq-field__error">{errors.categorias_ids.message}</span>}
+                    </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Transcripción Fonética</label>
-                    <input {...register('transcripcion_fonetica')} placeholder="/'su.maq/" style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '14px', outline: 'none' }} />
-                  </div>
-                </div>
-
-                {/* Columna Derecha: Multimedia y Definición */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  
-                  {/* Imagen */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label className="rq-field__label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ImageIcon size={14} /> Imagen Representativa</label>
-                    <div className="rq-upload-card">
-                      {imagenPreview ? (
-                        <div className="rq-upload-card__preview-row">
-                          <button
-                            type="button"
-                            className="rq-upload-card__thumb rq-thumb-zoom"
-                            onClick={() => setSelectedImage({ src: imagenPreview, title: watch('termino') || 'Imagen de palabra' })}
-                            title="Haz clic para ampliar"
-                            aria-label="Ampliar imagen representativa"
-                          >
-                            <img src={imagenPreview} alt="Preview" style={{ objectFit: 'contain' }} />
-                            <span className="rq-thumb-zoom__hint"><Eye size={16} /></span>
-                          </button>
-                          <div className="rq-upload-card__text">
-                            <span className="rq-upload-card__title">{imagenFile ? imagenFile.name : 'Imagen cargada'}</span>
-                            <span className="rq-upload-card__hint">Haz clic en la miniatura para ampliarla</span>
-                          </div>
-                          <div className="rq-upload-card__actions">
-                            <button type="button" className="rq-button rq-button--ghost" style={{ minHeight: '36px', padding: '0 12px', fontSize: '12.5px' }} onClick={() => document.getElementById('imagen-upload').click()}>
-                              Cambiar
-                            </button>
-                          </div>
+                    {isCreate && (
+                      <div className="rq-setting-row">
+                        <div>
+                          <strong>Guardar para reutilizar</strong>
+                          <span>Recordar este idioma, categoría y dificultad en las próximas palabras.</span>
                         </div>
-                      ) : (
-                        <div className="rq-upload-card__empty" onClick={() => document.getElementById('imagen-upload').click()}>
-                          <div className="rq-upload-card__info">
-                            <div className="rq-upload-card__icon"><Upload size={18} /></div>
+                        <button type="button" role="switch" className="rq-switch" aria-checked={rememberContext} aria-label="Guardar configuración para reutilizar" onClick={toggleRemember} />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {currentStep === 2 && (
+                  <div className="rq-step">
+                    <div className="rq-form-grid-2">
+                      <div className="rq-field">
+                        <label htmlFor="palabra-termino" className="rq-field__label">Término</label>
+                        <input id="palabra-termino" {...register('termino', { required: 'Requerido' })} placeholder="Sumaq" className={`rq-field__input${errors.termino ? ' rq-field__input--error' : ''}`} />
+                        {errors.termino && <span className="rq-field__error">{errors.termino.message}</span>}
+                      </div>
+                      <div className="rq-field">
+                        <label htmlFor="palabra-fonetica" className="rq-field__label">Transcripción Fonética</label>
+                        <input id="palabra-fonetica" {...register('transcripcion_fonetica')} placeholder="/'su.maq/" className="rq-field__input" />
+                      </div>
+                    </div>
+
+                    <div className="rq-field">
+                      <span className="rq-field__label rq-inline" style={{ gap: 6 }}><ImageIcon size={14} aria-hidden="true" /> Imagen Representativa</span>
+                      <input id="imagen-upload" type="file" accept="image/*" hidden onChange={(e) => setImagenFile(e.target.files?.[0] || null)} />
+                      <div className="rq-upload-card">
+                        {imagenPreview ? (
+                          <div className="rq-upload-card__preview-row">
+                            <button
+                              type="button"
+                              className="rq-upload-card__thumb rq-thumb-zoom"
+                              onClick={() => setLightbox({ src: imagenPreview, alt: watch('termino') || 'Imagen de palabra' })}
+                              aria-label="Ampliar imagen representativa"
+                            >
+                              <img src={imagenPreview} alt="" style={{ objectFit: 'contain' }} />
+                              <span className="rq-thumb-zoom__hint"><Eye size={16} /></span>
+                            </button>
                             <div className="rq-upload-card__text">
-                              <span className="rq-upload-card__title">Haz clic para subir una imagen</span>
-                              <span className="rq-upload-card__hint">PNG, JPG o WEBP</span>
+                              <span className="rq-upload-card__title">{imagenFile ? imagenFile.name : 'Imagen cargada'}</span>
+                              <span className="rq-upload-card__hint">Haz clic en la miniatura para ampliarla</span>
+                            </div>
+                            <div className="rq-upload-card__actions">
+                              <label htmlFor="imagen-upload" className="rq-button rq-button--ghost rq-button--sm">Cambiar</label>
                             </div>
                           </div>
-                        </div>
-                      )}
-                      <input id="imagen-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setImagenFile(e.target.files[0]);
-                          setImagenPreview(URL.createObjectURL(e.target.files[0]));
-                        }
-                      }} />
+                        ) : (
+                          <label htmlFor="imagen-upload" className="rq-upload-card__empty">
+                            <div className="rq-upload-card__info">
+                              <div className="rq-upload-card__icon"><Upload size={18} /></div>
+                              <div className="rq-upload-card__text">
+                                <span className="rq-upload-card__title">Haz clic para subir una imagen</span>
+                                <span className="rq-upload-card__hint">PNG, JPG o WEBP</span>
+                              </div>
+                            </div>
+                          </label>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="rq-field">
+                      <span className="rq-field__label rq-inline" style={{ gap: 6 }}><FileAudio size={14} aria-hidden="true" /> Audio de Pronunciación (.mp3 o .wav)</span>
+                      <input id="audio-upload" type="file" accept="audio/*" hidden onChange={(e) => setAudioFile(e.target.files?.[0] || null)} />
+                      <label htmlFor="audio-upload" className="rq-file-drop">
+                        <span className="rq-file-drop__icon"><Volume2 size={16} /></span>
+                        <span className={`rq-file-drop__name${audioPreview ? ' is-set' : ''}`}>
+                          {audioFile ? audioFile.name : audioPreview ? 'Audio cargado · haz clic para cambiar' : 'Haz clic para subir un audio'}
+                        </span>
+                      </label>
+                      {audioPreview && <audio controls src={audioPreview} className="rq-audio" />}
                     </div>
                   </div>
+                )}
 
-                  {/* Audio */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-on-surface-variant)', display: 'flex', alignItems: 'center', gap: '6px' }}><FileAudio size={14} /> Audio de Pronunciación (.mp3 o .wav)</label>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', border: '2px dashed var(--color-outline)', borderRadius: '12px', alignItems: 'center', backgroundColor: 'var(--color-surface-container-lowest)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--color-primary)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--color-outline)'} onClick={() => document.getElementById('audio-upload').click()}>
-                      {audioPreview ? (
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                           <audio controls src={audioPreview} style={{ width: '100%', height: '36px', outline: 'none' }} onClick={(e) => e.stopPropagation()} />
-                           <span style={{ fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'underline' }}>Cambiar audio</span>
-                        </div>
-                      ) : (
-                        <div style={{ textAlign: 'center', color: 'var(--color-outline)' }}>
-                          <Volume2 size={24} style={{ marginBottom: '8px', margin: '0 auto' }} />
-                          <p style={{ margin: 0, fontSize: '13px' }}>Haz clic para subir un audio</p>
-                        </div>
-                      )}
-                      <input id="audio-upload" type="file" accept="audio/*" style={{ display: 'none' }} onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setAudioFile(e.target.files[0]);
-                          setAudioPreview(URL.createObjectURL(e.target.files[0]));
-                        }
-                      }} />
-                    </div>
-                  </div>
-                  
-                </div>
-                </div>
-              )}
-
-              {currentStep === 3 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  
-                  {/* Definiciones y Ejemplos */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0, color: 'var(--color-on-surface)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        Traducciones y ejemplos
-                      </h3>
-                      <button type="button" onClick={() => append({ idioma_definicion_id: '', termino_traducido: '', definicion_origen: '', definicion_destino: '', ejemplo_texto: '', traduccion_ejemplo: '' })} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--color-primary-container)', border: 'none', color: 'var(--color-on-primary-container)', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                {currentStep === 3 && (
+                  <div className="rq-step">
+                    <div className="rq-inline" style={{ justifyContent: 'space-between' }}>
+                      <h3 className="rq-stat__value" style={{ margin: 0 }}>Traducciones y ejemplos</h3>
+                      <button type="button" className="rq-button rq-button--outline rq-button--sm" onClick={() => append(EMPTY_BLOCK)}>
                         <Plus size={14} /> Añadir Traducción
                       </button>
                     </div>
-                    
-                    {fields.map((item, index) => (
-                      <div key={item.id} style={{ backgroundColor: 'var(--color-surface-container-low)', padding: '20px', borderRadius: '12px', border: '1px solid var(--color-surface-variant)', position: 'relative' }}>
-                        {index > 0 && (
-                          <button type="button" onClick={() => remove(index)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--color-error-container)', color: 'var(--color-on-error-container)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
-                            <X size={16} />
-                          </button>
-                        )}
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--color-primary)' }}>Acepción {index + 1}</h4>
-                        <p style={{ margin: '0 0 16px', fontSize: '12px', color: 'var(--color-on-surface-variant)', lineHeight: 1.45 }}>Una acepción es una traducción posible según el contexto.</p>
-                        <div className="flex-col-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Idioma Destino (Traducción) *</label>
-                            <input type="hidden" {...register(`definiciones.${index}.idioma_definicion_id`, { required: 'Requerido' })} />
-                            <RimaqSelect
-                              value={String(watch(`definiciones.${index}.idioma_definicion_id`) || '')}
-                              onValueChange={(val) => setValue(`definiciones.${index}.idioma_definicion_id`, val, { shouldValidate: true })}
-                              placeholder="Seleccione el idioma..."
-                              options={idiomas
-                                .filter(i => String(i.idioma_id || i.idiomas_id || i.id) !== String(selectedSourceLanguageId))
-                                .map(i => ({
-                                  value: String(i.idioma_id || i.idiomas_id || i.id),
-                                  label: i.nombre || i.nombres
-                                }))}
-                              className="rimaq-select--full-width"
-                            />
-                            {errors.definiciones?.[index]?.idioma_definicion_id && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.definiciones[index].idioma_definicion_id.message}</span>}
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Término Traducido *</label>
-                            <input {...register(`definiciones.${index}.termino_traducido`, { required: 'Requerido' })} placeholder="Hermoso" style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', fontSize: '13px', outline: 'none' }} />
-                            {errors.definiciones?.[index]?.termino_traducido && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.definiciones[index].termino_traducido.message}</span>}
-                          </div>
-                        </div>
 
-                        <div aria-hidden="true" style={{ display: 'none' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>¿Qué significa en el idioma origen? *</label>
-                            <textarea {...register(`definiciones.${index}.definicion_origen`)} placeholder="Definición opcional en el idioma origen." rows={2} style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', fontSize: '13px', outline: 'none', resize: 'vertical' }} />
+                    {fields.map((item, index) => {
+                      const err = errors.definiciones?.[index];
+                      return (
+                        <section key={item.id} className="word-acepcion" aria-label={`Acepción ${index + 1}`}>
+                          {index > 0 && (
+                            <button type="button" className="rq-icon-btn rq-icon-btn--danger word-acepcion__remove" onClick={() => remove(index)} aria-label={`Quitar acepción ${index + 1}`}>
+                              <X size={16} />
+                            </button>
+                          )}
+                          <h4 className="rq-route__target" style={{ margin: '0 0 4px', fontSize: 14 }}>Acepción {index + 1}</h4>
+                          <p className="rq-muted" style={{ margin: '0 0 16px' }}>Una acepción es una traducción posible según el contexto.</p>
+                          <div className="rq-form-grid-2">
+                            <div className="rq-field">
+                              <span className="rq-field__label">Idioma destino <span className="rq-required">*</span></span>
+                              <input type="hidden" {...register(`definiciones.${index}.idioma_definicion_id`, { required: 'Requerido' })} />
+                              <RimaqSelect
+                                ariaLabel={`Idioma destino de la acepción ${index + 1}`}
+                                value={String(watch(`definiciones.${index}.idioma_definicion_id`) || '')}
+                                onValueChange={(val) => setValue(`definiciones.${index}.idioma_definicion_id`, val, { shouldValidate: true })}
+                                placeholder="Seleccione el idioma..."
+                                options={idiomas.filter((i) => idiomaKey(i) !== String(sourceLanguageId)).map((i) => ({ value: idiomaKey(i), label: idiomaLabel(i) }))}
+                                className="rimaq-select--full-width"
+                              />
+                              {err?.idioma_definicion_id && <span className="rq-field__error">{err.idioma_definicion_id.message}</span>}
+                            </div>
+                            <div className="rq-field">
+                              <label htmlFor={`termino-traducido-${index}`} className="rq-field__label">Término traducido <span className="rq-required">*</span></label>
+                              <input id={`termino-traducido-${index}`} {...register(`definiciones.${index}.termino_traducido`, { required: 'Requerido' })} placeholder="Hermoso" className={`rq-field__input${err?.termino_traducido ? ' rq-field__input--error' : ''}`} />
+                              {err?.termino_traducido && <span className="rq-field__error">{err.termino_traducido.message}</span>}
+                            </div>
                           </div>
-                          
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>¿Qué significa en el idioma destino? *</label>
-                            <textarea {...register(`definiciones.${index}.definicion_destino`)} placeholder="Definición opcional del término traducido." rows={2} style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface)', color: 'var(--color-on-surface)', fontSize: '13px', outline: 'none', resize: 'vertical' }} />
+
+                          {/* Definiciones heredadas: se conservan al editar aunque el formulario ya no las muestre. */}
+                          <input type="hidden" {...register(`definiciones.${index}.definicion_origen`)} />
+                          <input type="hidden" {...register(`definiciones.${index}.definicion_destino`)} />
+
+                          <div className="word-acepcion__example rq-stack">
+                            <div className="rq-field">
+                              <label htmlFor={`ejemplo-${index}`} className="rq-field__label">Ejemplo en el idioma original <span className="rq-required">*</span></label>
+                              <textarea id={`ejemplo-${index}`} rows={2} {...register(`definiciones.${index}.ejemplo_texto`, { required: 'Agrega un ejemplo para explicar el contexto' })} placeholder="Allinllachu kachkanki?" className={`rq-field__input rq-textarea${err?.ejemplo_texto ? ' rq-field__input--error' : ''}`} />
+                              {err?.ejemplo_texto && <span className="rq-field__error">{err.ejemplo_texto.message}</span>}
+                            </div>
+                            <div className="rq-field">
+                              <label htmlFor={`ejemplo-trad-${index}`} className="rq-field__label">Traducción del ejemplo <span className="rq-required">*</span></label>
+                              <textarea id={`ejemplo-trad-${index}`} rows={2} {...register(`definiciones.${index}.traduccion_ejemplo`, { required: 'Traduce el ejemplo al idioma destino' })} placeholder="Hola, ¿cómo estás?" className={`rq-field__input rq-textarea${err?.traduccion_ejemplo ? ' rq-field__input--error' : ''}`} />
+                              {err?.traduccion_ejemplo && <span className="rq-field__error">{err.traduccion_ejemplo.message}</span>}
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px', padding: '16px', backgroundColor: 'var(--color-surface)', borderRadius: '8px', border: '1px dashed var(--color-outline-variant)' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Ejemplo en el idioma original *</label>
-                            <textarea {...register(`definiciones.${index}.ejemplo_texto`, { required: 'Agrega un ejemplo para explicar el contexto' })} placeholder="Allinllachu kachkanki?" rows={2} style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '13px', outline: 'none', resize: 'vertical' }} />
-                            {errors.definiciones?.[index]?.ejemplo_texto && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.definiciones[index].ejemplo_texto.message}</span>}
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-on-surface-variant)' }}>Traducción del ejemplo *</label>
-                            <textarea {...register(`definiciones.${index}.traduccion_ejemplo`, { required: 'Traduce el ejemplo al idioma destino' })} placeholder="Hola, ¿cómo estás?" rows={2} style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--color-surface-variant)', backgroundColor: 'var(--color-surface-container-low)', color: 'var(--color-on-surface)', fontSize: '13px', outline: 'none', resize: 'vertical' }} />
-                            {errors.definiciones?.[index]?.traduccion_ejemplo && <span style={{ color: 'var(--color-error)', fontSize: '12px' }}>{errors.definiciones[index].traduccion_ejemplo.message}</span>}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                          
+                        </section>
+                      );
+                    })}
                   </div>
-                </div>
-              )}
+                )}
               </div>
 
-              <div id="rq-step-form-actions" className="rq-form-actions rq-step-form-actions word-editor-actions" style={{ borderTop: '1px solid var(--color-surface-variant)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--color-surface)', zIndex: 4, flexShrink: 0, borderBottomLeftRadius: '16px', borderBottomRightRadius: '16px' }}>
-                <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '10px 16px', background: 'transparent', border: 'none', color: 'var(--color-on-surface-variant)', fontWeight: 600, cursor: 'pointer', borderRadius: '8px', transition: 'background-color 0.2s' }} onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)'} onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>Cancelar</button>
-                <div className="rq-step-form-actions__primary" style={{ display: 'flex', gap: '12px' }}>
-                {currentStep > 1 && (
-                  <button type="button" onClick={() => setCurrentStep(step => step - 1)} style={{ padding: '10px 16px', background: 'transparent', border: '1px solid var(--color-outline-variant)', color: 'var(--color-on-surface)', fontWeight: 600, cursor: 'pointer', borderRadius: '8px' }}>Anterior</button>
-                )}
-                {currentStep < 3 ? (
-                  <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); handleNextWordStep(); }} style={{ padding: '10px 24px', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(153, 27, 27, 0.2)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>Continuar</button>
-                ) : (
-                  <button type="button" onClick={handleSubmit(handlePreSubmit)} style={{ padding: '10px 24px', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(153, 27, 27, 0.2)', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>{isEditMode ? 'Guardar cambios' : 'Crear Palabra'}</button>
-                )}
+              <div id="rq-step-form-actions" className="rq-form-actions rq-step-form-actions">
+                <button type="button" onClick={() => setEditing(null)}>Cancelar</button>
+                <div className="rq-step-form-actions__primary">
+                  {currentStep > 1 && <button type="button" onClick={() => setCurrentStep((s) => s - 1)}>Anterior</button>}
+                  {currentStep < 3
+                    ? <button type="button" onClick={handleNextStep}>Continuar</button>
+                    : <button type="button" onClick={handleSubmit(setConfirmData)}>{isCreate ? 'Crear Palabra' : 'Guardar cambios'}</button>}
                 </div>
               </div>
             </form>
@@ -966,40 +683,18 @@ export const Palabras = () => {
         </div>
       )}
 
-      {/* Confirm Modals */}
-      {confirmData && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1060, backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: 'var(--color-surface)', borderRadius: '16px', width: '360px', padding: '32px 24px', textAlign: 'center', boxShadow: 'var(--shadow-level-3)' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}><Save size={32} /></div>
-            <h2 style={{ margin: '0 0 8px 0', fontSize: '20px', color: 'var(--color-on-surface)' }}>¿{isEditMode ? 'Guardar cambios' : 'Crear Palabra'}?</h2>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button onClick={() => setConfirmData(null)} style={{ flex: 1, padding: '12px', background: 'var(--color-surface-container-high)', border: 'none', borderRadius: '8px', color: 'var(--color-on-surface)', fontWeight: 600, cursor: 'pointer' }}>Cancelar</button>
-              <button onClick={confirmSubmit} style={{ flex: 1, padding: '12px', background: 'var(--color-primary)', color: 'var(--color-on-primary)', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Sí, confirmar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={Boolean(confirmData)}
+        icon={Save}
+        title={isCreate ? '¿Crear palabra?' : '¿Guardar cambios?'}
+        description={isCreate ? `Se creará "${confirmData?.termino}" y se enviará a revisión.` : `Se guardarán los cambios de "${confirmData?.termino}".`}
+        onCancel={() => setConfirmData(null)}
+        onConfirm={confirmSubmit}
+      />
 
       <DeleteConfirmationModal open={Boolean(itemToDelete)} title="¿Eliminar palabra?" itemName={itemToDelete?.termino} onCancel={() => setItemToDelete(null)} onConfirm={confirmDelete} />
 
-      {selectedImage && (
-        <div className="rq-modal-backdrop rq-lightbox-backdrop" role="dialog" aria-modal="true" aria-label={selectedImage.title || 'Imagen'} onClick={() => setSelectedImage(null)}>
-          <div className="rq-lightbox-dialog" onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-on-surface)' }}>
-                {selectedImage.title || 'Vista previa de imagen'}
-              </span>
-              <button type="button" className="rq-icon-close" onClick={() => setSelectedImage(null)} aria-label="Cerrar imagen ampliada">
-                <X size={18} />
-              </button>
-            </div>
-            <div className="rq-lightbox-stage">
-              <img src={selectedImage.src || getFileUrl(selectedImage.url)} alt={selectedImage.title} crossOrigin="anonymous" />
-            </div>
-          </div>
-        </div>
-      )}
-
+      <ImageLightboxModal src={lightbox?.src} alt={lightbox?.alt} title={lightbox?.alt} onClose={() => setLightbox(null)} />
     </div>
   );
 };
