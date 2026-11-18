@@ -8,25 +8,19 @@ import { useAuth } from '../hooks/useAuth';
 import { isSuperAdmin, normalizeRole } from '../utils/roles';
 import { generateAnalyticsPdf } from '../utils/analyticsPdf';
 import { RimaqSelect } from '../components/RimaqSelect';
+import { PageHeader, Pagination } from '../components/PageKit';
 import './analytics.css';
 
 const RIMAQ_PALETTE = Object.freeze({
-  red: '#F43F5E',
-  yellow: '#F59E0B',
-  green: '#22C55E',
-  blue: '#3B82F6',
-  purple: '#A78BFA',
-  orange: '#FB923C',
-  white: '#FFFFFF',
+  red: 'var(--color-primary)',
+  yellow: 'var(--color-tertiary)',
+  green: 'var(--color-quaternary)',
+  blue: 'var(--color-secondary)',
+  purple: 'var(--color-quinary)',
+  orange: 'var(--color-senary)',
 });
-const CHART_COLORS = [
-  RIMAQ_PALETTE.red,
-  RIMAQ_PALETTE.yellow,
-  RIMAQ_PALETTE.green,
-  RIMAQ_PALETTE.blue,
-  RIMAQ_PALETTE.purple,
-  RIMAQ_PALETTE.orange,
-];
+const CHART_COLORS = [RIMAQ_PALETTE.red, RIMAQ_PALETTE.yellow, RIMAQ_PALETTE.green, RIMAQ_PALETTE.blue, RIMAQ_PALETTE.purple, RIMAQ_PALETTE.orange];
+const CHART_TOOLTIP = { backgroundColor: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-strong)', borderRadius: '12px', color: 'var(--color-on-surface)', boxShadow: 'var(--shadow-level-3)' };
 
 const formatNumber = value => new Intl.NumberFormat('es-PE', { maximumFractionDigits: 1 }).format(value || 0);
 const shortChartDateFormatter = new Intl.DateTimeFormat('es-PE', { day: '2-digit', month: 'short' });
@@ -177,11 +171,8 @@ const quickActions = [
   ['/academica/matriculas', 'Gestionar matrículas', GraduationCap, 'Administrar inscripciones activas']
 ];
 
-// Inside AdminAnalytics component (replace view === 'quick'):
-// Note: I will replace the inline section for view === 'quick' further down.
-
 const DashboardSkeleton = () => (
-  <div className="analytics-skeleton" aria-hidden="true" style={{ marginTop: 24 }}>
+  <div className="analytics-skeleton" aria-hidden="true">
     <div className="metric-grid">
       {[...Array(6)].map((_, i) => (
         <div key={i} className="nm-card skeleton-card">
@@ -322,23 +313,16 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
   };
 
   return <div className={`analytics-page analytics-page--${view}`}>
-    <header className="analytics-header">
-        <div>
-          <div className="rq-page-heading">
-            <div className="rq-page-heading__accent"></div>
-            <h1 className="rq-page-heading__title">{title}</h1>
-          </div>
-          <p style={{ margin: 0 }}>{description}</p>
-        </div>
+    <PageHeader
+      title={title}
+      description={description}
+      actions={(
         <div className="analytics-header-actions">
           <div style={{ minWidth: 120 }}>
             <RimaqSelect
               ariaLabel="Periodo del reporte"
               value={String(days)}
-              onValueChange={(val) => {
-                setLoading(true);
-                setDays(Number(val));
-              }}
+              onValueChange={(val) => { setLoading(true); setDays(Number(val)); }}
               options={[
                 { value: '7', label: '7 días' },
                 { value: '30', label: '30 días' },
@@ -347,22 +331,23 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
               ]}
             />
           </div>
-          <button type="button" className="analytics-refresh" aria-label={loading ? 'Actualizando datos' : 'Actualizar datos'} onClick={() => load()} disabled={loading} style={{ border: '1px solid var(--color-outline-variant)', background: 'var(--color-surface)', color: 'var(--color-on-surface)', minHeight: 42, width: 42, padding: 0, borderRadius: 10, display: 'grid', placeItems: 'center', cursor: 'pointer' }}>
+          <button type="button" className="analytics-refresh" aria-label={loading ? 'Actualizando datos' : 'Actualizar datos'} title="Actualizar datos" onClick={() => load()} disabled={loading}>
             <RefreshCw size={16} className={loading ? 'spinning' : ''} aria-hidden="true" />
           </button>
           {view !== 'exports' && (
-            <div style={{ display: 'flex', gap: 8 }}>
+            <>
               <button type="button" className="analytics-export analytics-export--excel" disabled={Boolean(exporting)} onClick={() => exportRows(view, 'excel')}>
                 {exporting === `${view}:excel` ? <RefreshCw className="spinning" size={16} /> : <Download size={16} />} Excel
               </button>
               <button type="button" className="analytics-export analytics-export--pdf" disabled={Boolean(exporting)} onClick={() => exportRows(view, 'pdf')}>
                 {exporting === `${view}:pdf` ? <RefreshCw className="spinning" size={16} /> : <Download size={16} />} PDF
               </button>
-            </div>
+            </>
           )}
         </div>
-    </header>
-    
+      )}
+    />
+
     {loading ? (view === 'exports' ? <ExportSkeleton /> : <DashboardSkeleton />) : !data ? <div className="analytics-empty">No hay datos disponibles.</div> : <>
       
       {view !== 'activity' && view !== 'quick' && view !== 'exports' && (
@@ -385,9 +370,8 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
       )}
 
       {(view === 'overview' || view === 'statistics') && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          {/* Row 2: 2 columns */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 24 }}>
+        <div className="analytics-stack">
+          <div className="analytics-row">
             <LineChart title="Actividad diaria" data={data.trends} series={[['intentos', RIMAQ_PALETTE.blue], ['matriculas', RIMAQ_PALETTE.green], ['respuestas', RIMAQ_PALETTE.red]]} />
             <HorizontalBarChart
               title="Estudiantes registrados"
@@ -397,8 +381,7 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
             />
           </div>
 
-          {/* Row 3: 2 columns */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 24 }}>
+          <div className="analytics-row">
             <DonutChart 
               title="Distribución por tipo" 
               data={[
@@ -413,8 +396,7 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
             <Heatmap title="Horas de mayor actividad" data={data.actividad_heatmap || []} />
           </div>
 
-          {/* Row 4: 2 columns */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 24 }}>
+          <div className="analytics-row">
             <HorizontalBarChart title="Top acciones recientes" data={data.top_acciones || [
                 { label: 'Palabra registrada', value: data.totals.palabras || 0 },
                 { label: 'Nueva matrícula', value: data.totals.matriculas || 0 },
@@ -436,21 +418,15 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
               })()} fill={RIMAQ_PALETTE.blue} />}
           </div>
 
-          {/* Row 5: 1 column */}
           {isSuper && <HistoryTable items={(data.recent_activity || []).slice(0, 5)} onSeeAll={() => navigate('/dashboard/actividad')} />}
 
-          {/* Accesos Rápidos */}
-          <section style={{ marginTop: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-              <div style={{ width: 4, height: 20, backgroundColor: 'var(--color-primary)', borderRadius: 2 }} />
-              <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--color-on-surface)' }}>Accesos rápidos</h2>
-              <div style={{ flex: 1, height: 1, backgroundColor: 'var(--color-surface-variant)', marginLeft: 8 }} />
-            </div>
+          <section aria-labelledby="quick-access-title">
+            <h2 id="quick-access-title" className="analytics-section-title">Accesos rápidos</h2>
             <div className="quick-grid">
               {quickActions
                 .filter(([path]) => path !== '/usuarios' && path !== '/usuarios/roles')
                 .map(([path, label, Icon, text]) => (
-                <button key={path} onClick={() => navigate(path)}>
+                <button type="button" key={path} onClick={() => navigate(path)}>
                   <span className="quick-icon-wrapper">
                     <Icon size={24} />
                   </span>
@@ -508,7 +484,7 @@ export const AdminAnalytics = ({ view = 'overview' }) => {
             <Languages size={32} />
             <strong>{formatNumber(data.totals.aportes_pendientes)} aportes pendientes</strong>
             <p>Revisa y aprueba el contenido subido por los estudiantes para mantener la calidad del corpus lingüístico.</p>
-            <button onClick={() => navigate('/diccionario/aportes')}>Ir a moderación de aportes</button>
+            <button type="button" onClick={() => navigate('/diccionario/aportes')}>Ir a moderación de aportes</button>
           </div>
         </div>
       )}
@@ -546,14 +522,14 @@ const InfoTooltip = ({ text }) => {
 
 const HorizontalBarChart = ({ title, data, dataKey = "value", nameKey = "label", fill = "var(--color-primary)", colors, infoText = "Muestra el total registrado en cada categoría; una barra más larga representa una cantidad mayor." }) => {
   return (
-    <article className="analytics-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="panel-title" style={{ marginBottom: 16 }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <article className="analytics-panel analytics-panel--fill">
+      <div className="panel-title">
+        <h2>
           {title}
           <InfoTooltip text={infoText} />
         </h2>
       </div>
-      <div style={{ width: '100%', flex: 1, minHeight: 260 }}>
+      <div className="analytics-chart analytics-chart--grow">
         <ResponsiveContainer>
           <RechartsBarChart data={data} layout="vertical" margin={{ top: 0, right: 30, left: 30, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--color-surface-variant)" />
@@ -561,7 +537,7 @@ const HorizontalBarChart = ({ title, data, dataKey = "value", nameKey = "label",
             <YAxis dataKey={nameKey} type="category" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: 'var(--color-on-surface)', fontWeight: 500 }} width={120} />
             <Tooltip
               cursor={{ fill: 'color-mix(in srgb, var(--color-on-surface) 5%, transparent)' }}
-              contentStyle={{ backgroundColor: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-strong)', borderRadius: '12px', color: 'var(--color-on-surface)', boxShadow: 'var(--shadow-level-3)' }}
+              contentStyle={CHART_TOOLTIP}
               itemStyle={{ fontWeight: 700, color: 'var(--color-on-surface)' }}
               labelStyle={{ display: 'none' }}
               formatter={(value, name, props) => [value, props.payload[nameKey]]}
@@ -593,36 +569,36 @@ const Heatmap = ({ title, data = [] }) => {
   };
 
   return (
-    <article className="analytics-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="panel-title" style={{ marginBottom: 16 }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <article className="analytics-panel analytics-panel--fill">
+      <div className="panel-title">
+        <h2>
           {title}
-          <InfoTooltip text="Cada celda representa la actividad de un día y una hora. Un rojo más intenso indica mayor actividad." />
+          <InfoTooltip text="Cada celda representa la actividad de un día y una hora. Un carmesí más intenso indica mayor actividad." />
         </h2>
       </div>
-      <div className="heatmap-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <div className="heatmap" role="img" aria-label="Mapa de calor de actividad por día y hora">
         {days.map((day, d) => (
-          <div key={day} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 26, fontSize: 11, color: 'var(--color-on-surface-variant)' }}>{day}</span>
-            <div style={{ display: 'flex', gap: 2, flex: 1 }}>
+          <div key={day} className="heatmap__row">
+            <span className="heatmap__label">{day}</span>
+            <div className="heatmap__cells">
               {hours.map((hour, h) => (
-                <div key={`${day}-${hour}`} style={{ flex: 1, aspectRatio: '1/1', background: RIMAQ_PALETTE.red, opacity: getIntensity(d, h), borderRadius: 1 }} title={`${day} ${hour}:00`} />
+                <span key={`${day}-${hour}`} className="heatmap__cell" style={{ opacity: getIntensity(d, h) }} title={`${day} ${hour}:00`} />
               ))}
             </div>
           </div>
         ))}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-          <span style={{ width: 26 }}></span>
-          <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
-            {hours.map((h, i) => i % 2 === 0 ? <span key={h} style={{ fontSize: 10, color: 'var(--color-on-surface-variant)', width: '8.33%', textAlign: 'left' }}>{h}</span> : null)}
+        <div className="heatmap__row">
+          <span className="heatmap__label" />
+          <div className="heatmap__hours">
+            {hours.map((h, i) => (i % 2 === 0 ? <span key={h}>{h}</span> : null))}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 'auto', fontSize: 12, color: 'var(--color-on-surface-variant)', paddingTop: 16 }}>
-           <span>Menor actividad</span>
-           <div style={{ display: 'flex', gap: 2 }}>
-             {[0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95].map(op => <div key={op} style={{ width: 14, height: 14, background: RIMAQ_PALETTE.red, opacity: op, borderRadius: 1 }} />)}
-           </div>
-           <span>Mayor actividad</span>
+        <div className="heatmap__legend">
+          <span>Menor actividad</span>
+          <span className="heatmap__scale">
+            {[0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95].map((op) => <span key={op} className="heatmap__cell" style={{ opacity: op }} />)}
+          </span>
+          <span>Mayor actividad</span>
         </div>
       </div>
     </article>
@@ -631,22 +607,22 @@ const Heatmap = ({ title, data = [] }) => {
 
 const HistoryTable = ({ items, onSeeAll }) => {
   return (
-    <article className="analytics-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="panel-title" style={{ marginBottom: 16 }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <article className="analytics-panel analytics-panel--fill">
+      <div className="panel-title">
+        <h2>
           Historial reciente
           <InfoTooltip text="Presenta los últimos cambios registrados, junto con su fecha, detalle y usuario responsable." />
         </h2>
       </div>
-      <div className="table-responsive" style={{ flex: 1 }}>
-        <table className="analytics-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+      <div className="table-responsive-container" style={{ flex: 1 }}>
+        <table className="rq-table">
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-surface-variant)', color: 'var(--color-on-surface-variant)', textAlign: 'left' }}>
-              <th style={{ padding: '12px 8px', fontWeight: 600 }}>Fecha y hora</th>
-              <th style={{ padding: '12px 8px', fontWeight: 600 }}>Tipo</th>
-              <th style={{ padding: '12px 8px', fontWeight: 600 }}>Evento</th>
-              <th style={{ padding: '12px 8px', fontWeight: 600 }}>Detalle</th>
-              <th style={{ padding: '12px 8px', fontWeight: 600 }}>Usuario</th>
+            <tr>
+              <th>Fecha y hora</th>
+              <th>Tipo</th>
+              <th>Evento</th>
+              <th>Detalle</th>
+              <th>Usuario</th>
             </tr>
           </thead>
           <tbody>
@@ -659,28 +635,28 @@ const HistoryTable = ({ items, onSeeAll }) => {
                 else user = 'Autor no disponible';
               }
               return (
-                <tr key={item.id || i} style={{ borderBottom: '1px solid var(--color-surface-variant)' }}>
-                  <td style={{ padding: '12px 8px', color: 'var(--color-on-surface-variant)' }}>
-                    {date.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })} <br/> {date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
+                <tr key={item.id || i}>
+                  <td className="rq-muted" style={{ fontSize: 13 }}>
+                    {date.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })}<br />{date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
                   </td>
-                  <td style={{ padding: '12px 8px' }}>
-                    <span className={`timeline-badge ${item.tipo}`} style={{ display: 'inline-flex', padding: '4px 8px', width: 'auto' }}>
+                  <td>
+                    <span className={`timeline-badge ${item.tipo}`} style={{ display: 'inline-flex', width: 'auto' }}>
                       {item.tipo === 'usuario' ? <UserPlus size={14} /> : item.tipo === 'matricula' ? <GraduationCap size={14} /> : <BookOpen size={14} />}
                       {item.tipo === 'usuario' ? 'SISTEMA' : item.tipo === 'matricula' ? 'ACADÉMICO' : 'DICCIONARIO'}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 8px', fontWeight: 500, color: 'var(--color-on-surface)' }}>{item.titulo}</td>
-                  <td style={{ padding: '12px 8px', color: 'var(--color-on-surface-variant)', maxWidth: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={item.detalle}>{item.detalle}</td>
-                  <td style={{ padding: '12px 8px', color: 'var(--color-on-surface)', display: 'flex', alignItems: 'center', gap: 6 }}><Users size={14} color="var(--color-on-surface-variant)" /> {user}</td>
+                  <td className="rq-strong" style={{ fontWeight: 500 }}>{item.titulo}</td>
+                  <td className="rq-muted rq-truncate" style={{ maxWidth: 300 }} title={item.detalle}>{item.detalle}</td>
+                  <td><span className="rq-inline" style={{ gap: 6 }}><Users size={14} aria-hidden="true" /> {user}</span></td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
-      <a onClick={onSeeAll} className="at-footer-link">
-        Ver todo el historial <ArrowRight size={16} />
-      </a>
+      <button type="button" onClick={onSeeAll} className="at-footer-link">
+        Ver todo el historial <ArrowRight size={16} aria-hidden="true" />
+      </button>
     </article>
   );
 };
@@ -718,9 +694,9 @@ const LineChart = ({ title, data, series }) => {
   }, [data, series, period]);
 
   return (
-    <article className="analytics-panel" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div className="panel-title" style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>{title}</h2>
+    <article className="analytics-panel analytics-panel--fill">
+      <div className="panel-title panel-title--split">
+        <h2>{title}</h2>
         <div className="analytics-period-switch" role="group" aria-label="Agrupar datos del gráfico">
           {['Diario', 'Semanal'].map(option => (
             <button
@@ -735,7 +711,7 @@ const LineChart = ({ title, data, series }) => {
           ))}
         </div>
       </div>
-      <div style={{ width: '100%', height: 260 }}>
+      <div className="analytics-chart">
         <ResponsiveContainer>
           <AreaChart data={visible} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
@@ -759,7 +735,7 @@ const LineChart = ({ title, data, series }) => {
               padding={{ left: 10, right: 10 }}
             />
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }} />
-            <Tooltip labelFormatter={value => formatChartDate(value, true)} contentStyle={{ backgroundColor: 'var(--color-surface-elevated)', border: '1px solid var(--color-border-strong)', borderRadius: '12px', color: 'var(--color-on-surface)', boxShadow: 'var(--shadow-level-3)' }} itemStyle={{ fontWeight: 700, padding: '4px 0' }} labelStyle={{ color: 'var(--color-on-surface-variant)', marginBottom: '8px', fontWeight: 600 }} />
+            <Tooltip labelFormatter={value => formatChartDate(value, true)} contentStyle={CHART_TOOLTIP} itemStyle={{ fontWeight: 700, padding: '4px 0' }} labelStyle={{ color: 'var(--color-on-surface-variant)', marginBottom: '8px', fontWeight: 600 }} />
             <Legend iconType="circle" wrapperStyle={{ fontSize: '13px', paddingTop: '16px', fontWeight: 600 }} />
             {series.map(([key, color]) => (
               <Area key={key} type="monotone" dataKey={key} name={key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')} stroke={color} strokeWidth={3} fillOpacity={1} fill={`url(#color${key})`} activeDot={{ r: 6, strokeWidth: 0 }} />
@@ -773,7 +749,7 @@ const LineChart = ({ title, data, series }) => {
 
 const DonutChart = ({ title, data, total, infoText, colors = CHART_COLORS }) => {
   return (
-    <article className="analytics-panel" style={{ height: '100%' }}>
+    <article className="analytics-panel analytics-panel--fill">
       <div className="panel-title">
         <h2>{title}</h2>
       </div>
@@ -793,7 +769,7 @@ const DonutChart = ({ title, data, total, infoText, colors = CHART_COLORS }) => 
                   <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface-elevated)', borderRadius: '12px', border: '1px solid var(--color-border-strong)', boxShadow: 'var(--shadow-level-3)' }} itemStyle={{ color: 'var(--color-on-surface)', fontWeight: 700 }} />
+              <Tooltip contentStyle={CHART_TOOLTIP} itemStyle={{ color: 'var(--color-on-surface)', fontWeight: 700 }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="donut-center-text">
@@ -832,10 +808,10 @@ const ActivityTimeline = ({ items }) => {
   const currentItems = (items || []).slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   return (
-    <section className="analytics-panel" style={{ padding: 32 }}>
-      <div className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
-        <div className="nm-icon-wrapper" style={{ width: 44, height: 44, background: 'var(--color-surface-container-lowest)', borderColor: 'transparent' }}><ClipboardList size={20} /></div>
-        <h2 style={{ fontSize: 20, fontWeight: 800 }}>Historial de auditoría y actividad</h2>
+    <section className="analytics-panel analytics-panel--roomy">
+      <div className="panel-title rq-inline" style={{ gap: 16 }}>
+        <span className="nm-icon-wrapper" aria-hidden="true"><ClipboardList size={20} /></span>
+        <h2>Historial de auditoría y actividad</h2>
       </div>
       <div className="corporate-timeline">
         {currentItems.map((item) => {
@@ -855,10 +831,10 @@ const ActivityTimeline = ({ items }) => {
                     {item.tipo === 'usuario' ? <UserPlus size={16} /> : item.tipo === 'matricula' ? <GraduationCap size={16} /> : <BookOpen size={16} />}
                     {item.tipo === 'usuario' ? 'SISTEMA' : item.tipo === 'matricula' ? 'ACADÉMICO' : 'DICCIONARIO'}
                   </span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <strong style={{ fontSize: 15, color: 'var(--color-on-surface)', fontWeight: 800 }}>{item.titulo}</strong>
-                    <p style={{ margin: 0, color: 'var(--color-on-surface-variant)', fontSize: 13 }}>{item.detalle}</p>
-                    <small style={{ color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>Realizado por: {item.usuario || 'Autor no disponible'}</small>
+                  <div className="timeline-text">
+                    <strong>{item.titulo}</strong>
+                    <p>{item.detalle}</p>
+                    <small>Realizado por: {item.usuario || 'Autor no disponible'}</small>
                   </div>
                 </div>
               </div>
@@ -867,27 +843,7 @@ const ActivityTimeline = ({ items }) => {
         })}
       </div>
       
-      {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 32, paddingTop: 24, borderTop: '1px solid var(--color-surface-variant)' }}>
-          <button 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--color-surface-variant)', background: page === 1 ? 'transparent' : 'var(--color-surface)', color: page === 1 ? 'var(--color-on-surface-variant)' : 'var(--color-on-surface)', cursor: page === 1 ? 'not-allowed' : 'pointer', fontWeight: 600 }}
-          >
-            Anterior
-          </button>
-          <span style={{ fontSize: 14, color: 'var(--color-on-surface-variant)', fontWeight: 500 }}>
-            Página {page} de {totalPages}
-          </span>
-          <button 
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--color-surface-variant)', background: page === totalPages ? 'transparent' : 'var(--color-surface)', color: page === totalPages ? 'var(--color-on-surface-variant)' : 'var(--color-on-surface)', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontWeight: 600 }}
-          >
-            Siguiente
-          </button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
   );
 };
@@ -921,11 +877,11 @@ const ExportCenter = ({ data, onExport, exporting, isSuper }) => {
                 <span className="export-card__summary">{summary}</span>
               </div>
               <div className="export-card__actions">
-                <button className="export-button export-button--excel" disabled={Boolean(exporting)} onClick={() => onExport(key, 'excel')}>
+                <button type="button" className="export-button export-button--excel" disabled={Boolean(exporting)} onClick={() => onExport(key, 'excel')}>
                   {excelLoading ? <RefreshCw className="spinning" size={17} /> : <FileSpreadsheet size={17} />}
                   <span>{excelLoading ? 'Generando…' : 'Descargar Excel'}</span>
                 </button>
-                <button className="export-button export-button--pdf" disabled={Boolean(exporting)} onClick={() => onExport(key, 'pdf')}>
+                <button type="button" className="export-button export-button--pdf" disabled={Boolean(exporting)} onClick={() => onExport(key, 'pdf')}>
                   {pdfLoading ? <RefreshCw className="spinning" size={17} /> : <FileText size={17} />}
                   <span>{pdfLoading ? 'Generando…' : 'PDF'}</span>
                 </button>

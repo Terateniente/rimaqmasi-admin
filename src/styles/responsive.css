@@ -228,22 +228,10 @@
 
   .rq-main audio { width: 100% !important; max-width: 100% !important; }
 
-  .rq-main .usuarios-header .btn-primary,
-  .rq-main .table-controls > button,
   .rq-main form > div:last-child > button {
     min-height: 44px;
   }
 
-  .rq-main .stats-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  .rq-main .tabs-container { width: 100%; overflow-x: auto; gap: 18px; }
-  .rq-main .tab-button { flex: 0 0 auto; }
-
-  .rq-main .table-footer {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px 16px;
-  }
 }
 
 @media (prefers-contrast: more) {

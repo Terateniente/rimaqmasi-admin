@@ -1,54 +1,6 @@
 .analytics-page {
-  --rq-red: #F43F5E;
-  --rq-yellow: #F59E0B;
-  --rq-green: #22C55E;
-  --rq-blue: #3B82F6;
-  --rq-purple: #A78BFA;
-  --rq-orange: #FB923C;
-  padding: 28px 32px;
-  overflow: auto;
-  height: 100%;
   color: var(--color-on-surface);
-  font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
-}
-
-.analytics-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  align-items: flex-start;
-  margin-bottom: 28px;
-  position: relative;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--color-outline-variant);
-}
-
-.analytics-eyebrow {
-  color: var(--color-primary-text);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.analytics-header h1 {
-  margin: 0 0 6px 0;
-  font-size: clamp(24px, 2vw, 28px);
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-}
-
-.analytics-header p {
-  margin: 0;
-  color: var(--color-on-surface-variant);
-  font-size: 14.5px;
-  max-width: 680px;
-  line-height: 1.55;
-  font-weight: 400;
 }
 
 .analytics-header-actions {
@@ -104,14 +56,14 @@
 }
 
 .analytics-header-actions .analytics-export--excel {
-  background: #15803D;
+  background: var(--color-success);
   border-color: rgba(255, 255, 255, 0.14);
 }
 
 .analytics-header-actions .analytics-export--excel:hover:not(:disabled) {
   filter: brightness(1.1);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(21, 128, 61, 0.3);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--color-success) 30%, transparent);
 }
 
 .analytics-header-actions .analytics-export--pdf {
@@ -158,7 +110,6 @@
 
 .analytics-panel,
 .metric-card,
-.contribution-card,
 .export-card {
   background: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
@@ -168,20 +119,17 @@
 }
 
 .metric-card,
-.contribution-card,
 .export-card {
   height: 100%;
 }
 
 .analytics-panel:hover,
-.metric-card:hover,
-.contribution-card:hover {
+.metric-card:hover {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-level-2);
 }
 
-.metric-card:hover,
-.contribution-card:hover {
+.metric-card:hover {
   transform: translateY(-2px);
 }
 
@@ -731,7 +679,7 @@
 .at-icon.diccionario { background: var(--color-primary-container); color: var(--color-on-primary-container); }
 .at-detail { color: var(--color-on-surface-variant); }
 .at-date { color: var(--color-on-surface-variant); font-size: 12px; }
-.at-footer-link { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; color: var(--color-primary-text); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; padding-top: 14px; border-top: 1px solid var(--color-outline-variant); transition: opacity var(--duration-fast) var(--ease-out); }
+.at-footer-link { width: 100%; border: 0; border-top: 1px solid var(--color-outline-variant); background: none; font: inherit; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; color: var(--color-primary-text); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; padding-top: 14px; border-top: 1px solid var(--color-outline-variant); transition: opacity var(--duration-fast) var(--ease-out); }
 .at-footer-link:hover { opacity: 0.85; }
 
 /* Donut Legend & Footer */
@@ -750,66 +698,8 @@
 
 .analytics-empty { min-height: 300px; display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; color: var(--color-on-surface-variant); font-size: 15px; font-weight: 500; }
 
-/* Reject Modal in Contribuciones */
-.analytics-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1400;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: var(--color-modal-backdrop);
-  backdrop-filter: blur(6px);
-}
-
-.analytics-modal {
-  padding: 26px;
-  border: 1px solid var(--color-outline-variant);
-  border-radius: var(--modal-radius);
-  background: var(--color-surface);
-  color: var(--color-on-surface);
-  box-shadow: var(--shadow-level-3);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.analytics-modal h2 { margin: 0; font-size: 20px; }
-.analytics-modal p { margin: 0; color: var(--color-on-surface-variant); font-size: 14px; }
-.analytics-modal textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-outline-variant);
-  background: var(--color-surface-container-lowest);
-  color: var(--color-on-surface);
-  font-size: 14px;
-  resize: vertical;
-}
-.analytics-modal textarea:focus {
-  outline: none;
-  border-color: var(--color-primary-text);
-  box-shadow: var(--focus-ring);
-}
-.analytics-modal > div {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
-}
-.analytics-modal .btn-reject {
-  padding: 10px 18px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: var(--color-error);
-  color: var(--color-on-error);
-  font-weight: 700;
-  cursor: pointer;
-}
-
 @media (max-width: 900px) {
   .dashboard-grid, .analytics-grid { grid-template-columns: 1fr; }
-  .analytics-header { flex-direction: column; }
   .analytics-header-actions { justify-content: flex-start; }
 }
 
@@ -823,7 +713,6 @@
 
 @media (max-width: 420px) {
   .metric-grid { grid-template-columns: minmax(0, 1fr); }
-  .analytics-header h1 { font-size: 24px; }
 }
 
 @media (max-width: 1180px) { .export-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -848,3 +737,154 @@
 .skeleton-line.title { height: 28px; width: 70%; margin-top: 4px; }
 .skeleton-footer { border-top-color: transparent !important; padding-top: 16px; margin-top: 16px; }
 .skeleton-panel { border-radius: var(--card-radius); height: 320px; width: 100%; border: 1px solid var(--color-outline-variant); }
+
+/* ── Layout de paneles (antes estilos inline) ─────── */
+.analytics-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.analytics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(450px, 100%), 1fr));
+  gap: 24px;
+}
+
+.analytics-panel--fill {
+  height: 100%;
+}
+
+.analytics-panel--roomy {
+  padding: 32px;
+}
+
+.panel-title h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analytics-chart {
+  width: 100%;
+  height: 260px;
+}
+
+.analytics-chart--grow {
+  height: auto;
+  flex: 1;
+  min-height: 260px;
+}
+
+.analytics-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 24px;
+  color: var(--color-on-surface);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.analytics-section-title::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--color-primary);
+}
+
+.analytics-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  margin-left: 8px;
+  background: var(--color-outline-variant);
+}
+
+.analytics-refresh {
+  width: 42px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.timeline-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.timeline-text strong { color: var(--color-on-surface); font-size: 15px; font-weight: 800; }
+.timeline-text p { margin: 0; color: var(--color-on-surface-variant); font-size: 13px; }
+.timeline-text small { color: var(--color-on-surface-variant); font-weight: 600; }
+
+/* ── Mapa de calor ─────────────────────────────────── */
+.heatmap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heatmap__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heatmap__label {
+  width: 26px;
+  flex: 0 0 26px;
+  color: var(--color-on-surface-variant);
+  font-size: 11px;
+}
+
+.heatmap__cells {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+}
+
+.heatmap__cell {
+  flex: 1;
+  aspect-ratio: 1 / 1;
+  border-radius: 1px;
+  background: var(--color-primary);
+}
+
+.heatmap__hours {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  color: var(--color-on-surface-variant);
+  font-size: 10px;
+}
+
+.heatmap__hours span {
+  width: 8.33%;
+}
+
+.heatmap__legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 16px;
+  color: var(--color-on-surface-variant);
+  font-size: 12px;
+}
+
+.heatmap__scale {
+  display: flex;
+  gap: 2px;
+}
+
+.heatmap__scale .heatmap__cell {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Clock3, Heart, Info, RefreshCw, Save, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { getConfiguracionVidas, updateConfiguracionVidas } from '../../services/vidasService';
 import { ModernPageSkeleton } from '../../components/ModernPageSkeleton';
+import { PageHeader } from '../../components/PageKit';
 import './VidasRachas.css';
 
 const durationLabel = (minutes) => {
@@ -77,7 +78,7 @@ export const VidasRachas = () => {
   };
 
   if (loading) {
-    return <div className="lives-page lives-page--loading"><ModernPageSkeleton cards={3} /></div>;
+    return <div className="lives-page"><ModernPageSkeleton cards={3} /></div>;
   }
 
   const totalRecovery = form.minutos_por_recarga * form.vidas_maximas;
@@ -89,14 +90,8 @@ export const VidasRachas = () => {
   ];
 
   return (
-    <main className="lives-page">
-      <header className="lives-header">
-        <div className="rq-page-heading">
-          <div className="rq-page-heading__accent" />
-          <h1 className="rq-page-heading__title">Vidas y rachas</h1>
-        </div>
-        <p>Configura las reglas globales de pérdida y recuperación de vidas.</p>
-      </header>
+    <div className="lives-page">
+      <PageHeader title="Vidas y rachas" description="Configura las reglas globales de pérdida y recuperación de vidas." />
 
       <section className="lives-metrics" aria-label="Resumen de la configuración">
         {metrics.map(({ icon: Icon, tone, value, label, detail }) => (
@@ -115,7 +110,6 @@ export const VidasRachas = () => {
         <form className="lives-panel lives-form" onSubmit={save}>
           <div className="lives-panel__header">
             <div>
-              <span className="lives-eyebrow">Reglas generales</span>
               <h2>Configuración de vidas</h2>
               <p>Estos cambios se aplicarán a todos los estudiantes.</p>
             </div>
@@ -193,7 +187,6 @@ export const VidasRachas = () => {
         <aside className="lives-panel lives-recovery">
           <div className="lives-panel__header">
             <div>
-              <span className="lives-eyebrow">Vista previa</span>
               <h2>Recuperación de vidas</h2>
               <p>Así avanzará un estudiante desde cero vidas.</p>
             </div>
@@ -206,15 +199,15 @@ export const VidasRachas = () => {
               const hasGap = previous && step - previous > 1;
               const isLast = step === form.vidas_maximas;
               return (
-                <React.Fragment key={step}>
-                  {hasGap && <div className="lives-timeline__gap"><span>•••</span><small>{step - previous - 1} etapas intermedias</small></div>}
+                <Fragment key={step}>
+                  {hasGap && <div className="lives-timeline__gap"><span aria-hidden="true">…</span><small>{step - previous - 1} etapas intermedias</small></div>}
                   <TimelineItem
                     icon={isLast ? Heart : Clock3}
                     title={isLast ? 'Vidas completas' : `+${step} ${step === 1 ? 'vida' : 'vidas'}`}
                     subtitle={`En ${durationLabel(form.minutos_por_recarga * step)}`}
                     variant={isLast ? 'complete' : 'step'}
                   />
-                </React.Fragment>
+                </Fragment>
               );
             })}
           </div>
@@ -225,7 +218,7 @@ export const VidasRachas = () => {
           </div>
         </aside>
       </section>
-    </main>
+    </div>
   );
 };
 

@@ -10,6 +10,7 @@ import {
   updateLessonChallengeConfig, updateLessonGuide, updateReto,
 } from '../../services/retoService';
 import { DeleteConfirmationModal } from '../../components/DeleteConfirmationModal';
+import { PageHeader } from '../../components/PageKit';
 import { ModernPageSkeleton } from '../../components/ModernPageSkeleton';
 import { RimaqSelect } from '../../components/RimaqSelect';
 import { resolveMediaUrl } from '../../services/api';
@@ -23,10 +24,6 @@ const TYPES = [
 const TYPE_LABEL = Object.fromEntries(TYPES);
 const unwrap = (response) => Array.isArray(response) ? response : response?.data ?? [];
 const idOf = (item, names) => names.map((name) => item?.[name]).find((value) => value !== undefined && value !== null);
-const field = { padding: '10px 12px', borderRadius: 10, border: '1px solid var(--color-outline-variant)', background: 'var(--color-surface-container-lowest)', color: 'var(--color-on-surface)', width: '100%', boxSizing: 'border-box' };
-const card = { background: 'var(--color-surface)', border: '1px solid var(--color-outline-variant)', borderRadius: 14, padding: 20, boxShadow: 'var(--shadow-level-1)' };
-const button = { border: 0, borderRadius: 10, padding: '10px 16px', cursor: 'pointer', fontWeight: 700, display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' };
-const iconButton = (color, background) => ({ border: '1px solid var(--color-outline-variant)', borderRadius: 8, width: 34, height: 34, display: 'inline-grid', placeItems: 'center', cursor: 'pointer', color, background });
 const mediaUrl = (url) => resolveMediaUrl(url);
 const isChoiceType = (type) => ['opcion_multiple', 'respuesta_imagen'].includes(type);
 const ROUTE_STORAGE_KEY = 'rimaqmasi:admin:retos-route';
@@ -310,16 +307,15 @@ export const Retos = () => {
   }
 
   return <div className="retos-page">
-    <div className="retos-page-header">
-      <div className="retos-page-header__content">
-        <div className="rq-page-heading">
-          <div className="rq-page-heading__accent" />
-          <h1 className="rq-page-heading__title">Gestión de retos</h1>
-        </div>
-        <p>Diseña, genera y organiza las actividades que resolverán los estudiantes en cada lección.</p>
-      </div>
-      {selection.lesson && <button className="retos-refresh-button" onClick={() => loadSummary()} disabled={loading}><RefreshCw className={loading ? 'spinning' : ''} size={16}/><span>{loading ? 'Actualizando…' : 'Actualizar datos'}</span></button>}
-    </div>
+    <PageHeader
+      title="Gestión de retos"
+      description="Diseña, genera y organiza las actividades que resolverán los estudiantes en cada lección."
+      actions={selection.lesson && (
+        <button type="button" className="rq-button rq-button--ghost" onClick={() => loadSummary()} disabled={loading}>
+          <RefreshCw className={loading ? 'spinning' : ''} size={16} /> {loading ? 'Actualizando…' : 'Actualizar datos'}
+        </button>
+      )}
+    />
 
     <section className="retos-context-card">
       <div className="retos-section-heading">
@@ -369,14 +365,52 @@ export const Retos = () => {
       </nav>
 
       {tab === 'banco' && <section id="retos-panel-banco" role="tabpanel" aria-labelledby="retos-tab-banco" className="retos-panel">
-        <header className="retos-panel__header"><div><span className="retos-panel__eyebrow">Banco seleccionado</span><h2>Retos de la lección</h2><p>{summary.leccion.titulo}</p></div>{summary.leccion.retos.length > 0 && <button className="retos-new-button" onClick={openCreate}><Plus size={18}/><span>Agregar nuevo reto</span></button>}</header>
-        <div className="table-responsive-container retos-table"><table><thead><tr>{['#', 'Instrucción', 'Tipo', 'Elemento', 'Puntos', 'Estado', 'Acciones'].map((name) => <th key={name}>{name}</th>)}</tr></thead><tbody>
-          {summary.leccion.retos.map((reto) => {
-            const isPublished = reto.estado === 'publicado' && reto.disponible_seleccion;
-            return <tr key={reto.reto_id} style={{ borderBottom: '1px solid var(--color-outline-variant)' }}><td style={{ padding: 12 }}>{reto.orden}</td><td style={{ padding: 12, maxWidth: 380 }}><strong>{reto.instruccion}</strong><div style={{ fontSize: 12, color: 'var(--color-on-surface-variant)' }}>{reto.origen} · dificultad {reto.dificultad} · 2 intentos</div></td><td style={{ padding: 12 }}>{TYPE_LABEL[reto.tipo] ?? reto.tipo}</td><td style={{ padding: 12 }}>{reto.elementos?.[0]?.elemento?.palabra?.termino ?? reto.elementos?.[0]?.elemento?.contenido ?? 'Manual'}</td><td style={{ padding: 12 }}>{reto.puntos}</td><td style={{ padding: 12 }}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, color: isPublished ? 'var(--color-on-success-container)' : 'var(--color-on-surface-variant)', background: isPublished ? 'var(--color-success-container)' : 'var(--color-surface-container-high)' }}><span style={{ width: 7, height: 7, borderRadius: '50%', background: isPublished ? 'var(--color-success-text)' : 'var(--color-text-muted)' }}/>{reto.estado}</span></td><td style={{ padding: 12 }}><div style={{ display: 'flex', gap: 7, alignItems: 'center' }}><button type="button" aria-label="Ver reto" title="Ver reto" onClick={() => setPreview(reto)} style={iconButton('var(--color-primary-text)', 'var(--color-primary-container)')}><Eye size={17}/></button><button type="button" aria-label="Editar reto" title="Editar reto" onClick={() => openEdit(reto)} style={iconButton('var(--color-secondary-text)', 'var(--color-secondary-container)')}><Edit2 size={17}/></button><button type="button" aria-label="Retirar reto" title="Retirar reto" onClick={() => removeChallenge(reto)} style={iconButton('var(--color-error-text)', 'var(--color-error-container)')}><Trash2 size={17}/></button></div></td></tr>;
-          })}
-          {!summary.leccion.retos.length && <tr><td colSpan="7"><div className="retos-empty"><div className="retos-empty__icon"><BrainCircuit size={28}/></div><strong>Todavía no hay retos</strong><p>Crea el primero manualmente o genéralos usando las palabras de esta lección.</p><button className="retos-new-button" onClick={openCreate}><Plus size={18}/><span>Agregar nuevo reto</span></button></div></td></tr>}
-        </tbody></table></div>
+        <header className="retos-panel__header">
+          <div><h2>Retos de la lección</h2><p>{summary.leccion.titulo}</p></div>
+          {summary.leccion.retos.length > 0 && <button type="button" className="retos-new-button" onClick={openCreate}><Plus size={18} /><span>Agregar nuevo reto</span></button>}
+        </header>
+        <div className="table-responsive-container">
+          <table className="rq-table" style={{ minWidth: 880 }}>
+            <thead><tr>{['#', 'Instrucción', 'Tipo', 'Elemento', 'Puntos', 'Estado'].map((name) => <th key={name}>{name}</th>)}<th className="rq-col-actions">Acciones</th></tr></thead>
+            <tbody>
+              {summary.leccion.retos.map((reto) => {
+                const isPublished = reto.estado === 'publicado' && reto.disponible_seleccion;
+                return (
+                  <tr key={reto.reto_id}>
+                    <td><span className="rq-badge">{reto.orden}</span></td>
+                    <td style={{ maxWidth: 380 }}>
+                      <div className="rq-cell-stack">
+                        <span className="rq-strong">{reto.instruccion}</span>
+                        <span className="rq-muted">{reto.origen} · dificultad {reto.dificultad} · 2 intentos</span>
+                      </div>
+                    </td>
+                    <td>{TYPE_LABEL[reto.tipo] ?? reto.tipo}</td>
+                    <td>{reto.elementos?.[0]?.elemento?.palabra?.termino ?? reto.elementos?.[0]?.elemento?.contenido ?? 'Manual'}</td>
+                    <td className="rq-strong">{reto.puntos}</td>
+                    <td><span className={`rq-badge rq-badge--${isPublished ? 'success' : 'neutral'}`}>{reto.estado}</span></td>
+                    <td className="rq-col-actions">
+                      <div>
+                        <button type="button" className="rq-icon-btn" aria-label={`Ver reto ${reto.orden}`} title="Ver reto" onClick={() => setPreview(reto)}><Eye size={17} /></button>
+                        <button type="button" className="rq-icon-btn" aria-label={`Editar reto ${reto.orden}`} title="Editar reto" onClick={() => openEdit(reto)}><Edit2 size={17} /></button>
+                        <button type="button" className="rq-icon-btn rq-icon-btn--danger" aria-label={`Retirar reto ${reto.orden}`} title="Retirar reto" onClick={() => removeChallenge(reto)}><Trash2 size={17} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {!summary.leccion.retos.length && (
+                <tr><td colSpan="7" className="rq-empty-cell">
+                  <div className="retos-empty">
+                    <div className="retos-empty__icon"><BrainCircuit size={28} /></div>
+                    <strong>Todavía no hay retos</strong>
+                    <p>Crea el primero manualmente o genéralos usando las palabras de esta lección.</p>
+                    <button type="button" className="retos-new-button" onClick={openCreate}><Plus size={18} /><span>Agregar nuevo reto</span></button>
+                  </div>
+                </td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>}
 
       {tab === 'generar' && <section id="retos-panel-generar" role="tabpanel" aria-labelledby="retos-tab-generar" className="retos-panel retos-workspace">
@@ -385,10 +419,10 @@ export const Retos = () => {
         <div className="retos-type-grid">{TYPES.filter(([type]) => ['opcion_multiple', 'completar', 'traducir', 'respuesta_imagen', 'escuchar_escribir', 'pronunciar'].includes(type)).map(([type, label]) => <label className={generationTypes.includes(type) ? 'selected' : ''} key={type}><input type="checkbox" checked={generationTypes.includes(type)} onChange={() => toggleType(type)}/> {label}</label>)}</div>
         <div className="retos-workspace__label"><span>2</span><div><strong>Palabras disponibles</strong><small>Busca y selecciona el contenido que deseas convertir en actividades.</small></div></div>
         <div className="retos-word-toolbar">
-          <div style={{ position: 'relative', flex: '1 1 300px' }}><Search size={18} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-outline)' }}/><input style={{ ...field, paddingLeft: 40 }} value={wordSearch} onChange={(e) => setWordSearch(e.target.value)} placeholder="Buscar por palabra o traducción..."/></div>
+          <div className="rq-search-box" style={{ flex: '1 1 300px' }}><Search size={18} aria-hidden="true" /><input type="search" aria-label="Buscar palabras" value={wordSearch} onChange={(e) => setWordSearch(e.target.value)} placeholder="Buscar por palabra o traducción..." /></div>
           <div className="retos-category-select"><RimaqSelect ariaLabel="Filtrar por categoría" value={categoryFilter || '__all__'} onValueChange={(value) => setCategoryFilter(value === '__all__' ? '' : value)} options={[{ value: '__all__', label: 'Todas las categorías' }, ...availableCategories.map((category) => ({ value: category, label: category }))]} /></div>
-          <button type="button" onClick={selectVisibleWords} style={{ ...button, background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)' }}>Seleccionar visibles</button>
-          <button type="button" onClick={clearVisibleWords} style={{ ...button, background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)' }}>Limpiar visibles</button>
+          <button type="button" className="rq-button rq-button--ghost" onClick={selectVisibleWords}>Seleccionar visibles</button>
+          <button type="button" className="rq-button rq-button--ghost" onClick={clearVisibleWords}>Limpiar visibles</button>
           <span className="retos-result-count">{visibleWords.length} resultado{visibleWords.length === 1 ? '' : 's'}</span>
         </div>
         {visibleWords.length > 0 ? <div className="retos-word-grid">{visibleWords.map((word) => { const selected = selectedWords.includes(Number(word.palabra_id)); return <label className={`retos-word-card ${selected ? 'selected' : ''}`} key={word.palabra_id}><input type="checkbox" checked={selected} onChange={() => toggleWord(Number(word.palabra_id))}/> <strong>{word.termino}</strong><div>{word.traduccionesOrigen?.[0]?.palabraDestino?.termino ?? word.definiciones?.[0]?.definicion ?? 'Sin traducción'} · {word.categoria?.nombre ?? 'Sin categoría'}</div><small>{word.url_audio ? 'Con audio' : 'Sin audio'} · {word.url_imagen ? 'Con imagen' : 'Sin imagen'}</small></label>; })}</div> : <div className="retos-word-empty"><Search size={24}/><strong>Sin coincidencias</strong><span>Prueba otra palabra o cambia la categoría seleccionada.</span></div>}
@@ -433,9 +467,9 @@ export const Retos = () => {
         <header className="retos-workspace__header"><div className="retos-workspace__icon"><FileText size={21}/></div><div><h2>Guía obligatoria</h2><p>Prepara el material de recuperación que verá el estudiante cuando necesite reforzar la lección.</p></div><button type="button" onClick={saveGuide} className="retos-header-save"><Save size={16}/>Guardar</button></header>
         <div className="retos-guide-layout">
           <div className="retos-guide-form">
-            <label><strong>Título</strong><span>Nombre breve y reconocible</span><input style={field} placeholder="Ejemplo: Repaso de vocabulario básico" value={guide.titulo} onChange={(e) => setGuide({ ...guide, titulo: e.target.value })}/></label>
-            <label><strong>Descripción</strong><span>Explica qué aprenderá el estudiante</span><input style={field} placeholder="Resume el objetivo de esta guía" value={guide.descripcion} onChange={(e) => setGuide({ ...guide, descripcion: e.target.value })}/></label>
-            <label className="retos-guide-content"><strong>Contenido</strong><span>Incluye ejemplos, reglas y recomendaciones claras</span><textarea style={{ ...field, fontFamily: 'inherit' }} placeholder="Escribe aquí el material de refuerzo…" value={guide.contenido} onChange={(e) => setGuide({ ...guide, contenido: e.target.value })}/><small>{guide.contenido.length} caracteres</small></label>
+            <label><strong>Título</strong><span>Nombre breve y reconocible</span><input className="rq-field__input" placeholder="Ejemplo: Repaso de vocabulario básico" value={guide.titulo} onChange={(e) => setGuide({ ...guide, titulo: e.target.value })}/></label>
+            <label><strong>Descripción</strong><span>Explica qué aprenderá el estudiante</span><input className="rq-field__input" placeholder="Resume el objetivo de esta guía" value={guide.descripcion} onChange={(e) => setGuide({ ...guide, descripcion: e.target.value })}/></label>
+            <label className="retos-guide-content"><strong>Contenido</strong><span>Incluye ejemplos, reglas y recomendaciones claras</span><textarea className="rq-field__input rq-textarea" placeholder="Escribe aquí el material de refuerzo…" value={guide.contenido} onChange={(e) => setGuide({ ...guide, contenido: e.target.value })}/><small>{guide.contenido.length} caracteres</small></label>
           </div>
           <aside className="retos-guide-aside">
             <div className="retos-guide-progress"><strong>{guideCompletion}/3</strong><span>secciones completas</span></div>
@@ -447,110 +481,180 @@ export const Retos = () => {
       </section>}
     </>}
 
-    {preview && <div className="retos-modal-backdrop" onClick={() => setPreview(null)}><div className="retos-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="reto-preview-title" onClick={(event) => event.stopPropagation()} style={{ ...card, width: 'min(860px, 100%)', maxHeight: '96vh', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}><div style={{ padding: '18px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-outline-variant)', flexShrink: 0 }}><div><div style={{ fontSize: 11.5, color: 'var(--color-primary-text)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Vista previa del reto</div><h2 id="reto-preview-title" style={{ margin: '3px 0 0' }}>{TYPE_LABEL[preview.tipo] ?? preview.tipo}</h2></div><button type="button" aria-label="Cerrar vista previa" onClick={() => setPreview(null)} style={iconButton('var(--color-on-surface)', 'var(--color-surface-container-high)')}><X size={18}/></button></div><div style={{ padding: 24, overflowY: 'auto', minHeight: 0 }}><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 18 }}>{[['Reto', `#${preview.orden}`], ['Dificultad', `${preview.dificultad}/5`], ['XP', `${preview.puntos}`], ['Intentos', `${preview.max_intentos ?? 2}`]].map(([label, value]) => <span key={label} style={{ padding: '6px 10px', borderRadius: 999, background: 'var(--color-surface-container-high)', fontSize: 12 }}><strong>{label}:</strong> {value}</span>)}</div><div style={{ padding: 22, borderRadius: 14, background: 'var(--color-surface-container-low)', border: '1px solid var(--color-outline-variant)' }}><div style={{ fontSize: 13, color: 'var(--color-on-surface-variant)', marginBottom: 8 }}>Pregunta</div><h3 style={{ fontSize: 21, margin: 0 }}>{preview.instruccion}</h3>{preview.contenido?.texto && <p style={{ fontSize: 20, fontWeight: 700, margin: '16px 0 0' }}>{preview.contenido.texto}</p>}{preview.contenido?.imagen && <img src={mediaUrl(preview.contenido.imagen)} alt="Contenido del reto" style={{ display: 'block', width: '100%', maxHeight: 280, objectFit: 'contain', borderRadius: 10, marginTop: 16 }}/>}<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginTop: 18 }}>{Array.isArray(preview.opciones) && preview.opciones.map((option) => { const correct = String(option.id) === String(preview.solucion?.opcion_id); return <div key={option.id} style={{ padding: 13, borderRadius: 10, border: `2px solid ${correct ? 'var(--color-success-text)' : 'var(--color-outline-variant)'}`, background: correct ? 'var(--color-success-container)' : 'var(--color-surface)', color: correct ? 'var(--color-on-success-container)' : 'var(--color-on-surface)' }}>{option.texto}{correct && <CheckCircle2 size={16} color="var(--color-success-text)" style={{ float: 'right' }}/>}</div>; })}</div></div><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12, marginTop: 16 }}><div style={{ padding: 15, borderRadius: 10, background: 'var(--color-success-container)', color: 'var(--color-on-success-container)', border: '1px solid color-mix(in srgb, var(--color-success-text) 24%, transparent)' }}><strong>Solución</strong><div style={{ marginTop: 6 }}>{preview.solucion?.respuestas_aceptadas?.join(', ') ?? preview.solucion?.orden?.join(' → ') ?? preview.solucion?.texto_esperado ?? (preview.solucion?.opcion_id ? `Opción ${preview.solucion.opcion_id}` : JSON.stringify(preview.solucion))}</div></div><div style={{ padding: 15, borderRadius: 10, background: 'var(--color-warning-container)', color: 'var(--color-on-warning-container)', border: '1px solid color-mix(in srgb, var(--color-warning-text) 24%, transparent)' }}><strong>Pista del segundo intento</strong><div style={{ marginTop: 6 }}>{preview.pistas?.nivel_1?.texto ?? 'Sin pista registrada'}</div></div></div><div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20, flexWrap: 'wrap' }}><button type="button" onClick={() => { setPreview(null); openEdit(preview); }} style={{ ...button, background: 'var(--color-primary)', color: 'var(--color-on-primary)' }}><Edit2 size={16}/>Editar este reto</button><button type="button" onClick={() => setPreview(null)} style={{ ...button, background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)' }}>Cerrar</button></div></div></div></div>}
-
-    {modal && <div className="retos-modal-backdrop"
-      onMouseDown={(event) => { if (event.target === event.currentTarget) setModal(false); }}
-    >
-      <form className="modal-content-responsive retos-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="reto-editor-title" onSubmit={saveChallenge} style={{ ...card, maxHeight: '96vh', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <div className="retos-editor-dialog__header" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, borderBottom: '1px solid var(--color-outline-variant)' }}>
-          <div>
-            <div style={{ color: 'var(--color-primary-text)', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em' }}>{editing ? `Reto #${editing.orden}` : 'Crear pregunta'}</div>
-            <h2 id="reto-editor-title" style={{ margin: '4px 0 2px' }}>{editing ? 'Editar reto' : 'Nuevo reto'}</h2>
-            <div style={{ color: 'var(--color-on-surface-variant)', fontSize: 13 }}>Define la pregunta, marca la respuesta correcta y revisa su dificultad.</div>
+    {preview && (
+      <div className="rq-modal-backdrop" onClick={() => setPreview(null)}>
+        <div className="modal-content-responsive rq-modal-dialog retos-dialog" role="dialog" aria-modal="true" aria-labelledby="reto-preview-title" onClick={(event) => event.stopPropagation()}>
+          <div className="rq-modal-header">
+            <h2 id="reto-preview-title" className="rq-modal-header__title">Vista previa · {TYPE_LABEL[preview.tipo] ?? preview.tipo}</h2>
+            <button type="button" className="rq-icon-close" aria-label="Cerrar vista previa" onClick={() => setPreview(null)}><X size={18} /></button>
           </div>
-          <button aria-label="Cerrar" type="button" onClick={() => setModal(false)} style={iconButton('var(--color-on-surface)', 'var(--color-surface-container-high)')}><X size={19}/></button>
-        </div>
-
-        <div style={{ padding: 24, overflowY: 'auto', minHeight: 0 }}>
-          <section style={{ padding: 18, border: '1px solid var(--color-outline-variant)', borderRadius: 14, marginBottom: 16 }}>
-            <div style={{ fontWeight: 800, marginBottom: 13 }}>1. Contenido de la pregunta</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>Tipo de reto</span>
-                <RimaqSelect
-                  value={form.tipo}
-                  onValueChange={(tipo) => {
-                    setForm({ ...form, tipo, ...(isChoiceType(tipo) && !isChoiceType(form.tipo) ? { puntos: 18, dificultad: 3 } : {}) });
-                  }}
-                  options={TYPES.map(([value, label]) => ({ value, label }))}
-                  className="rimaq-select--full-width"
-                />
+          <div className="rq-modal-body">
+            <div className="rq-inline" style={{ flexWrap: 'wrap', marginBottom: 18 }}>
+              {[['Reto', `#${preview.orden}`], ['Dificultad', `${preview.dificultad}/5`], ['XP', `${preview.puntos}`], ['Intentos', `${preview.max_intentos ?? 2}`]].map(([label, value]) => (
+                <span key={label} className="rq-badge" style={{ textTransform: 'none', letterSpacing: 0 }}><strong>{label}:</strong> {value}</span>
+              ))}
+            </div>
+            <div className="retos-preview-stage">
+              <span className="rq-muted">Pregunta</span>
+              <h3>{preview.instruccion}</h3>
+              {preview.contenido?.texto && <p className="retos-preview-content">{preview.contenido.texto}</p>}
+              {preview.contenido?.imagen && <img src={mediaUrl(preview.contenido.imagen)} alt="Contenido del reto" />}
+              {Array.isArray(preview.opciones) && (
+                <div className="retos-options" style={{ marginTop: 18 }}>
+                  {preview.opciones.map((option) => {
+                    const correct = String(option.id) === String(preview.solucion?.opcion_id);
+                    return (
+                      <div key={option.id} className={`retos-preview-option${correct ? ' is-correct' : ''}`}>
+                        {option.texto}
+                        {correct && <CheckCircle2 size={16} aria-label="Respuesta correcta" />}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="retos-preview-notes">
+              <div className="retos-note retos-note--success">
+                <strong>Solución</strong>
+                <div>{preview.solucion?.respuestas_aceptadas?.join(', ') ?? preview.solucion?.orden?.join(' → ') ?? preview.solucion?.texto_esperado ?? (preview.solucion?.opcion_id ? `Opción ${preview.solucion.opcion_id}` : JSON.stringify(preview.solucion))}</div>
               </div>
-              <label style={{ fontSize: 13, fontWeight: 700 }}>
-                {form.tipo === 'respuesta_imagen' ? 'URL o ruta de la imagen' : 'Contenido principal'}
-                <input required={form.tipo === 'respuesta_imagen'} style={{ ...field, marginTop: 6 }} placeholder={form.tipo === 'respuesta_imagen' ? '/images/ejemplo.png' : 'Palabra, frase o contenido de apoyo'} value={form.contenido} onChange={(e) => setForm({ ...form, contenido: e.target.value })}/>
+              <div className="retos-note retos-note--warning">
+                <strong>Pista del segundo intento</strong>
+                <div>{preview.pistas?.nivel_1?.texto ?? 'Sin pista registrada'}</div>
+              </div>
+            </div>
+          </div>
+          <div className="rq-modal-footer">
+            <button type="button" className="rq-button rq-button--ghost" onClick={() => setPreview(null)}>Cerrar</button>
+            <button type="button" className="rq-button rq-button--primary" onClick={() => { setPreview(null); openEdit(preview); }}><Edit2 size={16} /> Editar este reto</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {modal && (
+      <div className="rq-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setModal(false); }}>
+        <form className="modal-content-responsive rq-modal-dialog retos-dialog" role="dialog" aria-modal="true" aria-labelledby="reto-editor-title" onSubmit={saveChallenge}>
+          <div className="rq-modal-header">
+            <div>
+              <h2 id="reto-editor-title" className="rq-modal-header__title">{editing ? `Editar reto #${editing.orden}` : 'Nuevo reto'}</h2>
+              <p className="rq-muted" style={{ margin: '4px 0 0' }}>Define la pregunta, marca la respuesta correcta y revisa su dificultad.</p>
+            </div>
+            <button type="button" className="rq-icon-close" aria-label="Cerrar" onClick={() => setModal(false)}><X size={18} /></button>
+          </div>
+
+          <div className="academic-modal-scroll rq-modal-body">
+            <section className="retos-section">
+              <h3 className="retos-section__title">1. Contenido de la pregunta</h3>
+              <div className="rq-form-grid-2">
+                <div className="rq-field">
+                  <span className="rq-field__label">Tipo de reto</span>
+                  <RimaqSelect
+                    ariaLabel="Tipo de reto"
+                    value={form.tipo}
+                    onValueChange={(tipo) => setForm({ ...form, tipo, ...(isChoiceType(tipo) && !isChoiceType(form.tipo) ? { puntos: 18, dificultad: 3 } : {}) })}
+                    options={TYPES.map(([value, label]) => ({ value, label }))}
+                    className="rimaq-select--full-width"
+                  />
+                </div>
+                <div className="rq-field">
+                  <label htmlFor="reto-contenido" className="rq-field__label">{form.tipo === 'respuesta_imagen' ? 'URL o ruta de la imagen' : 'Contenido principal'}</label>
+                  <input id="reto-contenido" className="rq-field__input" required={form.tipo === 'respuesta_imagen'} placeholder={form.tipo === 'respuesta_imagen' ? '/images/ejemplo.png' : 'Palabra, frase o contenido de apoyo'} value={form.contenido} onChange={(e) => setForm({ ...form, contenido: e.target.value })} />
+                </div>
+              </div>
+              {form.tipo === 'respuesta_imagen' && form.contenido && (
+                <div className="rq-setting-row" style={{ marginTop: 12, justifyContent: 'flex-start' }}>
+                  <Image size={19} color="var(--color-primary-text)" aria-hidden="true" />
+                  <img src={mediaUrl(form.contenido)} alt="Vista previa" style={{ width: 86, height: 62, objectFit: 'contain', borderRadius: 8 }} />
+                  <span>Comprueba que la imagen representa claramente la respuesta.</span>
+                </div>
+              )}
+              <div className="rq-field" style={{ marginTop: 14 }}>
+                <label htmlFor="reto-instruccion" className="rq-field__label">Instrucción para el estudiante</label>
+                <input id="reto-instruccion" required className="rq-field__input" placeholder="Selecciona la palabra que corresponde a la imagen" value={form.instruccion} onChange={(e) => setForm({ ...form, instruccion: e.target.value })} />
+              </div>
+            </section>
+
+            {isChoiceType(form.tipo) ? (
+              <section className="retos-section">
+                <div className="rq-inline" style={{ justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 13 }}>
+                  <div>
+                    <h3 className="retos-section__title" style={{ margin: 0 }}>2. Opciones de respuesta</h3>
+                    <span className="rq-muted">Haz clic en una tarjeta para marcarla como correcta.</span>
+                  </div>
+                  <button type="button" className="rq-button rq-button--ghost rq-button--sm" onClick={shuffleFormOptions}><Shuffle size={16} /> Barajar opciones</button>
+                </div>
+                <div className="retos-options">
+                  {[1, 2, 3, 4].map((number) => {
+                    const correct = String(form.correcta) === String(number);
+                    return (
+                      <label key={number} className={`retos-option${correct ? ' is-correct' : ''}`}>
+                        <input type="radio" name="opcion-correcta" checked={correct} onChange={() => setForm({ ...form, correcta: String(number) })} aria-label={`Marcar opción ${number} como correcta`} />
+                        <span>
+                          <span className="retos-option__label">OPCIÓN {number}{correct && <span>RESPUESTA CORRECTA</span>}</span>
+                          <input required className="rq-field__input" placeholder={`Escribe la opción ${number}`} value={form[`opcion${number}`]} onClick={(event) => event.stopPropagation()} onChange={(e) => setForm({ ...form, [`opcion${number}`]: e.target.value })} />
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </section>
+            ) : (
+              <section className="retos-section">
+                <h3 className="retos-section__title" style={{ marginBottom: 4 }}>2. Respuesta esperada</h3>
+                <label htmlFor="reto-respuestas" className="rq-muted">Puedes registrar varias respuestas válidas separándolas con comas.</label>
+                <input id="reto-respuestas" required className="rq-field__input" style={{ marginTop: 10 }} placeholder="Respuesta principal, variante aceptada" value={form.respuestas} onChange={(e) => setForm({ ...form, respuestas: e.target.value })} />
+              </section>
+            )}
+
+            <section className="retos-section">
+              <h3 className="retos-section__title">3. Ayuda y configuración</h3>
+              <div className="rq-field">
+                <label htmlFor="reto-pista" className="rq-field__label">Pista del segundo intento</label>
+                <textarea id="reto-pista" required rows={3} className="rq-field__input rq-textarea" placeholder="Da una pista útil sin revelar directamente la respuesta" value={form.pista} onChange={(e) => setForm({ ...form, pista: e.target.value })} />
+              </div>
+              <div className="rq-form-row" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', marginTop: 12 }}>
+                <div className="rq-field">
+                  <label htmlFor="reto-puntos" className="rq-field__label">Puntos</label>
+                  <input id="reto-puntos" required type="number" min="1" className="rq-field__input rq-input-number" value={form.puntos} onChange={(e) => setForm({ ...form, puntos: e.target.value })} />
+                </div>
+                <div className="rq-field">
+                  <label htmlFor="reto-dificultad" className="rq-field__label">Dificultad (1–5)</label>
+                  <input id="reto-dificultad" required type="number" min="1" max="5" className="rq-field__input rq-input-number" value={form.dificultad} onChange={(e) => setForm({ ...form, dificultad: e.target.value })} />
+                </div>
+                <div className="rq-field">
+                  <span className="rq-field__label">Estado</span>
+                  <RimaqSelect
+                    ariaLabel="Estado del reto"
+                    value={form.estado}
+                    onValueChange={(estado) => setForm({ ...form, estado })}
+                    options={[
+                      { value: 'borrador', label: 'Borrador' },
+                      { value: 'revision', label: 'Revisión' },
+                      { value: 'publicado', label: 'Publicado' },
+                      { value: 'archivado', label: 'Archivado' },
+                    ]}
+                    className="rimaq-select--full-width"
+                  />
+                </div>
+              </div>
+              <label className="rq-check-card" style={{ marginTop: 14 }}>
+                <input type="checkbox" checked={form.disponible_seleccion} onChange={(e) => setForm({ ...form, disponible_seleccion: e.target.checked })} />
+                <span>
+                  <strong className="rq-stat__value">Disponible para selección aleatoria</strong>
+                  <span className="rq-muted" style={{ display: 'block' }}>El reto podrá aparecer en los intentos del estudiante.</span>
+                </span>
               </label>
-            </div>
-            {form.tipo === 'respuesta_imagen' && form.contenido && <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12, padding: 10, borderRadius: 10, background: 'var(--color-surface-container-low)' }}>
-              <Image size={19} color="var(--color-primary-text)"/>
-              <img src={mediaUrl(form.contenido)} alt="Vista previa" style={{ width: 86, height: 62, objectFit: 'contain', borderRadius: 8, background: 'var(--color-surface-container-lowest)' }}/>
-              <small style={{ color: 'var(--color-on-surface-variant)' }}>Comprueba que la imagen representa claramente la respuesta.</small>
-            </div>}
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginTop: 14 }}>Instrucción para el estudiante
-              <input required style={{ ...field, marginTop: 6, fontSize: 15 }} placeholder="Selecciona la palabra que corresponde a la imagen" value={form.instruccion} onChange={(e) => setForm({ ...form, instruccion: e.target.value })}/>
-            </label>
-          </section>
+            </section>
+          </div>
 
-          {isChoiceType(form.tipo) ? <section style={{ padding: 18, border: '1px solid var(--color-outline-variant)', borderRadius: 14, marginBottom: 16 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 13 }}>
-              <div>
-                <div style={{ fontWeight: 800 }}>2. Opciones de respuesta</div>
-                <small style={{ color: 'var(--color-on-surface-variant)' }}>Haz clic en una tarjeta para marcarla como correcta.</small>
-              </div>
-              <button type="button" onClick={shuffleFormOptions} style={{ ...button, padding: '8px 12px', background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)' }}><Shuffle size={16}/>Barajar opciones</button>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
-              {[1, 2, 3, 4].map((number) => {
-                const correct = String(form.correcta) === String(number);
-                return <label key={number} style={{ display: 'grid', gridTemplateColumns: '32px 1fr', alignItems: 'center', gap: 9, padding: 11, borderRadius: 12, cursor: 'pointer', border: `2px solid ${correct ? 'var(--color-success-text)' : 'var(--color-outline-variant)'}`, background: correct ? 'var(--color-success-container)' : 'var(--color-surface-container-low)' }}>
-                  <input type="radio" name="opcion-correcta" checked={correct} onChange={() => setForm({ ...form, correcta: String(number) })} style={{ width: 18, height: 18, accentColor: 'var(--color-success)', justifySelf: 'center' }}/>
-                  <span>
-                    <span style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 800, color: correct ? 'var(--color-on-success-container)' : 'var(--color-on-surface-variant)', marginBottom: 5 }}>OPCIÓN {number}{correct && <span>RESPUESTA CORRECTA</span>}</span>
-                    <input required style={{ ...field }} placeholder={`Escribe la opción ${number}`} value={form[`opcion${number}`]} onClick={(event) => event.stopPropagation()} onChange={(e) => setForm({ ...form, [`opcion${number}`]: e.target.value })}/>
-                  </span>
-                </label>;
-              })}
-            </div>
-          </section> : <section style={{ padding: 18, border: '1px solid var(--color-outline-variant)', borderRadius: 14, marginBottom: 16 }}>
-            <div style={{ fontWeight: 800, marginBottom: 4 }}>2. Respuesta esperada</div>
-            <small style={{ color: 'var(--color-on-surface-variant)' }}>Puedes registrar varias respuestas válidas separándolas con comas.</small>
-            <input required style={{ ...field, marginTop: 10 }} placeholder="Respuesta principal, variante aceptada" value={form.respuestas} onChange={(e) => setForm({ ...form, respuestas: e.target.value })}/>
-          </section>}
-
-          <section style={{ padding: 18, border: '1px solid var(--color-surface-variant)', borderRadius: 14 }}>
-            <div style={{ fontWeight: 800, marginBottom: 13 }}>3. Ayuda y configuración</div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 700 }}>Pista del segundo intento
-              <textarea required style={{ ...field, minHeight: 76, marginTop: 6, resize: 'vertical', fontFamily: 'inherit' }} placeholder="Da una pista útil sin revelar directamente la respuesta" value={form.pista} onChange={(e) => setForm({ ...form, pista: e.target.value })}/>
-            </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, marginTop: 12 }}>
-              <label style={{ fontSize: 13, fontWeight: 700 }}>Puntos<input required style={{ ...field, marginTop: 6 }} type="number" min="1" value={form.puntos} onChange={(e) => setForm({ ...form, puntos: e.target.value })}/></label>
-              <label style={{ fontSize: 13, fontWeight: 700 }}>Dificultad (1–5)<input required style={{ ...field, marginTop: 6 }} type="number" min="1" max="5" value={form.dificultad} onChange={(e) => setForm({ ...form, dificultad: e.target.value })}/></label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>Estado</span>
-                <RimaqSelect
-                  value={form.estado}
-                  onValueChange={(estado) => setForm({ ...form, estado })}
-                  options={[
-                    { value: 'borrador', label: 'Borrador' },
-                    { value: 'revision', label: 'Revisión' },
-                    { value: 'publicado', label: 'Publicado' },
-                    { value: 'archivado', label: 'Archivado' }
-                  ]}
-                  className="rimaq-select--full-width"
-                />
-              </div>
-            </div>
-            <label style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 14, padding: 12, borderRadius: 10, background: 'var(--color-surface-container-low)', cursor: 'pointer' }}><input type="checkbox" checked={form.disponible_seleccion} onChange={(e) => setForm({ ...form, disponible_seleccion: e.target.checked })}/> <span><strong>Disponible para selección aleatoria</strong><small style={{ display: 'block', color: 'var(--color-on-surface-variant)' }}>El reto podrá aparecer en los intentos del estudiante.</small></span></label>
-          </section>
-        </div>
-
-        <div style={{ padding: '14px 24px', borderTop: '1px solid var(--color-surface-variant)', background: 'var(--color-surface)', display: 'flex', justifyContent: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
-          <button type="button" onClick={() => setModal(false)} style={{ ...button, background: 'var(--color-surface-container-high)', color: 'var(--color-on-surface)' }}>Cancelar</button>
-          <button type="submit" style={{ ...button, background: 'var(--color-primary)', color: 'var(--color-on-primary)', minWidth: 150 }}><Save size={17}/>{editing ? 'Guardar cambios' : 'Crear reto'}</button>
-        </div>
-      </form>
-    </div>}
+          <div className="rq-modal-footer">
+            <button type="button" className="rq-button rq-button--ghost" onClick={() => setModal(false)}>Cancelar</button>
+            <button type="submit" className="rq-button rq-button--primary" style={{ minWidth: 150 }}><Save size={17} /> {editing ? 'Guardar cambios' : 'Crear reto'}</button>
+          </div>
+        </form>
+      </div>
+    )}
 
     <DeleteConfirmationModal open={Boolean(confirmDelete)} title="¿Qué deseas hacer con el reto?" itemName={confirmDelete?.instruccion} description={<>Puedes archivarlo para conservar su historial o eliminarlo definitivamente junto con todos sus resultados asociados.</>} onCancel={() => setConfirmDelete(null)} secondaryLabel="Archivar" onSecondary={() => executeRemoveChallenge('archive')} confirmLabel="Eliminar definitivamente" onConfirm={() => executeRemoveChallenge('force')} />
   </div>;

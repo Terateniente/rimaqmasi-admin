@@ -331,15 +331,7 @@ ul, ol {
   text-wrap: balance;
 }
 
-.rq-main .analytics-header,
-.rq-main .usuarios-header {
-  margin-bottom: 24px;
-  gap: 16px;
-}
-
-.rq-main .rq-page-heading + p,
-.rq-main .analytics-header p,
-.rq-main .usuarios-header p {
+.rq-main .rq-page-heading + p {
   margin: 0;
   max-width: 640px;
   color: var(--color-on-surface-variant);
@@ -441,11 +433,6 @@ ul, ol {
 @media (max-width: 768px) {
   .responsive-grid-2 {
     grid-template-columns: 1fr;
-  }
-
-  .rq-main .analytics-header,
-  .rq-main .usuarios-header {
-    margin-bottom: 20px;
   }
 
   .rq-modern-skeleton__grid {
